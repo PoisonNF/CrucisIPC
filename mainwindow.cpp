@@ -6,19 +6,63 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    /*读取可使用的串口号*/
     QStringList serialNamePort;
     serialPort = new QSerialPort(this);
-    connect(serialPort,SIGNAL(readyRead()),this,SLOT(serialPortReadReady_Slot()));
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) { //将可用的端口放入info中
         serialNamePort << info.portName();      //将端口名传给QStringList
     }
     ui->UartCB->addItems(serialNamePort);       //输出到串口号CB上
+
+    /*关联控件和槽函数*/
+    connect(serialPort,SIGNAL(readyRead()),this,SLOT(serialPortReadReady_Slot()));
+
+    /*SQLite相关初始化*/
+    //创建数据库
+    createDB();
+    //创建数据表
+    createTable();
+    //查询
+    queryTable();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+//创建数据库
+void MainWindow::createDB()
+{
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("CrucisIPC.db");
+    if(db.open()==true)
+    {
+        qDebug() << "创建或者打开数据库成功！";
+    }
+    else
+    {
+        qDebug() << "创建或者打开数据库失败！";
+    }
+}
+//创建数据表
+void MainWindow::createTable()
+{
+    QSqlQuery query;
+    QString str = QString("CREATE TABLE jy901 ("
+                          "ID INT PRIMARY KEY NOT NULL,"
+                          "Data TEXT NOT NULL,"
+                          "X REAL,"
+                          "Y REAL,"
+                          "Z REAL)");
+    query.exec(str);
+}
+//查询
+void MainWindow::queryTable()
+{
+    QString str = QString("SELECT * FROM jy901");
+    model.setQuery(str);
+    ui->JY901TB->setModel(&model);
 }
 
 //开启槽函数
@@ -91,4 +135,16 @@ void MainWindow::serialPortReadReady_Slot()
     QString buf;
     buf = QString(serialPort->readAll());
     ui->ReceivePTE->appendPlainText(buf);
+
+    QStringList data = buf.split(u' ');
+    QString updatestr = QString("UPDATE jy901 SET Data = '%2', X = %3, Y = %4, Z = %5 WHERE ID = %1")
+            .arg(data.at(0)).arg(data.at(1)).arg(data.at(2)).arg(data.at(3)).arg(data.at(4));
+    QString str = QString("INSERT INTO jy901 VALUES(%1,'%2',%3,%4,%5)")
+            .arg(data.at(0)).arg(data.at(1)).arg(data.at(2)).arg(data.at(3)).arg(data.at(4));
+    QString deletestr = QString("DELETE FROM jy901 WHERE id = %1").arg(data.at(0));
+    QSqlQuery query;
+    query.exec(str);
+    query.exec(updatestr);
+    //query.exec(deletestr);
+    queryTable();
 }

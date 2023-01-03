@@ -14,6 +14,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
@@ -22,6 +23,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTableView>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -39,7 +41,7 @@ public:
     QPlainTextEdit *plainTextEdit_2;
     QVBoxLayout *verticalLayout;
     QLabel *label_6;
-    QPlainTextEdit *plainTextEdit;
+    QTableView *JY901TB;
     QVBoxLayout *verticalLayout_5;
     QLabel *label_9;
     QPlainTextEdit *plainTextEdit_5;
@@ -84,12 +86,12 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(664, 684);
+        MainWindow->resize(858, 779);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         layoutWidget = new QWidget(centralwidget);
         layoutWidget->setObjectName("layoutWidget");
-        layoutWidget->setGeometry(QRect(10, 10, 631, 631));
+        layoutWidget->setGeometry(QRect(10, 10, 841, 721));
         gridLayout_4 = new QGridLayout(layoutWidget);
         gridLayout_4->setObjectName("gridLayout_4");
         gridLayout_4->setContentsMargins(0, 0, 0, 0);
@@ -119,11 +121,10 @@ public:
 
         verticalLayout->addWidget(label_6);
 
-        plainTextEdit = new QPlainTextEdit(layoutWidget);
-        plainTextEdit->setObjectName("plainTextEdit");
-        plainTextEdit->setReadOnly(true);
+        JY901TB = new QTableView(layoutWidget);
+        JY901TB->setObjectName("JY901TB");
 
-        verticalLayout->addWidget(plainTextEdit);
+        verticalLayout->addWidget(JY901TB);
 
 
         gridLayout_3->addLayout(verticalLayout, 0, 0, 1, 1);
@@ -340,7 +341,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 664, 21));
+        menubar->setGeometry(QRect(0, 0, 858, 21));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");

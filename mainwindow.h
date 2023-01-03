@@ -3,9 +3,16 @@
 
 #include <QMainWindow>
 #include <QSerialPort>
-#include <QString>
 #include <QSerialPortInfo>
 #include <QMessageBox>
+
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
+#include <QSqlError>
+
+#include <QString>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,5 +39,13 @@ private slots:
     void serialPortReadReady_Slot();
 private:
     Ui::MainWindow *ui;
+    //创建数据库
+    void createDB();
+    //创建数据表
+    void createTable();
+    //查询
+    void queryTable();
+    QSqlDatabase db;//建立QT和数据库连接
+    QSqlQueryModel model;//保存结果集
 };
 #endif // MAINWINDOW_H
