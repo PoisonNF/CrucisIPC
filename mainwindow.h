@@ -46,6 +46,9 @@ private:
     //查询
     void queryTable();
     QSqlDatabase db;//建立QT和数据库连接
-    QSqlQueryModel model;//保存结果集
+    QSqlQueryModel JYmodel;//保存JY901结果集
+    QSqlQueryModel RMmodel;//保存RM3100结果集
+
+    QStringList data;//保存被切割数据
 };
 #endif // MAINWINDOW_H

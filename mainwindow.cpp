@@ -49,20 +49,48 @@ void MainWindow::createDB()
 void MainWindow::createTable()
 {
     QSqlQuery query;
-    QString str = QString("CREATE TABLE jy901 ("
+    QString jystr = QString("CREATE TABLE jy901 ("
                           "ID INT PRIMARY KEY NOT NULL,"
                           "Data TEXT NOT NULL,"
                           "X REAL,"
                           "Y REAL,"
                           "Z REAL)");
-    query.exec(str);
+    query.exec(jystr);
+    qDebug() << "jy901数据库创建";
+
+    QString rmstr = QString("CREATE TABLE rm3100 ("
+                            "ID INT PRIMARY KEY NOT NULL,"
+                            "X REAL,"
+                            "Y REAL,"
+                            "Z REAL)");
+    query.exec(rmstr);
+    qDebug() << "rm3100数据库创建";
 }
 //查询
 void MainWindow::queryTable()
 {
-    QString str = QString("SELECT * FROM jy901");
-    model.setQuery(str);
-    ui->JY901TB->setModel(&model);
+
+    QString jystr = QString("SELECT * FROM jy901");
+    JYmodel.setQuery(jystr);
+    ui->JY901TB->setModel(&JYmodel);
+    ui->JY901TB->verticalHeader()->setHidden(true);//把QTableView中第一列的默认数字列去掉
+    ui->JY901TB->setColumnWidth(0,50);
+    ui->JY901TB->setColumnWidth(1,75);
+    ui->JY901TB->setColumnWidth(2,100);
+    ui->JY901TB->setColumnWidth(3,100);
+    //ui->JY901TB->resizeColumnsToContents();//将列宽自适应数据长度
+    //ui->JY901TB->resizeRowsToContents();//将行宽自适应数据长度
+    ui->JY901TB->setAlternatingRowColors(true);//QTableView隔行换色
+
+    QString rmstr = QString("SELECT * FROM rm3100");
+    RMmodel.setQuery(rmstr);
+    ui->RM3100TB->setModel(&RMmodel);
+    ui->RM3100TB->verticalHeader()->setHidden(true);
+    ui->RM3100TB->setColumnWidth(0,50);
+    ui->RM3100TB->setColumnWidth(1,100);
+    ui->RM3100TB->setColumnWidth(2,100);
+    ui->RM3100TB->setColumnWidth(3,100);
+    ui->RM3100TB->setAlternatingRowColors(true);
 }
 
 //开启槽函数
@@ -136,15 +164,34 @@ void MainWindow::serialPortReadReady_Slot()
     buf = QString(serialPort->readAll());
     ui->ReceivePTE->appendPlainText(buf);
 
+    //以空格进行分割
     QStringList data = buf.split(u' ');
-    QString updatestr = QString("UPDATE jy901 SET Data = '%2', X = %3, Y = %4, Z = %5 WHERE ID = %1")
-            .arg(data.at(0)).arg(data.at(1)).arg(data.at(2)).arg(data.at(3)).arg(data.at(4));
-    QString str = QString("INSERT INTO jy901 VALUES(%1,'%2',%3,%4,%5)")
-            .arg(data.at(0)).arg(data.at(1)).arg(data.at(2)).arg(data.at(3)).arg(data.at(4));
-    QString deletestr = QString("DELETE FROM jy901 WHERE id = %1").arg(data.at(0));
-    QSqlQuery query;
-    query.exec(str);
-    query.exec(updatestr);
-    //query.exec(deletestr);
+
+    //如果是JY901的数据
+    if(data.at(0) == 'J')
+    {
+        QString updatestr = QString("UPDATE jy901 SET Data = '%2', X = %3, Y = %4, Z = %5 WHERE ID = %1")
+                .arg(data.at(1)).arg(data.at(2)).arg(data.at(3)).arg(data.at(4)).arg(data.at(5));
+        QString str = QString("INSERT INTO jy901 VALUES(%1,'%2',%3,%4,%5)")
+                .arg(data.at(1)).arg(data.at(2)).arg(data.at(3)).arg(data.at(4)).arg(data.at(5));
+        QString deletestr = QString("DELETE FROM jy901 WHERE ID = %1").arg(data.at(1));
+        QSqlQuery query;
+        query.exec(str);
+        query.exec(updatestr);
+        //query.exec(deletestr);
+    }
+
+    if(data.at(0) == 'R')
+    {
+        QString updatestr = QString("UPDATE rm3100 SET X = %2, Y = %3, Z = %4 WHERE ID = %1")
+                .arg(data.at(1)).arg(data.at(2)).arg(data.at(3)).arg(data.at(4));
+        QString str = QString("INSERT INTO rm3100 VALUES(%1,%2,%3,%4)")
+                .arg(data.at(1)).arg(data.at(2)).arg(data.at(3)).arg(data.at(4));
+        QString deletestr = QString("DELETE FROM rm3100 WHERE ID = %1").arg(data.at(1));
+        QSqlQuery query;
+        query.exec(str);
+        query.exec(updatestr);
+        //query.exec(deletestr);
+    }
     queryTable();
 }

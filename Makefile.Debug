@@ -19,7 +19,7 @@ CXXFLAGS      = -fno-keep-inline-dllexport -g -std=gnu++1z -Wall -Wextra -Wextra
 INCPATH       = -I. -ID:/QT/6.4.1/mingw_64/include -ID:/QT/6.4.1/mingw_64/include/QtWidgets -ID:/QT/6.4.1/mingw_64/include/QtGui -ID:/QT/6.4.1/mingw_64/include/QtSerialPort -ID:/QT/6.4.1/mingw_64/include/QtSql -ID:/QT/6.4.1/mingw_64/include/QtCore -Idebug -I. -I/include -ID:/QT/6.4.1/mingw_64/mkspecs/win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-subsystem,windows -mthreads
-LIBS        =        D:\QT\6.4.1\mingw_64\lib\libQt6Widgets.a D:\QT\6.4.1\mingw_64\lib\libQt6Gui.a D:\QT\6.4.1\mingw_64\lib\libQt6SerialPort.a D:\QT\6.4.1\mingw_64\lib\libQt6Sql.a D:\QT\6.4.1\mingw_64\lib\libQt6Core.a -lmingw32 D:\QT\6.4.1\mingw_64\lib\libQt6EntryPoint.a -lshell32  
+LIBS        =        D:\QT\6.4.1\mingw_64\lib\libQt6Widgets.a D:\QT\6.4.1\mingw_64\lib\libQt6Gui.a D:\QT\6.4.1\mingw_64\lib\libQt6SerialPort.a D:\QT\6.4.1\mingw_64\lib\libQt6Sql.a D:\QT\6.4.1\mingw_64\lib\libQt6Core.a debug\CrucisIPC_resource_res.o -lmingw32 D:\QT\6.4.1\mingw_64\lib\libQt6EntryPoint.a -lshell32  
 QMAKE         = D:\QT\6.4.1\mingw_64\bin\qmake.exe
 DEL_FILE      = del
 CHK_DIR_EXISTS= if not exist
@@ -40,7 +40,7 @@ IDC           = idc
 IDL           = midl
 ZIP           = zip -r -9
 DEF_FILE      = 
-RES_FILE      = 
+RES_FILE      = debug\CrucisIPC_resource_res.o
 SED           = $(QMAKE) -install sed
 MOVE          = move
 
@@ -68,8 +68,11 @@ DESTDIR_TARGET = debug\CrucisIPC.exe
 first: all
 all: Makefile.Debug  debug/CrucisIPC.exe
 
-debug/CrucisIPC.exe: D:/QT/6.4.1/mingw_64/lib/libQt6Widgets.a D:/QT/6.4.1/mingw_64/lib/libQt6Gui.a D:/QT/6.4.1/mingw_64/lib/libQt6SerialPort.a D:/QT/6.4.1/mingw_64/lib/libQt6Sql.a D:/QT/6.4.1/mingw_64/lib/libQt6Core.a D:/QT/6.4.1/mingw_64/lib/libQt6EntryPoint.a ui_mainwindow.h $(OBJECTS) 
+debug/CrucisIPC.exe: D:/QT/6.4.1/mingw_64/lib/libQt6Widgets.a D:/QT/6.4.1/mingw_64/lib/libQt6Gui.a D:/QT/6.4.1/mingw_64/lib/libQt6SerialPort.a D:/QT/6.4.1/mingw_64/lib/libQt6Sql.a D:/QT/6.4.1/mingw_64/lib/libQt6Core.a D:/QT/6.4.1/mingw_64/lib/libQt6EntryPoint.a ui_mainwindow.h $(OBJECTS) debug/CrucisIPC_resource_res.o
 	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) $(OBJECTS) $(LIBS)
+
+debug/CrucisIPC_resource_res.o: CrucisIPC_resource.rc
+	windres -i CrucisIPC_resource.rc -o debug\CrucisIPC_resource_res.o --include-dir=. $(DEFINES)
 
 qmake: FORCE
 	@$(QMAKE) -o Makefile.Debug CrucisIPC.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
@@ -81,6 +84,7 @@ dist:
 
 clean: compiler_clean 
 	-$(DEL_FILE) debug\main.o debug\mainwindow.o debug\moc_mainwindow.o
+	-$(DEL_FILE) debug\CrucisIPC_resource_res.o
 
 distclean: clean 
 	-$(DEL_FILE) .qmake.stash
@@ -250,7 +254,6 @@ debug/moc_mainwindow.cpp: mainwindow.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialport.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialportglobal.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qtserialportexports.h \
-		D:/QT/6.4.1/mingw_64/include/QtCore/QString \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/QSerialPortInfo \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialportinfo.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QMessageBox \
@@ -268,6 +271,8 @@ debug/moc_mainwindow.cpp: mainwindow.h \
 		D:/QT/6.4.1/mingw_64/include/QtCore/qabstractitemmodel.h \
 		D:/QT/6.4.1/mingw_64/include/QtSql/QSqlError \
 		D:/QT/6.4.1/mingw_64/include/QtSql/qsqlerror.h \
+		D:/QT/6.4.1/mingw_64/include/QtCore/QString \
+		D:/QT/6.4.1/mingw_64/include/QtCore/QDebug \
 		debug/moc_predefs.h \
 		D:/QT/6.4.1/mingw_64/bin/moc.exe
 	D:\QT\6.4.1\mingw_64\bin\moc.exe $(DEFINES) --include E:/QTcode/CrucisIPC/debug/moc_predefs.h -ID:/QT/6.4.1/mingw_64/mkspecs/win32-g++ -IE:/QTcode/CrucisIPC -ID:/QT/6.4.1/mingw_64/include -ID:/QT/6.4.1/mingw_64/include/QtWidgets -ID:/QT/6.4.1/mingw_64/include/QtGui -ID:/QT/6.4.1/mingw_64/include/QtSerialPort -ID:/QT/6.4.1/mingw_64/include/QtSql -ID:/QT/6.4.1/mingw_64/include/QtCore -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -ID:/QT/Tools/mingw1120_64/x86_64-w64-mingw32/include mainwindow.h -o debug\moc_mainwindow.cpp
@@ -437,7 +442,6 @@ debug/main.o: main.cpp mainwindow.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialport.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialportglobal.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qtserialportexports.h \
-		D:/QT/6.4.1/mingw_64/include/QtCore/QString \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/QSerialPortInfo \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialportinfo.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QMessageBox \
@@ -455,6 +459,8 @@ debug/main.o: main.cpp mainwindow.h \
 		D:/QT/6.4.1/mingw_64/include/QtCore/qabstractitemmodel.h \
 		D:/QT/6.4.1/mingw_64/include/QtSql/QSqlError \
 		D:/QT/6.4.1/mingw_64/include/QtSql/qsqlerror.h \
+		D:/QT/6.4.1/mingw_64/include/QtCore/QString \
+		D:/QT/6.4.1/mingw_64/include/QtCore/QDebug \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QApplication \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qapplication.h \
 		D:/QT/6.4.1/mingw_64/include/QtCore/qcoreapplication.h \
@@ -622,7 +628,6 @@ debug/mainwindow.o: mainwindow.cpp mainwindow.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialport.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialportglobal.h \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qtserialportexports.h \
-		D:/QT/6.4.1/mingw_64/include/QtCore/QString \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/QSerialPortInfo \
 		D:/QT/6.4.1/mingw_64/include/QtSerialPort/qserialportinfo.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QMessageBox \
@@ -640,6 +645,8 @@ debug/mainwindow.o: mainwindow.cpp mainwindow.h \
 		D:/QT/6.4.1/mingw_64/include/QtCore/qabstractitemmodel.h \
 		D:/QT/6.4.1/mingw_64/include/QtSql/QSqlError \
 		D:/QT/6.4.1/mingw_64/include/QtSql/qsqlerror.h \
+		D:/QT/6.4.1/mingw_64/include/QtCore/QString \
+		D:/QT/6.4.1/mingw_64/include/QtCore/QDebug \
 		ui_mainwindow.h \
 		D:/QT/6.4.1/mingw_64/include/QtCore/QVariant \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QApplication \
