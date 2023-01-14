@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     /*SQLite相关初始化*/
     createDB();     //创建数据库
     createTable();  //创建数据表
+    configTable();  //外观配置
     queryTable();   //查询
 }
 
@@ -64,36 +65,66 @@ void MainWindow::createTable()
     query.exec(rmstr);
     qDebug() << "rm3100数据表创建";
 }
-/*查询*/
-void MainWindow::queryTable()
-{
 
-    QString jystr = QString("SELECT * FROM jy901");
-    JYmodel.setQuery(jystr);
-    ui->JY901TB->setModel(&JYmodel);
+/*配置所有Table View的外观设置*/
+void MainWindow::configTable()
+{
+    //JY901TB外观配置
     ui->JY901TB->verticalHeader()->setHidden(true);//把QTableView中第一列的默认数字列去掉
-    ui->JY901TB->setColumnWidth(0,50);
-    ui->JY901TB->setColumnWidth(1,75);
-    ui->JY901TB->setColumnWidth(2,100);
-    ui->JY901TB->setColumnWidth(3,100);
+    ui->JY901TB->setAlternatingRowColors(true);//QTableView隔行换色
     //ui->JY901TB->resizeColumnsToContents();//将列宽自适应数据长度
     //ui->JY901TB->resizeRowsToContents();//将行宽自适应数据长度
-    ui->JY901TB->setAlternatingRowColors(true);//QTableView隔行换色
-
-    QString rmstr = QString("SELECT * FROM rm3100");
-    RMmodel.setQuery(rmstr);
-    ui->RM3100TB->setModel(&RMmodel);
+    //RM3100TB外观配置
     ui->RM3100TB->verticalHeader()->setHidden(true);
-    ui->RM3100TB->setColumnWidth(0,50);
-    ui->RM3100TB->setColumnWidth(1,100);
-    ui->RM3100TB->setColumnWidth(2,100);
-    ui->RM3100TB->setColumnWidth(3,100);
     ui->RM3100TB->setAlternatingRowColors(true);
+}
+
+/*查询*/
+void MainWindow::queryTable(QString item)
+{
+    if(item == "JY901")
+    {
+        QString jystr = QString("SELECT * FROM jy901");
+        JYmodel.setQuery(jystr);
+        ui->JY901TB->setModel(&JYmodel);
+        ui->JY901TB->setColumnWidth(0,50);
+        ui->JY901TB->setColumnWidth(1,50);
+        qDebug() << "显示JY901数据";
+    }
+    else if(item == "RM3100")
+    {
+        QString rmstr = QString("SELECT * FROM rm3100");
+        RMmodel.setQuery(rmstr);
+        ui->RM3100TB->setModel(&RMmodel);
+        ui->RM3100TB->setColumnWidth(0,50);
+        qDebug() << "显示RM3100数据";
+    }
+    else if(item == "ALL")
+    {
+        QString jystr = QString("SELECT * FROM jy901");
+        JYmodel.setQuery(jystr);
+        ui->JY901TB->setModel(&JYmodel);
+        ui->JY901TB->setColumnWidth(0,50);
+        ui->JY901TB->setColumnWidth(1,50);
+
+        QString rmstr = QString("SELECT * FROM rm3100");
+        RMmodel.setQuery(rmstr);
+        ui->RM3100TB->setModel(&RMmodel);
+        ui->RM3100TB->setColumnWidth(0,50);
+        qDebug() << "显示全部数据";
+    }
 }
 
 /*开启槽函数*/
 void MainWindow::on_OpenPB_clicked()
 {
+    //如果串口已经打开，先清除并关闭
+    if(serialPort->isOpen())
+    {
+        serialPort->clear();
+        serialPort->close();
+    }
+
     QSerialPort::BaudRate baudRate = QSerialPort::Baud115200;
     QSerialPort::DataBits dataBits = QSerialPort::Data8;
     QSerialPort::StopBits stopBits = QSerialPort::OneStop;
@@ -163,7 +194,6 @@ void MainWindow::serialPortReadReady_Slot()
     ui->ReceivePTE->ensureCursorVisible(); //通过滚动文本编辑确保光标可见,始终显示最新一行
     ui->ReceivePTE->insertPlainText(buf);
 
-
     //以空格进行分割
     QStringList data = buf.split(u' ');
 
@@ -173,21 +203,31 @@ void MainWindow::serialPortReadReady_Slot()
         //查询数据表中是否已经存在数据
         QString checkstr = QString("SELECT * FROM jy901 WHERE ID = '%1'").arg(data.at(1));
         QSqlQuery query(checkstr);
-        if(query.next()) //存在数据，执行更新操作
+        if(query.next() == false)
         {
-            QString updatestr = QString("UPDATE jy901 SET Data = '%2', X = %3, Y = %4, Z = %5 WHERE ID = %1")
-                    .arg(data.at(1),data.at(2),data.at(3),data.at(4),data.at(5));
-            query.exec(updatestr);
+            QString insertstr = QString("INSERT INTO jy901 VALUES(%1,'%2',%3,%4,%5)")
+                                .arg(data.at(1),data.at(2),data.at(3),data.at(4),data.at(5));
+            query.exec(insertstr);
         }
         else
         {
-            QString insertstr = QString("INSERT INTO jy901 VALUES(%1,'%2',%3,%4,%5)")
-                    .arg(data.at(1),data.at(2),data.at(3),data.at(4),data.at(5));
-            query.exec(insertstr);
+            JYdatalist << data; //将数据存入容器中
+            JYnum+=1;
+            if(JYnum == 4) //数据收集完成
+            {
+                db.transaction();   //事务处理开始
+                for(int i=0;i<4;i++)
+                {
+                    QString updatestr = QString("UPDATE jy901 SET Data = '%2', X = %3, Y = %4, Z = %5 WHERE ID = %1")
+                                        .arg(JYdatalist[i].at(1),JYdatalist[i].at(2),JYdatalist[i].at(3),JYdatalist[i].at(4),JYdatalist[i].at(5));
+                    query.exec(updatestr);
+                }
+                db.commit();    //事务处理结束
+                JYdatalist.clear();
+                JYnum = 0;
+                queryTable("JY901");
+            }
         }
-
-        //QString deletestr = QString("DELETE FROM jy901 WHERE ID = %1").arg(data.at(1));
-        //query.exec(deletestr);
     }
 
     //如果是RM3100的数据
@@ -196,21 +236,30 @@ void MainWindow::serialPortReadReady_Slot()
         //查询数据表中是否已经存在数据
         QString checkstr = QString("SELECT * FROM rm3100 WHERE ID = '%1'").arg(data.at(1));
         QSqlQuery query(checkstr);
-        if(query.next()) //存在数据，执行更新操作
-        {
-            QString updatestr = QString("UPDATE rm3100 SET X = %2, Y = %3, Z = %4 WHERE ID = %1")
-                    .arg(data.at(1),data.at(2),data.at(3),data.at(4));
-            query.exec(updatestr);
-        }
-        else //不存在数据，执行插入操作
+        if(query.next() == false)
         {
             QString insertstr = QString("INSERT INTO rm3100 VALUES(%1,%2,%3,%4)")
-                    .arg(data.at(1),data.at(2),data.at(3),data.at(4));
+                                .arg(data.at(1),data.at(2),data.at(3),data.at(4));
             query.exec(insertstr);
         }
-        //QString deletestr = QString("DELETE FROM rm3100 WHERE ID = %1").arg(data.at(1));
-        //query.exec(deletestr);
+        else
+        {
+            RMdatalist << data; //将数据存入容器中
+            RMnum+=1;
+            if(RMnum == 1) //数据收集完成
+            {
+                db.transaction();
+                for(int i=0;i<1;i++)
+                {
+                    QString updatestr = QString("UPDATE rm3100 SET X = %2, Y = %3, Z = %4 WHERE ID = %1")
+                                        .arg(RMdatalist[i].at(1),RMdatalist[i].at(2),RMdatalist[i].at(3),RMdatalist[i].at(4));
+                    query.exec(updatestr);
+                }
+                db.commit();
+                RMdatalist.clear();
+                RMnum = 0;
+                queryTable("RM3100");
+            }
+        }
     }
-    queryTable();   //显示到Table View上
-
 }

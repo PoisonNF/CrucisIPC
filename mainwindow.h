@@ -44,11 +44,18 @@ private:
 
     void createTable(); //创建数据表
 
-    void queryTable();  //查询
+    void configTable(); //配置所有Table View的外观设置
+
+    void queryTable(QString item = "ALL");  //查询,默认查询全部数据
 
     QSqlDatabase db;        //建立QT和数据库连接
     QSqlQueryModel JYmodel; //保存JY901结果集
     QSqlQueryModel RMmodel; //保存RM3100结果集
     QStringList data;       //保存被切割数据
+
+    int JYnum = 0;
+    int RMnum = 0;
+    QVector<QStringList> JYdatalist;  //JY901的数据存储容器
+    QVector<QStringList> RMdatalist;  //RM3100的数据存储容器
 };
 #endif // MAINWINDOW_H
