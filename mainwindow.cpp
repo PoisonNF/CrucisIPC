@@ -89,6 +89,10 @@ void MainWindow::queryTable(QString item)
         ui->JY901TB->setModel(&JYmodel);
         ui->JY901TB->setColumnWidth(0,50);
         ui->JY901TB->setColumnWidth(1,50);
+        ui->JY901TB->setRowHeight(0,44);
+        ui->JY901TB->setRowHeight(1,44);
+        ui->JY901TB->setRowHeight(2,44);
+        ui->JY901TB->setRowHeight(3,44);
         qDebug() << "显示JY901数据";
     }
     else if(item == "RM3100")
@@ -97,6 +101,10 @@ void MainWindow::queryTable(QString item)
         RMmodel.setQuery(rmstr);
         ui->RM3100TB->setModel(&RMmodel);
         ui->RM3100TB->setColumnWidth(0,50);
+        ui->RM3100TB->setRowHeight(0,44);
+        ui->RM3100TB->setRowHeight(1,44);
+        ui->RM3100TB->setRowHeight(2,44);
+        ui->RM3100TB->setRowHeight(3,44);
         qDebug() << "显示RM3100数据";
     }
     else if(item == "ALL")
@@ -178,6 +186,11 @@ void MainWindow::on_ClosePB_clicked()
 void MainWindow::on_SendPB_clicked()
 {
     serialPort->write(ui->SendLE->text().toLocal8Bit().data());
+    //发送十六进制代码
+//    QString info = ui->SendLE->text();
+//    if(info.contains(' '))  info.replace(QString(" "),QString(""));
+//    QByteArray sendbuf = QByteArray::fromHex(info.toLatin1());
+//    serialPort->write(sendbuf);
 }
 
 /*清空槽函数*/
@@ -231,7 +244,7 @@ void MainWindow::serialPortReadReady_Slot()
     }
 
     //如果是RM3100的数据
-    if(data.at(0) == 'R')
+    else if(data.at(0) == 'R')
     {
         //查询数据表中是否已经存在数据
         QString checkstr = QString("SELECT * FROM rm3100 WHERE ID = '%1'").arg(data.at(1));
@@ -261,5 +274,21 @@ void MainWindow::serialPortReadReady_Slot()
                 queryTable("RM3100");
             }
         }
+    }
+
+    else if(data.at(0) == "M")
+    {
+        ui->MotorPTE->ensureCursorVisible(); //通过滚动文本编辑确保光标可见,始终显示最新一行
+        ui->MotorPTE->insertPlainText(buf);
+    }
+    else if(data.at(0) == "JETON")
+    {
+        ui->JetsonPTE->ensureCursorVisible(); //通过滚动文本编辑确保光标可见,始终显示最新一行
+        ui->JetsonPTE->insertPlainText(buf);
+    }
+    else if(data.at(0) == "OPENMV")
+    {
+        ui->OpenMVPTE->ensureCursorVisible(); //通过滚动文本编辑确保光标可见,始终显示最新一行
+        ui->OpenMVPTE->insertPlainText(buf);
     }
 }
