@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::Init(){
-    /* Create main widget and set mask, style sheet and shadow */
+    /* 创建主窗口小部件并设置掩码、样式表和阴影 */
 #ifdef Q_OS_LINUX
     QPainterPath path;
     path.addRect(ui->mainWidget->rect());
@@ -56,7 +56,7 @@ void MainWindow::Init(){
 #endif
     /**********************************************************/
 
-    /* Create border in order to cover the zigzag edge of the region */
+    /* 创建边界以覆盖区域的锯齿形边缘 */
 #ifdef Q_OS_WINDOWS
     border = new QWidget(this);
     border->move(ui->mainWidget->pos() - QPoint(1, 1));
@@ -69,8 +69,7 @@ void MainWindow::Init(){
 #endif
     /*****************************************************************/
 
-    /* Create about page */
-    //设置页相关内容
+    /* 创建设置关于页 */
     defaultSettingsPage = new SlidePage(cornerRadius, "ABOUT", ui->mainWidget);
     textInputItem *version = new textInputItem("version", defaultSettingsPage);
     version->setValue("1.3-beta");
@@ -98,34 +97,35 @@ void MainWindow::Init(){
 
     /************************/
 
-    /* Initialize display area */
-    //初始化显示主界面
+    /* 初始化主界面上部标题栏 */
+    //主标题设置
     QFont titleFont = QFont("Corbel Light", 24);
     QFontMetrics titleFm(titleFont);
-    canvasTitle = new QLineEdit(this);
-    canvasTitle->setFont(titleFont);
-    canvasTitle->setText("CrucisIPC");
-    canvasTitle->setMaxLength(20);
-    canvasTitle->setReadOnly(true);
-    canvasTitle->setMinimumHeight(titleFm.height());
-    canvasTitle->setMaximumWidth(titleFm.size(Qt::TextSingleLine, "CrucisIPC").width() + 10);
-    canvasTitle->setStyleSheet("background-color:#00000000;border-style:none;border-width:0px;margin-left:1px;");
-    connect(canvasTitle, &QLineEdit::textEdited, canvasTitle, [=](QString text){canvasTitle->setMaximumWidth(titleFm.size(Qt::TextSingleLine, text).width());});
+    Heading = new QLineEdit(this);
+    Heading->setFont(titleFont);
+    Heading->setText("CrucisIPC");
+    Heading->setMaxLength(20);
+    Heading->setReadOnly(true);
+    Heading->setMinimumHeight(titleFm.height());
+    Heading->setMaximumWidth(titleFm.size(Qt::TextSingleLine, "CrucisIPC").width() + 10);
+    Heading->setStyleSheet("background-color:#00000000;border-style:none;border-width:0px;margin-left:1px;");
+    connect(Heading, &QLineEdit::textEdited, Heading, [=](QString text){Heading->setMaximumWidth(titleFm.size(Qt::TextSingleLine, text).width());});
 
+    //副标题设置
     QFont descFont = QFont("Corbel Light", 12);
     QFontMetrics descFm(descFont);
-    canvasDesc = new QLineEdit(this);
-    canvasDesc->setFont(descFont);
-    canvasDesc->setText("Controller and Observer for AUV");
-    canvasDesc->setMaxLength(128);
-    canvasDesc->setReadOnly(true);
-    canvasDesc->setMinimumHeight(descFm.lineSpacing());
-    canvasDesc->setStyleSheet("background-color:#00000000;border-style:none;border-width:0px;");
+    Subtitle = new QLineEdit(this);
+    Subtitle->setFont(descFont);
+    Subtitle->setText("Controller and Observer for AUV");
+    Subtitle->setMaxLength(128);
+    Subtitle->setReadOnly(true);
+    Subtitle->setMinimumHeight(descFm.lineSpacing());
+    Subtitle->setStyleSheet("background-color:#00000000;border-style:none;border-width:0px;");
 
     //配置设置图标的大小
     settingsIcon = new customIcon(":/icons/icons/settings.svg", "settings", 5, this);
-    settingsIcon->setMinimumHeight(canvasTitle->height() * 0.7);
-    settingsIcon->setMaximumWidth(canvasTitle->height() * 0.7);
+    settingsIcon->setMinimumHeight(Heading->height() * 0.7);
+    settingsIcon->setMaximumWidth(Heading->height() * 0.7);
 
     //点击设置图标调出副窗口
     connect(settingsIcon, &customIcon::clicked, this, [=](){
@@ -137,127 +137,170 @@ void MainWindow::Init(){
         rotate->setEasingCurve(QEasingCurve::InOutExpo);
         rotate->start();
 
-        //自定义函数滑动
+        //当前设置界面滑入
         curSettingsPage->slideIn();
     });
 
     //配置层图标的大小
     layersIcon = new customIcon(":/icons/icons/layers.svg", "layers", 5, this);
-    layersIcon->setMinimumHeight(canvasTitle->height() * 0.7);
-    layersIcon->setMaximumWidth(canvasTitle->height() * 0.7);
+    layersIcon->setMinimumHeight(Heading->height() * 0.7);
+    layersIcon->setMaximumWidth(Heading->height() * 0.7);
 
-    /* create title */
+    /*****************************************************************/
 
+    /* 布局配置 */
     QWidget *titleInnerWidget = new QWidget(this);
-    titleInnerWidget->setFixedHeight(canvasTitle->height());
+    titleInnerWidget->setFixedHeight(Heading->height());
     QHBoxLayout *innerLayout = new QHBoxLayout(titleInnerWidget);   //水平布局
     titleInnerWidget->setLayout(innerLayout);
     innerLayout->setContentsMargins(0, 0, 0, 0);
     innerLayout->setSpacing(10);
     innerLayout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    innerLayout->addWidget(canvasTitle);
+    innerLayout->addWidget(Heading);
     innerLayout->addWidget(settingsIcon);
     innerLayout->addWidget(layersIcon);
 
     QWidget *titleWidget = new QWidget(this);
-    titleWidget->setMaximumHeight(canvasTitle->height() + canvasDesc->height());
+    titleWidget->setMaximumHeight(Heading->height() + Subtitle->height());
     QVBoxLayout *outerLayout = new QVBoxLayout(titleWidget);        //垂直布局
     titleWidget->setLayout(outerLayout);
     outerLayout->setContentsMargins(0, 0, 0, 0);
     outerLayout->setSpacing(0);
     outerLayout->addWidget(titleInnerWidget);
-    outerLayout->addWidget(canvasDesc);
+    outerLayout->addWidget(Subtitle);
 
-    /* create default page */
+    /*****************************************************************/
 
+    /* 创建主界面 */
     defaultPage = new QWidget(ui->mainWidget);
     defaultPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     //放置两个大图标
-    bigIconButton *createNew = new bigIconButton(":/icons/icons/create.png", "Create new", 10, this);
-    createNew->setScale(0.9);
-    bigIconButton *openFile = new bigIconButton(":/icons/icons/open.png", "Open from file", 10, this);
+    bigIconButton *Data_display = new bigIconButton(":/icons/icons/create.png", "数据显示", 10, this);
+    Data_display->setScale(0.9);
+    bigIconButton *Motion_control = new bigIconButton(":/icons/icons/open.png", "运动控制", 10, this);
 
-    //点击打开文件按钮
-    connect(openFile, &bigIconButton::clicked, this, [=](){
-        //右图标事件槽函数
+    //数据显示按钮槽函数连接
+    connect(Data_display, &bigIconButton::clicked, this, [=](){
+        //左图标事件槽函数
+        qDebug() << "Data_displayBtn";
+        ChangeDDWidget();
     });
 
-    //水平布局
+    //运动控制按钮槽函数连接
+    connect(Motion_control, &bigIconButton::clicked, this, [=](){
+        //右图标事件槽函数
+        qDebug() << "Motion_controlBtn";
+    });
+
+    //两个大按钮进行水平布局
     QHBoxLayout *defaultPageLayout = new QHBoxLayout(defaultPage);
     defaultPage->setLayout(defaultPageLayout);
     defaultPageLayout->setContentsMargins(50, 30, 50, 80);
     defaultPageLayout->setSpacing(20);
-    defaultPageLayout->addWidget(createNew);
-    defaultPageLayout->addWidget(openFile);
-
-    /* create layers page */
-    //for add new page
-    textInputItem *rename = new textInputItem("Name:",createNewPage);
-    rename->setValue("Layer_0");
-    textInputItem *redescribe = new textInputItem("Detail:",createNewPage);
-    redescribe->setValue("No description");
-
-    layersPage = new SlidePage(cornerRadius, "LAYERS", ui->mainWidget);
-    layersPage->stackUnder(createNewPage);
-    connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
-    layerSel = new singleSelectGroup("Layers", layersPage);
-    connect(layerSel, &singleSelectGroup::itemChange, layersPage, [=](){layersPage->UpdateContents();});
-    textButton *openFileBtn = new textButton("Open file", layersPage);
-
-    connect(openFileBtn, &textButton::clicked, this, [=](){
-        //左图标点击槽函数
-    });
-
-    textButton *addNewBtn = new textButton("Create new", layersPage);
-    layersPage->AddContent(addNewBtn);
-    layersPage->AddContent(openFileBtn);
-    layersPage->AddContent(layerSel);
-
-    connect(addNewBtn, &textButton::clicked, this, [=](){
-        rename->setValue("Layer_0");
-        redescribe->setValue("No description");createNewPage->slideIn();});
-    layersPage->show();
-    pageList.push_back(layersPage);
-
-    /* create add new slide page */
-    createNewPage = new SlidePage(cornerRadius, "CREATE CANVAS", ui->mainWidget);
-
-    QWidget *whiteSpace = new QWidget(createNewPage);
-    whiteSpace->setFixedHeight(30);
-    singleSelectGroup *structureSel = new singleSelectGroup("Structure",createNewPage);
-    selectionItem *item_1 = new selectionItem("AL", "Use adjacent list for canvas", createNewPage);
-    selectionItem *item_2 = new selectionItem("AML", "Use multiple adjacent list for canvas", createNewPage);
-    structureSel->AddItem(item_1);
-    structureSel->AddItem(item_2);
-    singleSelectGroup *dirSel = new singleSelectGroup("Mode", createNewPage);
-    selectionItem *item_3 = new selectionItem("DG", "Directed graph", createNewPage);
-    selectionItem *item_4 = new selectionItem("UDG", "Undirected graph", createNewPage);
-    dirSel->AddItem(item_3);
-    dirSel->AddItem(item_4);
-    textButton *submit = new textButton("Create!", createNewPage);
-    connect(submit, &textButton::clicked, this, [=](){
-
-    });
-    createNewPage->AddContent(submit);
-    createNewPage->AddContent(dirSel);
-    createNewPage->AddContent(structureSel);
-    createNewPage->AddContent(whiteSpace);
-    createNewPage->AddContent(redescribe);
-    createNewPage->AddContent(rename);
-
-    connect(createNew, &bigIconButton::clicked, createNewPage, [=](){
-        rename->setValue("Layer_0");
-        redescribe->setValue("No description");createNewPage->slideIn();});
-
-    createNewPage->show();
-    pageList.push_back(createNewPage);
+    defaultPageLayout->addWidget(Data_display);
+    defaultPageLayout->addWidget(Motion_control);
 
     ui->displayLayout->addWidget(titleWidget);
     ui->displayLayout->addWidget(defaultPage);
     ui->displayLayout->setAlignment(Qt::AlignTop);
+
+    InitLayersPage();   //层页界面和按钮初始化
 }
 
+//层页初始化函数
+void MainWindow::InitLayersPage()
+{
+    layersPage = new SlidePage(cornerRadius, "功能选择", ui->mainWidget);
+
+    //标题到可选项之间的留白
+    QWidget *whiteSpace = new QWidget(layersPage);
+    whiteSpace->setFixedHeight(30);
+
+    modeSelGroup = new singleSelectGroup("模式", layersPage);
+    selectionItem *testModeItem = new selectionItem("数据显示", "展示所有传感器的数据", layersPage);
+    selectionItem *travelModeItem = new selectionItem("运动控制", "进行PID和手柄控制", layersPage);
+    modeSelGroup->AddItem(testModeItem);
+    modeSelGroup->AddItem(travelModeItem);
+
+//    subModeSelGroup = new singleSelectGroup("控制", layersPage);
+//    selectionItem *mvCtrItem = new selectionItem("运动控制", "待填", layersPage);
+//    selectionItem *balCtrItem = new selectionItem("调平控制", "待填", layersPage);
+//    selectionItem *actCtrItem = new selectionItem("动作控制", "待填", layersPage);
+
+//    subModeSelGroup->AddItem(mvCtrItem);
+//    subModeSelGroup->AddItem(balCtrItem);
+//    subModeSelGroup->AddItem(actCtrItem);
+
+    textButton *ensureBtn = new textButton("确认", layersPage);
+
+    //按照从下到上的顺序排布
+    layersPage->AddContent(ensureBtn);          //确认按钮
+    //layersPage->AddContent(subModeSelGroup);  //副模式组
+    layersPage->AddContent(modeSelGroup);       //主模式组
+    layersPage->AddContent(whiteSpace);         //留白
+    layersPage->show(); //界面显示
+
+    //将层页放入页表容器中
+    pageList.push_back(layersPage);
+
+    //按下层图标的时候，触发层页滑入
+    connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
+
+    connect(testModeItem, &selectionItem::selected, this, [=](){
+        //modeKind = MODE::TEST_MV_CTR;
+        //subModeSelGroup->SetSelection(mvCtrItem);
+        //emit ModeKindChange(modeKind);
+        qDebug()<<"进入数据显示界面";
+    });
+    connect(travelModeItem, &selectionItem::selected, this, [=](){
+        //modeKind = MODE::TRAVEL_MV_CTR;
+        //subModeSelGroup->SetSelection(mvCtrItem);
+        //emit ModeKindChange(modeKind);
+
+        qDebug()<<"进入运动控制界面";
+    });
+//    connect(mvCtrItem, &selectionItem::selected, this, [=](){
+//        //modeKind = MODE::TEST_MV_CTR;
+//        //emit ModeKindChange(modeKind);
+
+//        qDebug()<<"modeKind = TEST_MV_CTR";
+//    });
+//    connect(balCtrItem, &selectionItem::selected, this, [=](){
+//        //modeKind = MODE::TEST_BAL_CTR;
+//        //emit ModeKindChange(modeKind);
+
+//        qDebug()<<"modeKind = TEST_BAL_CTR";
+//    });
+//    connect(actCtrItem, &selectionItem::selected, this, [=](){
+//        //modeKind = MODE::TEST_ACT_CTR;
+//        //emit ModeKindChange(modeKind);
+
+//        qDebug()<<"modeKind = TEST_ACT_CTR";
+//    });
+
+    //connectPage3DLight(layersPage);
+    connect(ensureBtn, &textButton::clicked, this, [=](){
+        //ChangeMyWidget(); //切换界面
+        layersPage->slideOut();
+    });
+}
+
+
+/* 切换到数据显示窗口 */
+void MainWindow::ChangeDataDisplayWidget()
+{
+    if(DDWidgetFlag)
+    {
+        DDWidgetFlag = false;
+
+        //旧界面隐藏
+        ui->displayLayout->removeWidget(defaultPage);
+        defaultPage->hide();
+
+        //切换新界面
+    }
+}
 
 MainWindow::~MainWindow()
 {

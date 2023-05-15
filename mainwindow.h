@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QGraphicsDropShadowEffect>
 #include "slidepage.h"
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,25 +16,33 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 private:
     int cornerRadius = 20;
-    QWidget *border = nullptr;
-    QWidget *defaultPage;
+    bool DDWidgetFlag = true;
+
+    QWidget *border = nullptr;  //边界
+    QWidget *defaultPage;       //主界面除标题之外
     QGraphicsDropShadowEffect *windowShadow;
     QColor mainBackGround = QColor(251, 251, 251);
 
-    QLineEdit *canvasTitle = nullptr;
-    QLineEdit *canvasDesc = nullptr;
-    customIcon *settingsIcon = nullptr;
-    customIcon *layersIcon = nullptr;
-    QWidget *canvasDisplay = nullptr;
 
-    QVector<SlidePage*> pageList;
+    QLineEdit *Heading = nullptr;   //主界面主标题
+    QLineEdit *Subtitle = nullptr;  //主界面副标题
+
+    customIcon *settingsIcon = nullptr; //设置图标
+    customIcon *layersIcon = nullptr;   //层图标
+
+    QVector<SlidePage*> pageList;   //储存页面的容器
+
     SlidePage *createNewPage = nullptr;
     SlidePage *defaultSettingsPage = nullptr;
     SlidePage *curSettingsPage = nullptr;
-    SlidePage *layersPage = nullptr;
-    singleSelectGroup *layerSel = nullptr;
 
-    void Init();
+    //换层页相关
+    SlidePage *layersPage = nullptr;    //层页
+    singleSelectGroup *modeSelGroup = nullptr;
+    singleSelectGroup *subModeSelGroup = nullptr;
+
+    void Init();            //界面初始化
+    void InitLayersPage();  //换层页初始化
 
     enum {AT_LEFT = 1, AT_TOP = 2,  AT_RIGHT = 4, AT_BOTTOM = 8,
           AT_TOP_LEFT = 3, AT_TOP_RIGHT = 6, AT_BOTTOM_LEFT = 9, AT_BOTTOM_RIGHT = 12};
@@ -57,7 +66,8 @@ private:
     bool maximized = false;
     QRect lastGeometry;
     void controlWindowScale();
-
+private slots:
+    void ChangeDataDisplayWidget();  //切换到数据显示的窗口槽函数
 
 public:
     MainWindow(QWidget *parent = nullptr);

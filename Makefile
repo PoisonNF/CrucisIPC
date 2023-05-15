@@ -340,8 +340,16 @@ Makefile: CrucisIPC.pro D:/QT/6.4.1/mingw_64/mkspecs/win32-g++/qmake.conf D:/QT/
 		D:/QT/6.4.1/mingw_64/mkspecs/features/lex.prf \
 		CrucisIPC.pro \
 		D:/QT/6.4.1/mingw_64/lib/Qt6Svg.prl \
+		D:/QT/6.4.1/mingw_64/lib/Qt63DExtras.prl \
+		D:/QT/6.4.1/mingw_64/lib/Qt63DRender.prl \
+		D:/QT/6.4.1/mingw_64/lib/Qt63DInput.prl \
+		D:/QT/6.4.1/mingw_64/lib/Qt63DLogic.prl \
+		D:/QT/6.4.1/mingw_64/lib/Qt63DCore.prl \
+		D:/QT/6.4.1/mingw_64/lib/Qt6OpenGL.prl \
 		D:/QT/6.4.1/mingw_64/lib/Qt6Widgets.prl \
 		D:/QT/6.4.1/mingw_64/lib/Qt6Gui.prl \
+		D:/QT/6.4.1/mingw_64/lib/Qt6Concurrent.prl \
+		D:/QT/6.4.1/mingw_64/lib/Qt6Network.prl \
 		D:/QT/6.4.1/mingw_64/lib/Qt6Core.prl \
 		D:/QT/6.4.1/mingw_64/lib/Qt6EntryPoint.prl \
 		D:/QT/6.4.1/mingw_64/mkspecs/features/build_pass.prf \
@@ -617,8 +625,16 @@ D:/QT/6.4.1/mingw_64/mkspecs/features/yacc.prf:
 D:/QT/6.4.1/mingw_64/mkspecs/features/lex.prf:
 CrucisIPC.pro:
 D:/QT/6.4.1/mingw_64/lib/Qt6Svg.prl:
+D:/QT/6.4.1/mingw_64/lib/Qt63DExtras.prl:
+D:/QT/6.4.1/mingw_64/lib/Qt63DRender.prl:
+D:/QT/6.4.1/mingw_64/lib/Qt63DInput.prl:
+D:/QT/6.4.1/mingw_64/lib/Qt63DLogic.prl:
+D:/QT/6.4.1/mingw_64/lib/Qt63DCore.prl:
+D:/QT/6.4.1/mingw_64/lib/Qt6OpenGL.prl:
 D:/QT/6.4.1/mingw_64/lib/Qt6Widgets.prl:
 D:/QT/6.4.1/mingw_64/lib/Qt6Gui.prl:
+D:/QT/6.4.1/mingw_64/lib/Qt6Concurrent.prl:
+D:/QT/6.4.1/mingw_64/lib/Qt6Network.prl:
 D:/QT/6.4.1/mingw_64/lib/Qt6Core.prl:
 D:/QT/6.4.1/mingw_64/lib/Qt6EntryPoint.prl:
 D:/QT/6.4.1/mingw_64/mkspecs/features/build_pass.prf:
