@@ -1,294 +1,406 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QPainterPath>
+#include <QRegion>
+#include <QTimer>
+
+#if (QT_VERSION > QT_VERSION_CHECK(6,3,0))
+#include <QFileDialog>
+#endif
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->centralwidget->setMouseTracking(true);
+#ifdef Q_OS_LINUX
+    ui->verticalLayout->setContentsMargins(0, 0, 0, 0);
+    cornerRadius = 0;
+#endif
+    QTimer *t = new QTimer(this);
+    connect(t, &QTimer::timeout, this, [=](){Init();});
+    t->setSingleShot(true);
+    t->start(10);
 
-    /*读取可使用的串口号*/
-    QStringList serialNamePort;
-    serialPort = new QSerialPort(this);
-    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) { //将可用的端口放入info中
-        serialNamePort << info.portName();      //将端口名传给QStringList
-    }
-    ui->UartCB->addItems(serialNamePort);       //输出到串口号CB上
-
-    /*关联控件和槽函数*/
-    connect(serialPort,SIGNAL(readyRead()),this,SLOT(serialPortReadReady_Slot()));
-
-    /*SQLite相关初始化*/
-    createDB();     //创建数据库
-    createTable();  //创建数据表
-    configTable();  //外观配置
-    queryTable();   //查询
+    connect(ui->adjSizeBtn, &QPushButton::clicked, this, [=](){controlWindowScale();});
 }
+
+void MainWindow::Init(){
+    /* Create main widget and set mask, style sheet and shadow */
+#ifdef Q_OS_LINUX
+    QPainterPath path;
+    path.addRect(ui->mainWidget->rect());
+#else
+    QPainterPath path;
+    path.addRoundedRect(ui->mainWidget->rect(), cornerRadius - 1, cornerRadius - 1);
+#endif
+    QRegion mask(path.toFillPolygon().toPolygon());
+    ui->mainWidget->setMask(mask);
+
+    QString mainStyle;
+    ui->mainWidget->setObjectName("mainWidget");
+    mainStyle = "QWidget#mainWidget{background-color:" + mainBackGround.name() + QString::asprintf(";border-radius:%dpx", cornerRadius) + "}";
+    ui->mainWidget->setStyleSheet(mainStyle);
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+#ifdef Q_OS_WINDOWS
+    //增加窗口阴影
+    windowShadow = new QGraphicsDropShadowEffect(this);
+    windowShadow->setBlurRadius(30);
+    windowShadow->setColor(QColor(0, 0, 0));
+    windowShadow->setOffset(0, 0);
+    ui->mainWidget->setGraphicsEffect(windowShadow);
+#endif
+#endif
+    /**********************************************************/
+
+    /* Create border in order to cover the zigzag edge of the region */
+#ifdef Q_OS_WINDOWS
+    border = new QWidget(this);
+    border->move(ui->mainWidget->pos() - QPoint(1, 1));
+    border->resize(ui->mainWidget->size() + QSize(2, 2));
+    QString borderStyle;
+    borderStyle = "background-color:#00FFFFFF;border:1.5px solid #686868; border-radius:" + QString::asprintf("%d",cornerRadius) + "px";
+    border->setStyleSheet(borderStyle);
+    border->setAttribute(Qt::WA_TransparentForMouseEvents);
+    border->show();
+#endif
+    /*****************************************************************/
+
+    /* Create about page */
+    //设置页相关内容
+    defaultSettingsPage = new SlidePage(cornerRadius, "ABOUT", ui->mainWidget);
+    textInputItem *version = new textInputItem("version", defaultSettingsPage);
+    version->setValue("1.3-beta");
+    version->setEnabled(false);
+    textInputItem *updateDate = new textInputItem("last-upd", defaultSettingsPage);
+    updateDate->setValue("2021/12/6 10:14");
+    updateDate->setEnabled(false);
+    textInputItem *Author = new textInputItem("author", defaultSettingsPage);
+    Author->setValue("Linloir | PoisonNF");
+    Author->setEnabled(false);
+    textInputItem *lic = new textInputItem("lic", defaultSettingsPage);
+    lic->setValue("MIT License");
+    lic->setEnabled(false);
+    textInputItem *GitHub = new textInputItem("git", defaultSettingsPage);
+    GitHub->setValue("github.com/PoisonNF");
+    GitHub->setEnabled(false);
+    defaultSettingsPage->AddContent(GitHub);
+    defaultSettingsPage->AddContent(lic);
+    defaultSettingsPage->AddContent(Author);
+    defaultSettingsPage->AddContent(updateDate);
+    defaultSettingsPage->AddContent(version);
+    curSettingsPage = defaultSettingsPage;
+    defaultSettingsPage->show();
+    pageList.push_back(defaultSettingsPage);
+
+    /************************/
+
+    /* Initialize display area */
+    //初始化显示主界面
+    QFont titleFont = QFont("Corbel Light", 24);
+    QFontMetrics titleFm(titleFont);
+    canvasTitle = new QLineEdit(this);
+    canvasTitle->setFont(titleFont);
+    canvasTitle->setText("CrucisIPC");
+    canvasTitle->setMaxLength(20);
+    canvasTitle->setReadOnly(true);
+    canvasTitle->setMinimumHeight(titleFm.height());
+    canvasTitle->setMaximumWidth(titleFm.size(Qt::TextSingleLine, "CrucisIPC").width() + 10);
+    canvasTitle->setStyleSheet("background-color:#00000000;border-style:none;border-width:0px;margin-left:1px;");
+    connect(canvasTitle, &QLineEdit::textEdited, canvasTitle, [=](QString text){canvasTitle->setMaximumWidth(titleFm.size(Qt::TextSingleLine, text).width());});
+
+    QFont descFont = QFont("Corbel Light", 12);
+    QFontMetrics descFm(descFont);
+    canvasDesc = new QLineEdit(this);
+    canvasDesc->setFont(descFont);
+    canvasDesc->setText("Controller and Observer for AUV");
+    canvasDesc->setMaxLength(128);
+    canvasDesc->setReadOnly(true);
+    canvasDesc->setMinimumHeight(descFm.lineSpacing());
+    canvasDesc->setStyleSheet("background-color:#00000000;border-style:none;border-width:0px;");
+
+    //配置设置图标的大小
+    settingsIcon = new customIcon(":/icons/icons/settings.svg", "settings", 5, this);
+    settingsIcon->setMinimumHeight(canvasTitle->height() * 0.7);
+    settingsIcon->setMaximumWidth(canvasTitle->height() * 0.7);
+
+    //点击设置图标调出副窗口
+    connect(settingsIcon, &customIcon::clicked, this, [=](){
+        //设置图标转动，0 逐渐变为 90度，持续时间为 750 毫秒，并使用插值曲线使动画效果更加自然
+        QPropertyAnimation *rotate = new QPropertyAnimation(settingsIcon, "rotationAngle", this);
+        rotate->setDuration(750);
+        rotate->setStartValue(0);
+        rotate->setEndValue(90);
+        rotate->setEasingCurve(QEasingCurve::InOutExpo);
+        rotate->start();
+
+        //自定义函数滑动
+        curSettingsPage->slideIn();
+    });
+
+    //配置层图标的大小
+    layersIcon = new customIcon(":/icons/icons/layers.svg", "layers", 5, this);
+    layersIcon->setMinimumHeight(canvasTitle->height() * 0.7);
+    layersIcon->setMaximumWidth(canvasTitle->height() * 0.7);
+
+    /* create title */
+
+    QWidget *titleInnerWidget = new QWidget(this);
+    titleInnerWidget->setFixedHeight(canvasTitle->height());
+    QHBoxLayout *innerLayout = new QHBoxLayout(titleInnerWidget);   //水平布局
+    titleInnerWidget->setLayout(innerLayout);
+    innerLayout->setContentsMargins(0, 0, 0, 0);
+    innerLayout->setSpacing(10);
+    innerLayout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    innerLayout->addWidget(canvasTitle);
+    innerLayout->addWidget(settingsIcon);
+    innerLayout->addWidget(layersIcon);
+
+    QWidget *titleWidget = new QWidget(this);
+    titleWidget->setMaximumHeight(canvasTitle->height() + canvasDesc->height());
+    QVBoxLayout *outerLayout = new QVBoxLayout(titleWidget);        //垂直布局
+    titleWidget->setLayout(outerLayout);
+    outerLayout->setContentsMargins(0, 0, 0, 0);
+    outerLayout->setSpacing(0);
+    outerLayout->addWidget(titleInnerWidget);
+    outerLayout->addWidget(canvasDesc);
+
+    /* create default page */
+
+    defaultPage = new QWidget(ui->mainWidget);
+    defaultPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    //放置两个大图标
+    bigIconButton *createNew = new bigIconButton(":/icons/icons/create.png", "Create new", 10, this);
+    createNew->setScale(0.9);
+    bigIconButton *openFile = new bigIconButton(":/icons/icons/open.png", "Open from file", 10, this);
+
+    //点击打开文件按钮
+    connect(openFile, &bigIconButton::clicked, this, [=](){
+        //右图标事件槽函数
+    });
+
+    //水平布局
+    QHBoxLayout *defaultPageLayout = new QHBoxLayout(defaultPage);
+    defaultPage->setLayout(defaultPageLayout);
+    defaultPageLayout->setContentsMargins(50, 30, 50, 80);
+    defaultPageLayout->setSpacing(20);
+    defaultPageLayout->addWidget(createNew);
+    defaultPageLayout->addWidget(openFile);
+
+    /* create layers page */
+    //for add new page
+    textInputItem *rename = new textInputItem("Name:",createNewPage);
+    rename->setValue("Layer_0");
+    textInputItem *redescribe = new textInputItem("Detail:",createNewPage);
+    redescribe->setValue("No description");
+
+    layersPage = new SlidePage(cornerRadius, "LAYERS", ui->mainWidget);
+    layersPage->stackUnder(createNewPage);
+    connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
+    layerSel = new singleSelectGroup("Layers", layersPage);
+    connect(layerSel, &singleSelectGroup::itemChange, layersPage, [=](){layersPage->UpdateContents();});
+    textButton *openFileBtn = new textButton("Open file", layersPage);
+
+    connect(openFileBtn, &textButton::clicked, this, [=](){
+        //左图标点击槽函数
+    });
+
+    textButton *addNewBtn = new textButton("Create new", layersPage);
+    layersPage->AddContent(addNewBtn);
+    layersPage->AddContent(openFileBtn);
+    layersPage->AddContent(layerSel);
+
+    connect(addNewBtn, &textButton::clicked, this, [=](){
+        rename->setValue("Layer_0");
+        redescribe->setValue("No description");createNewPage->slideIn();});
+    layersPage->show();
+    pageList.push_back(layersPage);
+
+    /* create add new slide page */
+    createNewPage = new SlidePage(cornerRadius, "CREATE CANVAS", ui->mainWidget);
+
+    QWidget *whiteSpace = new QWidget(createNewPage);
+    whiteSpace->setFixedHeight(30);
+    singleSelectGroup *structureSel = new singleSelectGroup("Structure",createNewPage);
+    selectionItem *item_1 = new selectionItem("AL", "Use adjacent list for canvas", createNewPage);
+    selectionItem *item_2 = new selectionItem("AML", "Use multiple adjacent list for canvas", createNewPage);
+    structureSel->AddItem(item_1);
+    structureSel->AddItem(item_2);
+    singleSelectGroup *dirSel = new singleSelectGroup("Mode", createNewPage);
+    selectionItem *item_3 = new selectionItem("DG", "Directed graph", createNewPage);
+    selectionItem *item_4 = new selectionItem("UDG", "Undirected graph", createNewPage);
+    dirSel->AddItem(item_3);
+    dirSel->AddItem(item_4);
+    textButton *submit = new textButton("Create!", createNewPage);
+    connect(submit, &textButton::clicked, this, [=](){
+
+    });
+    createNewPage->AddContent(submit);
+    createNewPage->AddContent(dirSel);
+    createNewPage->AddContent(structureSel);
+    createNewPage->AddContent(whiteSpace);
+    createNewPage->AddContent(redescribe);
+    createNewPage->AddContent(rename);
+
+    connect(createNew, &bigIconButton::clicked, createNewPage, [=](){
+        rename->setValue("Layer_0");
+        redescribe->setValue("No description");createNewPage->slideIn();});
+
+    createNewPage->show();
+    pageList.push_back(createNewPage);
+
+    ui->displayLayout->addWidget(titleWidget);
+    ui->displayLayout->addWidget(defaultPage);
+    ui->displayLayout->setAlignment(Qt::AlignTop);
+}
+
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-/*创建数据库*/
-void MainWindow::createDB()
-{
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("CrucisIPC.db");
-    if(db.open()==true)
-    {
-        qDebug() << "创建或者打开数据库成功！";
-    }
-    else
-    {
-        qDebug() << "创建或者打开数据库失败！";
-    }
-}
-/*创建数据表*/
-void MainWindow::createTable()
-{
-    QSqlQuery query;
-    QString jystr = QString("CREATE TABLE jy901 ("
-                          "ID INT PRIMARY KEY NOT NULL,"
-                          "Data TEXT NOT NULL,"
-                          "X REAL,"
-                          "Y REAL,"
-                          "Z REAL)");
-    query.exec(jystr);
-    qDebug() << "jy901数据表创建";
-
-    QString rmstr = QString("CREATE TABLE rm3100 ("
-                            "ID INT PRIMARY KEY NOT NULL,"
-                            "X REAL,"
-                            "Y REAL,"
-                            "Z REAL)");
-    query.exec(rmstr);
-    qDebug() << "rm3100数据表创建";
-}
-
-/*配置所有Table View的外观设置*/
-void MainWindow::configTable()
-{
-    //JY901TB外观配置
-    ui->JY901TB->verticalHeader()->setHidden(true);//把QTableView中第一列的默认数字列去掉
-    ui->JY901TB->setAlternatingRowColors(true);//QTableView隔行换色
-    //ui->JY901TB->resizeColumnsToContents();//将列宽自适应数据长度
-    //ui->JY901TB->resizeRowsToContents();//将行宽自适应数据长度
-    //RM3100TB外观配置
-    ui->RM3100TB->verticalHeader()->setHidden(true);
-    ui->RM3100TB->setAlternatingRowColors(true);
-}
-
-/*查询*/
-void MainWindow::queryTable(QString item)
-{
-    if(item == "JY901")
-    {
-        QString jystr = QString("SELECT * FROM jy901");
-        JYmodel.setQuery(jystr);
-        ui->JY901TB->setModel(&JYmodel);
-        ui->JY901TB->setColumnWidth(0,50);
-        ui->JY901TB->setColumnWidth(1,50);
-        ui->JY901TB->setRowHeight(0,44);
-        ui->JY901TB->setRowHeight(1,44);
-        ui->JY901TB->setRowHeight(2,44);
-        ui->JY901TB->setRowHeight(3,44);
-        qDebug() << "显示JY901数据";
-    }
-    else if(item == "RM3100")
-    {
-        QString rmstr = QString("SELECT * FROM rm3100");
-        RMmodel.setQuery(rmstr);
-        ui->RM3100TB->setModel(&RMmodel);
-        ui->RM3100TB->setColumnWidth(0,50);
-        ui->RM3100TB->setRowHeight(0,44);
-        ui->RM3100TB->setRowHeight(1,44);
-        ui->RM3100TB->setRowHeight(2,44);
-        ui->RM3100TB->setRowHeight(3,44);
-        qDebug() << "显示RM3100数据";
-    }
-    else if(item == "ALL")
-    {
-        QString jystr = QString("SELECT * FROM jy901");
-        JYmodel.setQuery(jystr);
-        ui->JY901TB->setModel(&JYmodel);
-        ui->JY901TB->setColumnWidth(0,50);
-        ui->JY901TB->setColumnWidth(1,50);
-
-        QString rmstr = QString("SELECT * FROM rm3100");
-        RMmodel.setQuery(rmstr);
-        ui->RM3100TB->setModel(&RMmodel);
-        ui->RM3100TB->setColumnWidth(0,50);
-        qDebug() << "显示全部数据";
+void MainWindow::mousePressEvent(QMouseEvent *event){
+    if(event->button() == Qt::LeftButton){
+        mousePressed = true;
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+        lastPos = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
+#else
+        lastPos = event->globalPos() - this->frameGeometry().topLeft();
+#endif
     }
 }
 
-/*开启槽函数*/
-void MainWindow::on_OpenPB_clicked()
-{
-    //如果串口已经打开，先清除并关闭
-    if(serialPort->isOpen())
-    {
-        serialPort->clear();
-        serialPort->close();
-    }
-
-    QSerialPort::BaudRate baudRate = QSerialPort::Baud115200;
-    QSerialPort::DataBits dataBits = QSerialPort::Data8;
-    QSerialPort::StopBits stopBits = QSerialPort::OneStop;
-    QSerialPort::Parity checkBits  = QSerialPort::NoParity;
-
-    //获取波特率控件上面的数据
-    if(ui->BaudCB->currentText() == "9600") baudRate = QSerialPort::Baud9600;
-    else if (ui->BaudCB->currentText() == "115200") baudRate = QSerialPort::Baud115200;
-
-    //获取数据位控件上面的数据
-    if(ui->DataCB->currentText() == "5") dataBits = QSerialPort::Data5;
-    else if(ui->DataCB->currentText() == "6") dataBits = QSerialPort::Data6;
-    else if(ui->DataCB->currentText() == "7") dataBits = QSerialPort::Data7;
-    else if(ui->DataCB->currentText() == "8") dataBits = QSerialPort::Data8;
-
-    //获取停止位控件上面的数据
-    if(ui->StopCB->currentText() == "1") stopBits = QSerialPort::OneStop;
-    else if(ui->StopCB->currentText() == "1.5") stopBits = QSerialPort::OneAndHalfStop;
-    else if(ui->StopCB->currentText() == "2") stopBits = QSerialPort::TwoStop;
-
-    //获取校验位控件上面的数据
-    if(ui->checkCB->currentText() == "None") checkBits = QSerialPort::NoParity;
-    else if(ui->checkCB->currentText() == "Odd") checkBits = QSerialPort::OddParity;
-    else if(ui->checkCB->currentText() == "Even") checkBits = QSerialPort::EvenParity;
-
-    //为串口赋值
-    serialPort->setPortName(ui->UartCB->currentText());
-    serialPort->setBaudRate(baudRate);
-    serialPort->setDataBits(dataBits);
-    serialPort->setStopBits(stopBits);
-    serialPort->setParity(checkBits);
-    if(serialPort->open(QIODevice::ReadWrite)== true)
-    {
-        QMessageBox::information(this,"提示",ui->UartCB->currentText()+"打开成功");
-    }
-    else
-    {
-        QMessageBox::critical(this,"提示",ui->UartCB->currentText()+"打开失败");
-    }
-
-}
-
-/*关闭槽函数*/
-void MainWindow::on_ClosePB_clicked()
-{
-    serialPort->close();
-    QMessageBox::information(this,"提示",ui->UartCB->currentText()+"已关闭");
-}
-
-/*发送槽函数*/
-void MainWindow::on_SendPB_clicked()
-{
-    serialPort->write(ui->SendLE->text().toLocal8Bit().data());
-    //发送十六进制代码
-//    QString info = ui->SendLE->text();
-//    if(info.contains(' '))  info.replace(QString(" "),QString(""));
-//    QByteArray sendbuf = QByteArray::fromHex(info.toLatin1());
-//    serialPort->write(sendbuf);
-}
-
-/*清空槽函数*/
-void MainWindow::on_ClearPB_clicked()
-{
-    ui->ReceivePTE->clear();
-}
-
-/*串口准备接收槽函数*/
-void MainWindow::serialPortReadReady_Slot()
-{
-    QString buf;
-    buf = QString(serialPort->readLine());
-    ui->ReceivePTE->ensureCursorVisible(); //通过滚动文本编辑确保光标可见,始终显示最新一行
-    ui->ReceivePTE->insertPlainText(buf);
-
-    //以空格进行分割
-    QStringList data = buf.split(u' ');
-
-    //如果是JY901的数据
-    if(data.at(0) == 'J')
-    {
-        //查询数据表中是否已经存在数据
-        QString checkstr = QString("SELECT * FROM jy901 WHERE ID = '%1'").arg(data.at(1));
-        QSqlQuery query(checkstr);
-        if(query.next() == false)
-        {
-            QString insertstr = QString("INSERT INTO jy901 VALUES(%1,'%2',%3,%4,%5)")
-                                .arg(data.at(1),data.at(2),data.at(3),data.at(4),data.at(5));
-            query.exec(insertstr);
-        }
+void MainWindow::mouseMoveEvent(QMouseEvent *event){
+    if(event->buttons() == Qt::NoButton)
+        mousePressed = false;
+    if(!mousePressed){
+        mouseState = 0;
+        if(!maximized && abs(event->pos().x() - ui->mainWidget->pos().x()) < 5)
+            mouseState |= AT_LEFT;
+        if(!maximized && abs(event->pos().y() - ui->mainWidget->pos().y()) < 5)
+            mouseState |= AT_TOP;
+        if(!maximized && abs(event->pos().x() - ui->mainWidget->pos().x() - ui->mainWidget->width()) < 5)
+            mouseState |= AT_RIGHT;
+        if(!maximized && abs(event->pos().y() - ui->mainWidget->pos().y() - ui->mainWidget->height()) < 5)
+            mouseState |= AT_BOTTOM;
+        if(mouseState == AT_TOP_LEFT  || mouseState == AT_BOTTOM_RIGHT)
+            setCursor(Qt::SizeFDiagCursor);
+        else if(mouseState == AT_TOP_RIGHT || mouseState == AT_BOTTOM_LEFT)
+            setCursor(Qt::SizeBDiagCursor);
+        else if(mouseState & (AT_LEFT | AT_RIGHT))
+            setCursor(Qt::SizeHorCursor);
+        else if(mouseState & (AT_TOP | AT_BOTTOM))
+            setCursor(Qt::SizeVerCursor);
         else
-        {
-            JYdatalist << data; //将数据存入容器中
-            JYnum+=1;
-            if(JYnum == 4) //数据收集完成
-            {
-                db.transaction();   //事务处理开始
-                for(int i=0;i<4;i++)
-                {
-                    QString updatestr = QString("UPDATE jy901 SET Data = '%2', X = %3, Y = %4, Z = %5 WHERE ID = %1")
-                                        .arg(JYdatalist[i].at(1),JYdatalist[i].at(2),JYdatalist[i].at(3),JYdatalist[i].at(4),JYdatalist[i].at(5));
-                    query.exec(updatestr);
-                }
-                db.commit();    //事务处理结束
-                JYdatalist.clear();
-                JYnum = 0;
-                queryTable("JY901");
+            unsetCursor();
+    }
+    else{
+        if(mouseState == 0){
+            if(maximized){
+                qreal wRatio = (double)event->pos().x() / (double)ui->mainWidget->width();
+                controlWindowScale();
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+                this->move(QPoint(event->globalPosition().x() - ui->mainWidget->width() * wRatio, -30));
+#else
+                this->move(QPoint(event->globalPos().x() - ui->mainWidget->width() * wRatio, -30));
+#endif
+                lastPos = QPoint(ui->mainWidget->width() * wRatio, event->pos().y());
+            }
+            else
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+                this->move(event->globalPosition().toPoint() - lastPos);
+#else
+                this->move(event->globalPos() - lastPos);
+#endif
+        }
+        else{
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+            QPoint d = event->globalPosition().toPoint() - frameGeometry().topLeft() - lastPos;
+#else
+            QPoint d = event->globalPos() - frameGeometry().topLeft() - lastPos;
+#endif
+            if(mouseState & AT_LEFT){
+                this->move(this->frameGeometry().x() + d.x(), this->frameGeometry().y());
+                this->resize(this->width() - d.x(), this->height());
+            }
+            if(mouseState & AT_RIGHT){
+                this->resize(this->width() + d.x(), this->height());
+            }
+            if(mouseState & AT_TOP){
+                this->move(this->frameGeometry().x(), this->frameGeometry().y() + d.y());
+                this->resize(this->width(), this->height() - d.y());
+            }
+            if(mouseState & AT_BOTTOM){
+                this->resize(this->width(), this->height() + d.y());
             }
         }
-    }
-
-    //如果是RM3100的数据
-    else if(data.at(0) == 'R')
-    {
-        //查询数据表中是否已经存在数据
-        QString checkstr = QString("SELECT * FROM rm3100 WHERE ID = '%1'").arg(data.at(1));
-        QSqlQuery query(checkstr);
-        if(query.next() == false)
-        {
-            QString insertstr = QString("INSERT INTO rm3100 VALUES(%1,%2,%3,%4)")
-                                .arg(data.at(1),data.at(2),data.at(3),data.at(4));
-            query.exec(insertstr);
-        }
-        else
-        {
-            RMdatalist << data; //将数据存入容器中
-            RMnum+=1;
-            if(RMnum == 1) //数据收集完成
-            {
-                db.transaction();
-                for(int i=0;i<1;i++)
-                {
-                    QString updatestr = QString("UPDATE rm3100 SET X = %2, Y = %3, Z = %4 WHERE ID = %1")
-                                        .arg(RMdatalist[i].at(1),RMdatalist[i].at(2),RMdatalist[i].at(3),RMdatalist[i].at(4));
-                    query.exec(updatestr);
-                }
-                db.commit();
-                RMdatalist.clear();
-                RMnum = 0;
-                queryTable("RM3100");
-            }
-        }
-    }
-
-    else if(data.at(0) == "M")
-    {
-        ui->MotorPTE->ensureCursorVisible(); //通过滚动文本编辑确保光标可见,始终显示最新一行
-        ui->MotorPTE->insertPlainText(buf);
-    }
-    else if(data.at(0) == "JETON")
-    {
-        ui->JetsonPTE->ensureCursorVisible(); //通过滚动文本编辑确保光标可见,始终显示最新一行
-        ui->JetsonPTE->insertPlainText(buf);
-    }
-    else if(data.at(0) == "OPENMV")
-    {
-        ui->OpenMVPTE->ensureCursorVisible(); //通过滚动文本编辑确保光标可见,始终显示最新一行
-        ui->OpenMVPTE->insertPlainText(buf);
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+        lastPos = event->globalPosition().toPoint() - this->frameGeometry().topLeft();
+#else
+        lastPos = event->globalPos() - this->frameGeometry().topLeft();
+#endif
     }
 }
+
+void MainWindow::resizeEvent(QResizeEvent *event){
+    //Resize border
+    if(border)
+        border->resize(ui->mainWidget->size() + QSize(2, 2));
+
+    //Resize mask
+    QPainterPath path;
+#ifdef Q_OS_WINDOWS
+    path.addRoundedRect(ui->mainWidget->rect(), cornerRadius - 1, cornerRadius - 1);
+#else
+    path.addRect(ui->mainWidget->rect());
+#endif
+    QRegion mask(path.toFillPolygon().toPolygon());
+    ui->mainWidget->setMask(mask);
+
+    //Resize all pages
+    for(int i = 0; i < pageList.size(); i++){
+        pageList[i]->resize(ui->mainWidget->width() * 0.4 < pageList[i]->preferWidth ? pageList[i]->preferWidth - 1 : ui->mainWidget->width() * 0.4 - 1, ui->mainWidget->height());
+        pageList[i]->resize(pageList[i]->width() + 1, pageList[i]->height());
+    }
+}
+
+void MainWindow::controlWindowScale(){
+#ifdef Q_OS_WINDOWS
+    if(!maximized){
+        lastGeometry = this->frameGeometry();
+        windowShadow->setEnabled(false);
+        ui->verticalLayout->setContentsMargins(0, 0, 0, 0);
+        border->hide();
+        QString mainStyle = "QWidget#mainWidget{background-color:" + mainBackGround.name() + ";border-radius:0px;}";
+        ui->mainWidget->setStyleSheet(mainStyle);
+        this->showMaximized();
+        maximized = true;
+        QPainterPath path;
+        path.addRect(ui->mainWidget->rect());
+        QRegion mask(path.toFillPolygon().toPolygon());
+        ui->mainWidget->setMask(mask);
+    }
+    else{
+        ui->verticalLayout->setContentsMargins(30, 30, 30, 30);
+        this->showNormal();
+        QString mainStyle = "QWidget#mainWidget{background-color:" + mainBackGround.name() + QString::asprintf(";border-radius:%dpx", cornerRadius) + "}";
+        ui->mainWidget->setStyleSheet(mainStyle);
+        QPainterPath path;
+        path.addRoundedRect(ui->mainWidget->rect(), cornerRadius - 1, cornerRadius - 1);
+        QRegion mask(path.toFillPolygon().toPolygon());
+        ui->mainWidget->setMask(mask);
+        border->show();
+        windowShadow->setEnabled(true);
+        this->resize(lastGeometry.width(), lastGeometry.height());
+        this->move(lastGeometry.x(), lastGeometry.y());
+        maximized = false;
+    }
+#endif
+}
+
+

@@ -339,13 +339,13 @@ Makefile: CrucisIPC.pro D:/QT/6.4.1/mingw_64/mkspecs/win32-g++/qmake.conf D:/QT/
 		D:/QT/6.4.1/mingw_64/mkspecs/features/yacc.prf \
 		D:/QT/6.4.1/mingw_64/mkspecs/features/lex.prf \
 		CrucisIPC.pro \
+		D:/QT/6.4.1/mingw_64/lib/Qt6Svg.prl \
 		D:/QT/6.4.1/mingw_64/lib/Qt6Widgets.prl \
 		D:/QT/6.4.1/mingw_64/lib/Qt6Gui.prl \
-		D:/QT/6.4.1/mingw_64/lib/Qt6SerialPort.prl \
-		D:/QT/6.4.1/mingw_64/lib/Qt6Sql.prl \
 		D:/QT/6.4.1/mingw_64/lib/Qt6Core.prl \
 		D:/QT/6.4.1/mingw_64/lib/Qt6EntryPoint.prl \
-		D:/QT/6.4.1/mingw_64/mkspecs/features/build_pass.prf
+		D:/QT/6.4.1/mingw_64/mkspecs/features/build_pass.prf \
+		icons.qrc
 	$(QMAKE) -o Makefile CrucisIPC.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 D:/QT/6.4.1/mingw_64/mkspecs/features/spec_pre.prf:
 D:/QT/6.4.1/mingw_64/mkspecs/features/device_config.prf:
@@ -616,13 +616,13 @@ D:/QT/6.4.1/mingw_64/mkspecs/features/exceptions.prf:
 D:/QT/6.4.1/mingw_64/mkspecs/features/yacc.prf:
 D:/QT/6.4.1/mingw_64/mkspecs/features/lex.prf:
 CrucisIPC.pro:
+D:/QT/6.4.1/mingw_64/lib/Qt6Svg.prl:
 D:/QT/6.4.1/mingw_64/lib/Qt6Widgets.prl:
 D:/QT/6.4.1/mingw_64/lib/Qt6Gui.prl:
-D:/QT/6.4.1/mingw_64/lib/Qt6SerialPort.prl:
-D:/QT/6.4.1/mingw_64/lib/Qt6Sql.prl:
 D:/QT/6.4.1/mingw_64/lib/Qt6Core.prl:
 D:/QT/6.4.1/mingw_64/lib/Qt6EntryPoint.prl:
 D:/QT/6.4.1/mingw_64/mkspecs/features/build_pass.prf:
+icons.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile CrucisIPC.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 
