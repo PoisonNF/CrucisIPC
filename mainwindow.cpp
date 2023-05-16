@@ -230,10 +230,10 @@ void MainWindow::InitLayersPage()
     whiteSpace->setFixedHeight(30);
 
     modeSelGroup = new singleSelectGroup("模式", layersPage);
-    selectionItem *testModeItem = new selectionItem("数据显示", "展示所有传感器的数据", layersPage);
-    selectionItem *travelModeItem = new selectionItem("运动控制", "进行PID和手柄控制", layersPage);
-    modeSelGroup->AddItem(testModeItem);
-    modeSelGroup->AddItem(travelModeItem);
+    selectionItem *DDModeItem = new selectionItem("数据显示", "展示所有传感器的数据", layersPage);
+    selectionItem *MotionModeItem = new selectionItem("运动控制", "进行PID和手柄控制", layersPage);
+    modeSelGroup->AddItem(DDModeItem);
+    modeSelGroup->AddItem(MotionModeItem);
 
 //    subModeSelGroup = new singleSelectGroup("控制", layersPage);
 //    selectionItem *mvCtrItem = new selectionItem("运动控制", "待填", layersPage);
@@ -259,18 +259,19 @@ void MainWindow::InitLayersPage()
     //按下层图标的时候，触发层页滑入
     connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
 
-    connect(testModeItem, &selectionItem::selected, this, [=](){
+    connect(DDModeItem, &selectionItem::selected, this, [=](){
         //modeKind = MODE::TEST_MV_CTR;
         //subModeSelGroup->SetSelection(mvCtrItem);
         //emit ModeKindChange(modeKind);
-        qDebug()<<"进入数据显示界面";
+        Switch_Mode = DATADISPLAY;
+
     });
-    connect(travelModeItem, &selectionItem::selected, this, [=](){
+    connect(MotionModeItem, &selectionItem::selected, this, [=](){
         //modeKind = MODE::TRAVEL_MV_CTR;
         //subModeSelGroup->SetSelection(mvCtrItem);
         //emit ModeKindChange(modeKind);
+        Switch_Mode = MOTIONCONTROl;
 
-        qDebug()<<"进入运动控制界面";
     });
 //    connect(mvCtrItem, &selectionItem::selected, this, [=](){
 //        //modeKind = MODE::TEST_MV_CTR;
@@ -294,6 +295,14 @@ void MainWindow::InitLayersPage()
     //connectPage3DLight(layersPage);
     connect(ensureBtn, &textButton::clicked, this, [=](){
         //ChangeMyWidget(); //切换界面
+        if(Switch_Mode == DATADISPLAY)
+        {
+            qDebug()<<"进入数据显示界面";
+            ChangeDataDisplayWidget();
+        }
+        else if(Switch_Mode == MOTIONCONTROl)
+            qDebug()<<"进入运动控制界面";
+
         layersPage->slideOut();
     });
 }
@@ -407,6 +416,8 @@ void MainWindow::InitSerialPage()
     connect(openSerialBtn, &textButton::clicked, this, &MainWindow::OpenSerialPort);
     connect(closeSerialBtn, &textButton::clicked, this, &MainWindow::CloseSerialPort);
     connect(serial,&QSerialPort::readyRead,this,&MainWindow::ReadData);
+
+    connect(this,SIGNAL(MainWindow::DataReadCplt(buf)),dataDisplayWidget,SLOT(DataDisplayWidget::DataDisplayPTE(buf)));
 }
 
 void MainWindow::InitDataDisplayWidget()
@@ -421,21 +432,17 @@ void MainWindow::InitDataDisplayWidget()
 /* 切换到数据显示窗口 */
 void MainWindow::ChangeDataDisplayWidget()
 {
-    if(DDWidgetFlag)
-    {
-        DDWidgetFlag = false;
 
-        //旧界面隐藏
-        ui->displayLayout->removeWidget(defaultPage);
-        defaultPage->hide();
+    //旧界面隐藏
+    ui->displayLayout->removeWidget(defaultPage);
+    defaultPage->hide();
 
-        //切换新界面
-        ui->displayLayout->addWidget(dataDisplayWidget);
-        curSettingsPage = dataDisplayWidget->settingPage();
-        Subtitle->setText("DataDisplay");
-        dataDisplayWidget->show();
+    //切换新界面
+    ui->displayLayout->addWidget(dataDisplayWidget);
+    curSettingsPage = dataDisplayWidget->settingPage();
+    Subtitle->setText("DataDisplay");
+    dataDisplayWidget->show();
 
-    }
 }
 
 void MainWindow::OpenSerialPort()
@@ -493,9 +500,11 @@ void MainWindow::CloseSerialPort()
 
 void MainWindow::ReadData()
 {
-    QString buf;
+    QString buf;    //接收到的数据
     buf = QString(serial->readLine());
-    qDebug() << buf;
+    //qDebug() << buf;
+
+    emit DataReadCplt(buf);
 }
 
 MainWindow::~MainWindow()

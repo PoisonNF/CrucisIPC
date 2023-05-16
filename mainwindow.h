@@ -21,7 +21,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 private:
     int cornerRadius = 20;
-    bool DDWidgetFlag = true;
 
     QWidget *border = nullptr;  //边界
     QWidget *defaultPage;       //主界面除标题之外
@@ -49,6 +48,7 @@ private:
     singleSelectGroup *modeSelGroup = nullptr;
     singleSelectGroup *subModeSelGroup = nullptr;
 
+    //串口相关
     QSerialPort *serial;    //串口对象
     SlideDialog *serialDialog = nullptr; //串口配置滑入对话框
     textButton *openSerialBtn = nullptr;
@@ -60,6 +60,8 @@ private:
     QComboBox *stopBitsCBox;
     QComboBox *flowCtlCBox;
 
+
+    //函数声明
     void Init();            //界面初始化
     void InitFrame();       //框架初始化
     void InitDefaultSettingsPage(); //默认设置界面初始化
@@ -68,8 +70,12 @@ private:
     void InitSerialPage();  //串口设置界面初始化
     void InitDataDisplayWidget();   //初始化数据显示窗口
 
+    //模式枚举类型
+    enum MODE{DATADISPLAY = 1, MOTIONCONTROl = 2};
+    MODE Switch_Mode;
+
     enum {AT_LEFT = 1, AT_TOP = 2,  AT_RIGHT = 4, AT_BOTTOM = 8,
-          AT_TOP_LEFT = 3, AT_TOP_RIGHT = 6, AT_BOTTOM_LEFT = 9, AT_BOTTOM_RIGHT = 12};
+           AT_TOP_LEFT = 3, AT_TOP_RIGHT = 6, AT_BOTTOM_LEFT = 9, AT_BOTTOM_RIGHT = 12};
     bool mousePressed = false;
     int mouseState;
     QPoint lastPos;
@@ -95,6 +101,9 @@ private slots:
     void OpenSerialPort();  //打开串口
     void CloseSerialPort(); //关闭串口
     void ReadData(); //读取串口数据
+
+signals:
+    void DataReadCplt(QString serialBuf);
 
 public:
     MainWindow(QWidget *parent = nullptr);

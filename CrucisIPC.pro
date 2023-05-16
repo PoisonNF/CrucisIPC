@@ -19,6 +19,7 @@ SOURCES += \
     graph_view.cpp \
     main.cpp \
     mainwindow.cpp \
+    scenemodifier.cpp \
     slidedialog.cpp \
     slidepage.cpp
 
@@ -29,6 +30,7 @@ HEADERS += \
     graph_implement.h \
     graph_view.h \
     mainwindow.h \
+    scenemodifier.h \
     slidedialog.h \
     slidepage.h
 
@@ -36,6 +38,7 @@ FORMS += \
     mainwindow.ui
 
 RC_ICONS = logo.ico
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
