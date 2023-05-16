@@ -417,7 +417,7 @@ void MainWindow::InitSerialPage()
     connect(closeSerialBtn, &textButton::clicked, this, &MainWindow::CloseSerialPort);
     connect(serial,&QSerialPort::readyRead,this,&MainWindow::ReadData);
 
-    connect(this,SIGNAL(MainWindow::DataReadCplt(buf)),dataDisplayWidget,SLOT(DataDisplayWidget::DataDisplayPTE(buf)));
+    connect(this,&MainWindow::DataReadCplt,dataDisplayWidget,&DataDisplayWidget::DataDisplayPTE);
 }
 
 void MainWindow::InitDataDisplayWidget()
@@ -505,6 +505,7 @@ void MainWindow::ReadData()
     //qDebug() << buf;
 
     emit DataReadCplt(buf);
+    //dataDisplayWidget->AddLog(buf);
 }
 
 MainWindow::~MainWindow()
