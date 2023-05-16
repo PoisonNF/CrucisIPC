@@ -4,12 +4,13 @@
 #include <QMainWindow>
 #include <QVector>
 #include <QGraphicsDropShadowEffect>
-#include "slidedialog.h"
 #include <QDebug>
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QComboBox>
 #include <QMessageBox>
+#include "slidedialog.h"
+#include "datadisplaywidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,6 +25,10 @@ private:
 
     QWidget *border = nullptr;  //边界
     QWidget *defaultPage;       //主界面除标题之外
+    QWidget *titleWidget;       //标题栏
+
+    DataDisplayWidget *dataDisplayWidget = nullptr; //数据采集窗口对象
+
     QGraphicsDropShadowEffect *windowShadow;
     QColor mainBackGround = QColor(251, 251, 251);
 
@@ -36,7 +41,6 @@ private:
 
     QVector<SlidePage*> pageList;   //储存页面的容器
 
-    SlidePage *createNewPage = nullptr;
     SlidePage *defaultSettingsPage = nullptr;
     SlidePage *curSettingsPage = nullptr;
 
@@ -57,7 +61,12 @@ private:
     QComboBox *flowCtlCBox;
 
     void Init();            //界面初始化
+    void InitFrame();       //框架初始化
+    void InitDefaultSettingsPage(); //默认设置界面初始化
+    void InitDefaultPage(); //默认主界面初始化
     void InitLayersPage();  //换层页初始化
+    void InitSerialPage();  //串口设置界面初始化
+    void InitDataDisplayWidget();   //初始化数据显示窗口
 
     enum {AT_LEFT = 1, AT_TOP = 2,  AT_RIGHT = 4, AT_BOTTOM = 8,
           AT_TOP_LEFT = 3, AT_TOP_RIGHT = 6, AT_BOTTOM_LEFT = 9, AT_BOTTOM_RIGHT = 12};

@@ -45,7 +45,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(900, 650);
+        MainWindow->resize(1158, 832);
         MainWindow->setMouseTracking(true);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");

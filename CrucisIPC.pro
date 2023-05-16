@@ -14,6 +14,7 @@ CONFIG += c++11
 SOURCES += \
     customScrollContainer.cpp \
     customWidgets.cpp \
+    datadisplaywidget.cpp \
     graph_implement.cpp \
     graph_view.cpp \
     main.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 HEADERS += \
     customScrollContainer.h \
     customWidgets.h \
+    datadisplaywidget.h \
     graph_implement.h \
     graph_view.h \
     mainwindow.h \

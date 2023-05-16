@@ -29,6 +29,17 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::Init(){
+
+    InitFrame();    //框架初始化
+    InitDefaultPage();  //默认主界面初始化
+    InitDefaultSettingsPage(); //默认设置界面初始化
+    InitLayersPage();   //层页界面和按钮初始化
+    InitDataDisplayWidget();    //数据显示界面初始化
+    InitSerialPage();   //串口设置界面初始化
+}
+
+void MainWindow::InitFrame()
+{
     /* 创建主窗口小部件并设置掩码、样式表和阴影 */
 #ifdef Q_OS_LINUX
     QPainterPath path;
@@ -67,8 +78,11 @@ void MainWindow::Init(){
     border->setAttribute(Qt::WA_TransparentForMouseEvents);
     border->show();
 #endif
-    /*****************************************************************/
+}
 
+
+void MainWindow::InitDefaultSettingsPage()
+{
     /* 创建设置关于页 */
     defaultSettingsPage = new SlidePage(cornerRadius, "ABOUT", ui->mainWidget);
     textInputItem *version = new textInputItem("version", defaultSettingsPage);
@@ -94,9 +108,11 @@ void MainWindow::Init(){
     curSettingsPage = defaultSettingsPage;
     defaultSettingsPage->show();
     pageList.push_back(defaultSettingsPage);
+}
 
-    /************************/
-
+//默认主界面初始化
+void MainWindow::InitDefaultPage()
+{
     /* 初始化主界面上部标题栏 */
     //主标题设置
     QFont titleFont = QFont("Corbel Light", 24);
@@ -168,9 +184,6 @@ void MainWindow::Init(){
     outerLayout->setSpacing(0);
     outerLayout->addWidget(titleInnerWidget);
     outerLayout->addWidget(Subtitle);
-
-    /*****************************************************************/
-
     /* 创建主界面 */
     defaultPage = new QWidget(ui->mainWidget);
     defaultPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -205,8 +218,88 @@ void MainWindow::Init(){
     ui->displayLayout->addWidget(defaultPage);
     ui->displayLayout->setAlignment(Qt::AlignTop);
 
-    InitLayersPage();   //层页界面和按钮初始化
+}
 
+//层页初始化函数
+void MainWindow::InitLayersPage()
+{
+    layersPage = new SlidePage(cornerRadius, "功能选择", ui->mainWidget);
+
+    //标题到可选项之间的留白
+    QWidget *whiteSpace = new QWidget(layersPage);
+    whiteSpace->setFixedHeight(30);
+
+    modeSelGroup = new singleSelectGroup("模式", layersPage);
+    selectionItem *testModeItem = new selectionItem("数据显示", "展示所有传感器的数据", layersPage);
+    selectionItem *travelModeItem = new selectionItem("运动控制", "进行PID和手柄控制", layersPage);
+    modeSelGroup->AddItem(testModeItem);
+    modeSelGroup->AddItem(travelModeItem);
+
+//    subModeSelGroup = new singleSelectGroup("控制", layersPage);
+//    selectionItem *mvCtrItem = new selectionItem("运动控制", "待填", layersPage);
+//    selectionItem *balCtrItem = new selectionItem("调平控制", "待填", layersPage);
+//    selectionItem *actCtrItem = new selectionItem("动作控制", "待填", layersPage);
+
+//    subModeSelGroup->AddItem(mvCtrItem);
+//    subModeSelGroup->AddItem(balCtrItem);
+//    subModeSelGroup->AddItem(actCtrItem);
+
+    textButton *ensureBtn = new textButton("确认", layersPage);
+
+    //按照从下到上的顺序排布
+    layersPage->AddContent(ensureBtn);          //确认按钮
+    //layersPage->AddContent(subModeSelGroup);  //副模式组
+    layersPage->AddContent(modeSelGroup);       //主模式组
+    layersPage->AddContent(whiteSpace);         //留白
+    layersPage->show(); //界面显示
+
+    //将层页放入页表容器中
+    pageList.push_back(layersPage);
+
+    //按下层图标的时候，触发层页滑入
+    connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
+
+    connect(testModeItem, &selectionItem::selected, this, [=](){
+        //modeKind = MODE::TEST_MV_CTR;
+        //subModeSelGroup->SetSelection(mvCtrItem);
+        //emit ModeKindChange(modeKind);
+        qDebug()<<"进入数据显示界面";
+    });
+    connect(travelModeItem, &selectionItem::selected, this, [=](){
+        //modeKind = MODE::TRAVEL_MV_CTR;
+        //subModeSelGroup->SetSelection(mvCtrItem);
+        //emit ModeKindChange(modeKind);
+
+        qDebug()<<"进入运动控制界面";
+    });
+//    connect(mvCtrItem, &selectionItem::selected, this, [=](){
+//        //modeKind = MODE::TEST_MV_CTR;
+//        //emit ModeKindChange(modeKind);
+
+//        qDebug()<<"modeKind = TEST_MV_CTR";
+//    });
+//    connect(balCtrItem, &selectionItem::selected, this, [=](){
+//        //modeKind = MODE::TEST_BAL_CTR;
+//        //emit ModeKindChange(modeKind);
+
+//        qDebug()<<"modeKind = TEST_BAL_CTR";
+//    });
+//    connect(actCtrItem, &selectionItem::selected, this, [=](){
+//        //modeKind = MODE::TEST_ACT_CTR;
+//        //emit ModeKindChange(modeKind);
+
+//        qDebug()<<"modeKind = TEST_ACT_CTR";
+//    });
+
+    //connectPage3DLight(layersPage);
+    connect(ensureBtn, &textButton::clicked, this, [=](){
+        //ChangeMyWidget(); //切换界面
+        layersPage->slideOut();
+    });
+}
+
+void MainWindow::InitSerialPage()
+{
     //串口配置按钮 还有个 空出的按钮
     textButton *serialBtn = new textButton("串口配置", ui->titleBar,1.2);
     serialBtn->setMinimumWidth(50);
@@ -316,84 +409,14 @@ void MainWindow::Init(){
     connect(serial,&QSerialPort::readyRead,this,&MainWindow::ReadData);
 }
 
-//层页初始化函数
-void MainWindow::InitLayersPage()
+void MainWindow::InitDataDisplayWidget()
 {
-    layersPage = new SlidePage(cornerRadius, "功能选择", ui->mainWidget);
+    dataDisplayWidget = new DataDisplayWidget(cornerRadius,0, ui->mainWidget);
+    dataDisplayWidget->hide();
+    dataDisplayWidget->settingPage()->setParent(ui->mainWidget);
+    pageList.push_back(dataDisplayWidget->settingPage());
 
-    //标题到可选项之间的留白
-    QWidget *whiteSpace = new QWidget(layersPage);
-    whiteSpace->setFixedHeight(30);
-
-    modeSelGroup = new singleSelectGroup("模式", layersPage);
-    selectionItem *testModeItem = new selectionItem("数据显示", "展示所有传感器的数据", layersPage);
-    selectionItem *travelModeItem = new selectionItem("运动控制", "进行PID和手柄控制", layersPage);
-    modeSelGroup->AddItem(testModeItem);
-    modeSelGroup->AddItem(travelModeItem);
-
-//    subModeSelGroup = new singleSelectGroup("控制", layersPage);
-//    selectionItem *mvCtrItem = new selectionItem("运动控制", "待填", layersPage);
-//    selectionItem *balCtrItem = new selectionItem("调平控制", "待填", layersPage);
-//    selectionItem *actCtrItem = new selectionItem("动作控制", "待填", layersPage);
-
-//    subModeSelGroup->AddItem(mvCtrItem);
-//    subModeSelGroup->AddItem(balCtrItem);
-//    subModeSelGroup->AddItem(actCtrItem);
-
-    textButton *ensureBtn = new textButton("确认", layersPage);
-
-    //按照从下到上的顺序排布
-    layersPage->AddContent(ensureBtn);          //确认按钮
-    //layersPage->AddContent(subModeSelGroup);  //副模式组
-    layersPage->AddContent(modeSelGroup);       //主模式组
-    layersPage->AddContent(whiteSpace);         //留白
-    layersPage->show(); //界面显示
-
-    //将层页放入页表容器中
-    pageList.push_back(layersPage);
-
-    //按下层图标的时候，触发层页滑入
-    connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
-
-    connect(testModeItem, &selectionItem::selected, this, [=](){
-        //modeKind = MODE::TEST_MV_CTR;
-        //subModeSelGroup->SetSelection(mvCtrItem);
-        //emit ModeKindChange(modeKind);
-        qDebug()<<"进入数据显示界面";
-    });
-    connect(travelModeItem, &selectionItem::selected, this, [=](){
-        //modeKind = MODE::TRAVEL_MV_CTR;
-        //subModeSelGroup->SetSelection(mvCtrItem);
-        //emit ModeKindChange(modeKind);
-
-        qDebug()<<"进入运动控制界面";
-    });
-//    connect(mvCtrItem, &selectionItem::selected, this, [=](){
-//        //modeKind = MODE::TEST_MV_CTR;
-//        //emit ModeKindChange(modeKind);
-
-//        qDebug()<<"modeKind = TEST_MV_CTR";
-//    });
-//    connect(balCtrItem, &selectionItem::selected, this, [=](){
-//        //modeKind = MODE::TEST_BAL_CTR;
-//        //emit ModeKindChange(modeKind);
-
-//        qDebug()<<"modeKind = TEST_BAL_CTR";
-//    });
-//    connect(actCtrItem, &selectionItem::selected, this, [=](){
-//        //modeKind = MODE::TEST_ACT_CTR;
-//        //emit ModeKindChange(modeKind);
-
-//        qDebug()<<"modeKind = TEST_ACT_CTR";
-//    });
-
-    //connectPage3DLight(layersPage);
-    connect(ensureBtn, &textButton::clicked, this, [=](){
-        //ChangeMyWidget(); //切换界面
-        layersPage->slideOut();
-    });
 }
-
 
 /* 切换到数据显示窗口 */
 void MainWindow::ChangeDataDisplayWidget()
@@ -407,6 +430,11 @@ void MainWindow::ChangeDataDisplayWidget()
         defaultPage->hide();
 
         //切换新界面
+        ui->displayLayout->addWidget(dataDisplayWidget);
+        curSettingsPage = dataDisplayWidget->settingPage();
+        Subtitle->setText("DataDisplay");
+        dataDisplayWidget->show();
+
     }
 }
 
@@ -425,7 +453,6 @@ void MainWindow::OpenSerialPort()
     QStringList PortName = textPortName.split(":");
     //qDebug() << PortName.at(0) << PortName.at(1);
     serial->setPortName(PortName[0]);
-
 
     //设置串口通信参数
     serial->setBaudRate(baudrateCBox->currentText().toInt());//设置波特率
