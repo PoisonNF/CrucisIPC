@@ -184,7 +184,7 @@ void MainWindow::Init(){
     connect(Data_display, &bigIconButton::clicked, this, [=](){
         //左图标事件槽函数
         qDebug() << "Data_displayBtn";
-        ChangeDDWidget();
+        ChangeDataDisplayWidget();
     });
 
     //运动控制按钮槽函数连接
@@ -206,6 +206,114 @@ void MainWindow::Init(){
     ui->displayLayout->setAlignment(Qt::AlignTop);
 
     InitLayersPage();   //层页界面和按钮初始化
+
+    //串口配置按钮 还有个 空出的按钮
+    textButton *serialBtn = new textButton("串口配置", ui->titleBar,1.2);
+    serialBtn->setMinimumWidth(50);
+    textButton *internetBtn = new textButton("", ui->titleBar,1.2);
+    internetBtn->setMinimumWidth(50);
+
+    ui->horizontalLayout->insertWidget(1,serialBtn);
+    ui->horizontalLayout->insertWidget(2,internetBtn);
+
+    serial = new QSerialPort;
+    serialDialog = new SlideDialog(cornerRadius,"串口配置",ui->mainWidget);
+
+    QWidget *serialSetWidget = new QWidget(serialDialog);
+    serialSetWidget->setMinimumHeight(200);
+    QGridLayout *serialSetWidgetLayout = new QGridLayout(serialSetWidget);
+    serialSetWidgetLayout->setContentsMargins(20, 20, 20, 20);
+    serialSetWidgetLayout->setColumnStretch(0,1);
+    serialSetWidgetLayout->setColumnStretch(1,2);
+    serialSetWidgetLayout->setColumnStretch(2,2);
+    serialSetWidget->setLayout(serialSetWidgetLayout);
+
+    QLabel *comPortLabel = new QLabel("串口号", serialSetWidget);
+    QLabel *baudrateLabel = new QLabel("波特率", serialSetWidget);
+    QLabel *dataBitsLabel = new QLabel("数据位", serialSetWidget);
+    QLabel *checkBitsLabel = new QLabel("校验位", serialSetWidget);
+    QLabel *stopBitsLabel = new QLabel("停止位", serialSetWidget);
+    QLabel *flowCtlLabel = new QLabel("流控制", serialSetWidget);
+
+    comPortLabel->setContentsMargins(0, 0, 18, 0);
+    baudrateLabel->setContentsMargins(0, 0, 18, 0);
+    dataBitsLabel->setContentsMargins(0, 0, 18, 0);
+    checkBitsLabel->setContentsMargins(0, 0, 18, 0);
+    stopBitsLabel->setContentsMargins(0, 0, 18, 0);
+    flowCtlLabel->setContentsMargins(0, 0, 18, 0);
+
+    comPortCBox = new QComboBox(serialSetWidget);
+    baudrateCBox = new QComboBox(serialSetWidget);
+    dataBitsCBox = new QComboBox(serialSetWidget);
+    checkBitsCBox = new QComboBox(serialSetWidget);
+    stopBitsCBox = new QComboBox(serialSetWidget);
+    flowCtlCBox = new QComboBox(serialSetWidget);
+
+    openSerialBtn = new textButton("打开串口", serialSetWidget);
+    closeSerialBtn = new textButton("关闭串口", serialSetWidget);
+
+    foreach(qint32 baud, QSerialPortInfo::standardBaudRates())
+        baudrateCBox->addItem(QString::number(baud));
+    baudrateCBox->setCurrentText("115200");
+    serial->setBaudRate(baudrateCBox->currentText().toInt());
+
+    dataBitsCBox->addItem(QString::number(5));
+    dataBitsCBox->addItem(QString::number(6));
+    dataBitsCBox->addItem(QString::number(7));
+    dataBitsCBox->addItem(QString::number(8));
+    dataBitsCBox->setCurrentText("8");
+    serial->setDataBits(QSerialPort::DataBits(dataBitsCBox->currentText().toInt()));
+
+    checkBitsCBox->addItem("NoParity");
+    checkBitsCBox->addItem("EvenParity");
+    checkBitsCBox->addItem("OddParity");
+    checkBitsCBox->setCurrentText("NoParity");
+    serial->setParity(QSerialPort::NoParity);
+
+    stopBitsCBox->addItem(QString::number(1));
+    stopBitsCBox->addItem(QString::number(1.5));
+    stopBitsCBox->addItem(QString::number(2));
+    stopBitsCBox->setCurrentText("1");
+    serial->setStopBits(QSerialPort::OneStop);
+
+    flowCtlCBox->addItem("NoFlowControl");
+    flowCtlCBox->addItem("FlowControl");
+    flowCtlCBox->setCurrentText("NoFlowControl");
+    serial->setFlowControl(QSerialPort::NoFlowControl);
+
+    serialSetWidgetLayout->addWidget(comPortLabel, 0, 0, Qt::AlignRight);
+    serialSetWidgetLayout->addWidget(baudrateLabel, 1, 0, Qt::AlignRight);
+    serialSetWidgetLayout->addWidget(dataBitsLabel, 2, 0, Qt::AlignRight);
+    serialSetWidgetLayout->addWidget(checkBitsLabel, 3, 0, Qt::AlignRight);
+    serialSetWidgetLayout->addWidget(stopBitsLabel, 4, 0, Qt::AlignRight);
+    serialSetWidgetLayout->addWidget(flowCtlLabel, 5, 0, Qt::AlignRight);
+
+    serialSetWidgetLayout->addWidget(comPortCBox, 0, 1);
+    serialSetWidgetLayout->addWidget(baudrateCBox, 1, 1);
+    serialSetWidgetLayout->addWidget(dataBitsCBox, 2, 1);
+    serialSetWidgetLayout->addWidget(checkBitsCBox, 3, 1);
+    serialSetWidgetLayout->addWidget(stopBitsCBox, 4, 1);
+    serialSetWidgetLayout->addWidget(flowCtlCBox, 5, 1);
+
+    serialSetWidgetLayout->addWidget(openSerialBtn, 0, 2, 3, 1);
+    serialSetWidgetLayout->addWidget(closeSerialBtn, 3, 2, 3, 1);
+
+    serialDialog->AddContent(serialSetWidget);
+    serialDialog->show();
+
+    pageList.push_back(serialDialog);
+
+    connect(serialBtn, &textButton::clicked, serialDialog, &SlidePage::slideIn);
+    connect(serialBtn, &textButton::clicked, this, [=](){
+        comPortCBox->clear();
+        foreach(QSerialPortInfo portInfo, QSerialPortInfo::availablePorts())
+            comPortCBox->addItem(portInfo.portName()+":"+portInfo.description());
+        openSerialBtn->setEnabled(comPortCBox->count()>0);
+        serial->setPortName(comPortCBox->currentText());
+    });
+    connect(openSerialBtn, &textButton::clicked, this, &MainWindow::OpenSerialPort);
+    connect(closeSerialBtn, &textButton::clicked, this, &MainWindow::CloseSerialPort);
+    connect(serial,&QSerialPort::readyRead,this,&MainWindow::ReadData);
 }
 
 //层页初始化函数
@@ -300,6 +408,67 @@ void MainWindow::ChangeDataDisplayWidget()
 
         //切换新界面
     }
+}
+
+void MainWindow::OpenSerialPort()
+{
+    if (serial->isOpen())
+    {
+        QMessageBox::warning(this,"错误","串口已打开");
+        return;
+    }
+
+    //设置串口名称
+    QString textPortName;
+    textPortName = comPortCBox->currentText();
+    //根据“：”分割字符串，保留COMx部分
+    QStringList PortName = textPortName.split(":");
+    //qDebug() << PortName.at(0) << PortName.at(1);
+    serial->setPortName(PortName[0]);
+
+
+    //设置串口通信参数
+    serial->setBaudRate(baudrateCBox->currentText().toInt());//设置波特率
+
+    serial->setDataBits(QSerialPort::DataBits(dataBitsCBox->currentText().toInt()));//数据位，默认8位
+
+    //获取校验位控件上面的数据
+    QSerialPort::Parity checkBits  = QSerialPort::NoParity;
+    if(checkBitsCBox->currentText() == "NoParity") checkBits = QSerialPort::NoParity;
+    else if(checkBitsCBox->currentText() == "OddParity") checkBits = QSerialPort::OddParity;
+    else if(checkBitsCBox->currentText() == "EvenParity") checkBits = QSerialPort::EvenParity;
+
+    serial->setParity(checkBits);
+
+    if (serial->open(QIODeviceBase::ReadWrite))
+    {
+        comPortCBox->setEnabled(false);  //串口设置面板
+        openSerialBtn->setEnabled(false);
+        closeSerialBtn->setEnabled(true);
+
+        QMessageBox::information(this,"提示信息","串口已经被成功打开");
+    }
+    else
+        QMessageBox::warning(this,"错误","打开串口失败");
+}
+
+void MainWindow::CloseSerialPort()
+{
+    if (serial->isOpen())
+    {
+        serial->close();
+        openSerialBtn->setEnabled(true);
+        closeSerialBtn->setEnabled(false);
+        QMessageBox::information(this,"提示信息","串口关闭成功");
+        return;
+    }
+}
+
+void MainWindow::ReadData()
+{
+    QString buf;
+    buf = QString(serial->readLine());
+    qDebug() << buf;
 }
 
 MainWindow::~MainWindow()

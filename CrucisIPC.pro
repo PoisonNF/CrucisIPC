@@ -1,6 +1,7 @@
 QT       += core gui
 QT += svg
 QT += 3dcore 3drender 3dinput 3dextras
+QT += serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,6 +18,7 @@ SOURCES += \
     graph_view.cpp \
     main.cpp \
     mainwindow.cpp \
+    slidedialog.cpp \
     slidepage.cpp
 
 HEADERS += \
@@ -25,6 +27,7 @@ HEADERS += \
     graph_implement.h \
     graph_view.h \
     mainwindow.h \
+    slidedialog.h \
     slidepage.h
 
 FORMS += \

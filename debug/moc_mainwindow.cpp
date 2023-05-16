@@ -28,25 +28,31 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_MainWindow_t {
-    uint offsetsAndSizes[8];
+    uint offsetsAndSizes[12];
     char stringdata0[11];
-    char stringdata1[15];
+    char stringdata1[24];
     char stringdata2[1];
     char stringdata3[15];
+    char stringdata4[16];
+    char stringdata5[9];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_MainWindow_t::offsetsAndSizes) + ofs), len 
 Q_CONSTINIT static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
     {
         QT_MOC_LITERAL(0, 10),  // "MainWindow"
-        QT_MOC_LITERAL(11, 14),  // "ChangeDDWidget"
-        QT_MOC_LITERAL(26, 0),  // ""
-        QT_MOC_LITERAL(27, 14)   // "InitLayersPage"
+        QT_MOC_LITERAL(11, 23),  // "ChangeDataDisplayWidget"
+        QT_MOC_LITERAL(35, 0),  // ""
+        QT_MOC_LITERAL(36, 14),  // "OpenSerialPort"
+        QT_MOC_LITERAL(51, 15),  // "CloseSerialPort"
+        QT_MOC_LITERAL(67, 8)   // "ReadData"
     },
     "MainWindow",
-    "ChangeDDWidget",
+    "ChangeDataDisplayWidget",
     "",
-    "InitLayersPage"
+    "OpenSerialPort",
+    "CloseSerialPort",
+    "ReadData"
 };
 #undef QT_MOC_LITERAL
 } // unnamed namespace
@@ -57,7 +63,7 @@ Q_CONSTINIT static const uint qt_meta_data_MainWindow[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -65,10 +71,14 @@ Q_CONSTINIT static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   26,    2, 0x08,    1 /* Private */,
-       3,    0,   27,    2, 0x08,    2 /* Private */,
+       1,    0,   38,    2, 0x08,    1 /* Private */,
+       3,    0,   39,    2, 0x08,    2 /* Private */,
+       4,    0,   40,    2, 0x08,    3 /* Private */,
+       5,    0,   41,    2, 0x08,    4 /* Private */,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -84,9 +94,13 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_MainWindow_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<MainWindow, std::true_type>,
-        // method 'ChangeDDWidget'
+        // method 'ChangeDataDisplayWidget'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'InitLayersPage'
+        // method 'OpenSerialPort'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'CloseSerialPort'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'ReadData'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -98,8 +112,10 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<MainWindow *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->ChangeDDWidget(); break;
-        case 1: _t->InitLayersPage(); break;
+        case 0: _t->ChangeDataDisplayWidget(); break;
+        case 1: _t->OpenSerialPort(); break;
+        case 2: _t->CloseSerialPort(); break;
+        case 3: _t->ReadData(); break;
         default: ;
         }
     }
@@ -125,13 +141,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 4;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 2;
+        _id -= 4;
     }
     return _id;
 }

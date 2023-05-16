@@ -24,6 +24,7 @@ private:
     QWidget *bg;
     void mousePressEvent(QMouseEvent *event){if(enabled)pressed = true;}
     void mouseReleaseEvent(QMouseEvent *event){if(enabled && pressed)emit clicked();pressed = false;}
+protected:
     void resizeEvent(QResizeEvent *event){bg->resize(this->parentWidget()->size());}
 public:
     SheildLayer(QWidget *parent = nullptr) : QWidget(parent){
@@ -41,7 +42,7 @@ signals:
 class SlidePage : public QWidget
 {
     Q_OBJECT
-private:
+protected:
     int cornerRadius;
     QString pageName;
     ScrollAreaCustom *pageContentContainer;
@@ -55,10 +56,12 @@ private:
     QParallelAnimationGroup *curAni = nullptr;
     QGraphicsOpacityEffect *opacity;
 
+protected:
     void resizeEvent(QResizeEvent *event);
 
 public:
     const int preferWidth = 350;
+    const int preferHeight = 350;
     explicit SlidePage(int radius, QString name, QWidget *parent = nullptr);
     void SetRadius(int radius);
     void SetName(QString name);
@@ -70,10 +73,12 @@ public:
 
 signals:
     void sizeChange();
+    void SlideOutSignal();
+    void SlideInSignal();
 
 public slots:
-    void slideIn();
-    void slideOut();
+    virtual void slideIn();
+    virtual void slideOut();
 
 };
 

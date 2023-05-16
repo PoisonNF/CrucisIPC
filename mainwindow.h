@@ -4,8 +4,12 @@
 #include <QMainWindow>
 #include <QVector>
 #include <QGraphicsDropShadowEffect>
-#include "slidepage.h"
+#include "slidedialog.h"
 #include <QDebug>
+#include <QSerialPort>
+#include <QSerialPortInfo>
+#include <QComboBox>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -41,6 +45,17 @@ private:
     singleSelectGroup *modeSelGroup = nullptr;
     singleSelectGroup *subModeSelGroup = nullptr;
 
+    QSerialPort *serial;    //串口对象
+    SlideDialog *serialDialog = nullptr; //串口配置滑入对话框
+    textButton *openSerialBtn = nullptr;
+    textButton *closeSerialBtn = nullptr;
+    QComboBox *comPortCBox;
+    QComboBox *baudrateCBox;
+    QComboBox *dataBitsCBox;
+    QComboBox *checkBitsCBox;
+    QComboBox *stopBitsCBox;
+    QComboBox *flowCtlCBox;
+
     void Init();            //界面初始化
     void InitLayersPage();  //换层页初始化
 
@@ -68,6 +83,9 @@ private:
     void controlWindowScale();
 private slots:
     void ChangeDataDisplayWidget();  //切换到数据显示的窗口槽函数
+    void OpenSerialPort();  //打开串口
+    void CloseSerialPort(); //关闭串口
+    void ReadData(); //读取串口数据
 
 public:
     MainWindow(QWidget *parent = nullptr);
