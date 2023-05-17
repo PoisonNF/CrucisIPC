@@ -1,4 +1,5 @@
 #include "datadisplaywidget.h"
+#include "customWidgets.h"
 
 DataDisplayWidget::DataDisplayWidget(int radius, int modeKind, QWidget *parent) :
     QWidget(parent), modeKind_(modeKind)
@@ -69,7 +70,7 @@ void DataDisplayWidget::TestMvSetting(int radius){
 void DataDisplayWidget::Init(){
 //layout
 
-    //1为最大的布局器，2，4，5分别为垂直布局器，对应左中右 3是水平布局器，包括在2内，在state中使用
+    //1为最大的布局器，2，4，5分别为垂直布局器，对应左中右 3是水平布局器，包括在2内，在RM3100中使用
     splitter_1 = new QSplitter(this);
     splitter_1->setOrientation(Qt::Horizontal);
     splitter_2 = new QSplitter(splitter_1);
@@ -96,18 +97,18 @@ void DataDisplayWidget::Init(){
     splitter_4->setSizePolicy(sizepolicy);
     splitter_5->setSizePolicy(sizepolicy);
 
-//axis
+//JY901S
     QFont titleFont = QFont("Corbel", 20);
-    axisTitle = new QLabel(this);
-    axisTitle->setText("AXIS");
-    axisTitle->setFont(titleFont);
-    axisTitle->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    axisTitle->setStyleSheet("color:#2c2c2c");
+    JY901STitle = new QLabel(this);
+    JY901STitle->setText("JY901S");
+    JY901STitle->setFont(titleFont);
+    JY901STitle->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    JY901STitle->setStyleSheet("color:#2c2c2c");
 
     //小横条设置
-    QWidget *axisSplitter = new QWidget(this);
-    axisSplitter->setFixedSize(30, 6);
-    axisSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
+    QWidget *JY901SSplitter = new QWidget(this);
+    JY901SSplitter->setFixedSize(30, 6);
+    JY901SSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
 //    AuvLocationGraph * graph = new AuvLocationGraph(this);
 //    graph->setSizePolicy(sizepolicy);
@@ -116,99 +117,102 @@ void DataDisplayWidget::Init(){
 //    graph->setStyleSheet("QWidget#graph{border:1px solid #cfcfcf;border-radius:5px;}");
 
 
-    QWidget *axisDataWidget = new QWidget(this);
-    axisDataWidget->setSizePolicy(sizepolicy);
+    QWidget *JY901SDataWidget = new QWidget(this);
+    JY901SDataWidget->setSizePolicy(sizepolicy);
     //设置最小大小
-    axisDataWidget->setMinimumSize(300,300);
-    QHBoxLayout *axisDataLayout = new QHBoxLayout(this);
-    axisDataWidget->setLayout(axisDataLayout);
-    axisDataLayout->setContentsMargins(0, 0, 0, 0);
-    axisDataLayout->setAlignment(Qt::AlignTop);
-    //axisDataLayout->addWidget(graph);
+    JY901SDataWidget->setMinimumSize(300,300);
+    QHBoxLayout *JY901SDataLayout = new QHBoxLayout(this);
+    JY901SDataWidget->setLayout(JY901SDataLayout);
+    JY901SDataLayout->setContentsMargins(0, 0, 0, 0);
+    JY901SDataLayout->setAlignment(Qt::AlignTop);
+    //JY901SDataLayout->addWidget(graph);
 
-    axisWidget = new QWidget(this);
-    axisWidget->setSizePolicy(sizepolicy);
-    QVBoxLayout *axisLayout = new QVBoxLayout(this);
-    axisWidget->setLayout(axisLayout);
-    axisLayout->setContentsMargins(0, 0, 0, 0);
-    axisLayout->setAlignment(Qt::AlignTop);
-    axisLayout->addWidget(axisTitle);
-    axisLayout->addWidget(axisSplitter);
-    axisLayout->addWidget(axisDataWidget);
+    JY901SWidget = new QWidget(this);
+    JY901SWidget->setSizePolicy(sizepolicy);
+    QVBoxLayout *JY901SLayout = new QVBoxLayout(this);
+    JY901SWidget->setLayout(JY901SLayout);
+    JY901SLayout->setContentsMargins(0, 0, 0, 0);
+    JY901SLayout->setAlignment(Qt::AlignTop);
+    JY901SLayout->addWidget(JY901STitle);
+    JY901SLayout->addWidget(JY901SSplitter);
+    JY901SLayout->addWidget(JY901SDataWidget);
 
-    splitter_2->addWidget(axisWidget);
-    splitter_2->addWidget(splitter_3);
+    splitter_2->addWidget(JY901SWidget);
+    //splitter_2->addWidget(splitter_3);
 
-//state
-    stateTitle = new QLabel(this);
-    stateTitle->setText("STATE");
-    stateTitle->setFont(titleFont);
-    stateTitle->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    stateTitle->setStyleSheet("color:#2c2c2c");
+//RM3100
+    RM3100Title = new QLabel(this);
+    RM3100Title->setText("RM3100");
+    RM3100Title->setFont(titleFont);
+    RM3100Title->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    RM3100Title->setStyleSheet("color:#2c2c2c");
 
     //小横条设置
-    QWidget *stateSplitter = new QWidget(this);
-    stateSplitter->setFixedSize(30, 6);
-    stateSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
+    QWidget *RM3100Splitter = new QWidget(this);
+    RM3100Splitter->setFixedSize(30, 6);
+    RM3100Splitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-    ScrollAreaCustom *stateDisplay = new ScrollAreaCustom(this);
+    ScrollAreaCustom *RM3100Display = new ScrollAreaCustom(this);
 
-    QWidget *stateDataWidget = new QWidget(this);
-    stateDataWidget->setSizePolicy(sizepolicy);
-    stateDataWidget->setMinimumSize(150,300);
-    QHBoxLayout *stateDataLayout = new QHBoxLayout(this);
-    stateDataWidget->setLayout(stateDataLayout);
-    stateDataLayout->setContentsMargins(0, 0, 0, 0);
-    stateDataLayout->setAlignment(Qt::AlignTop);
-    stateDataLayout->addWidget(stateDisplay);
+    QWidget *RM3100DataWidget = new QWidget(this);
+    RM3100DataWidget->setSizePolicy(sizepolicy);
+    RM3100DataWidget->setMinimumSize(150,300);
+    QHBoxLayout *RM3100DataLayout = new QHBoxLayout(this);
+    RM3100DataWidget->setLayout(RM3100DataLayout);
+    RM3100DataLayout->setContentsMargins(0, 0, 0, 0);
+    RM3100DataLayout->setAlignment(Qt::AlignTop);
+    RM3100DataLayout->addWidget(RM3100Display);
 
-    stateWidget = new QWidget(this);
-    stateWidget->setSizePolicy(sizepolicy);
-    QVBoxLayout *stateLayout = new QVBoxLayout(this);
-    stateWidget->setLayout(stateLayout);
-    stateLayout->setContentsMargins(0, 0, 0, 0);
-    stateLayout->setAlignment(Qt::AlignTop);
-    stateLayout->addWidget(stateTitle);
-    stateLayout->addWidget(stateSplitter);
-    stateLayout->addWidget(stateDataWidget);
+    RM3100Widget = new QWidget(this);
+    RM3100Widget->setSizePolicy(sizepolicy);
+    QVBoxLayout *RM3100Layout = new QVBoxLayout(this);
+    RM3100Widget->setLayout(RM3100Layout);
+    RM3100Layout->setContentsMargins(0, 0, 0, 0);
+    RM3100Layout->setAlignment(Qt::AlignTop);
+    RM3100Layout->addWidget(RM3100Title);
+    RM3100Layout->addWidget(RM3100Splitter);
+    RM3100Layout->addWidget(RM3100DataWidget);
 
     //AuvDepHeiWidget *depHeiWidget = new AuvDepHeiWidget(this);
-    //splitter_3为水平布局器，tempwidget将会出现在state的右边
+    //splitter_3为水平布局器，tempwidget将会出现在RM3100的右边
     //QWidget *tempwidget = new QWidget(this);
-    splitter_3->addWidget(stateWidget);
+    splitter_2->addWidget(RM3100Widget);
+    //splitter_3->addWidget(RM3100Widget);
     //splitter_3->addWidget(tempwidget);
 
-//推进器转速设置
-    QLabel *mvCtrLabel = new QLabel(this);
-    mvCtrLabel->setText("MOVE CONTROL");
-    mvCtrLabel->setFont(titleFont);
-    mvCtrLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    mvCtrLabel->setStyleSheet("color:#2c2c2c");
+//动力系统
+    QLabel *PropulsionSysLabel = new QLabel(this);
+    PropulsionSysLabel->setText("Propulsion System");
+    PropulsionSysLabel->setFont(titleFont);
+    PropulsionSysLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    PropulsionSysLabel->setStyleSheet("color:#2c2c2c");
 
     //小横条设置
-    QWidget *mvCtrSplitter = new QWidget(this);
-    mvCtrSplitter->setFixedSize(30, 6);
-    mvCtrSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
+    QWidget *PropulsionSysSplitter = new QWidget(this);
+    PropulsionSysSplitter->setFixedSize(30, 6);
+    PropulsionSysSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-    propellerWidget = new QWidget(splitter_4);
-    propellerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QGridLayout *propellerLayout = new QGridLayout(propellerWidget);
-    propellerLayout->setContentsMargins(0, 0, 0, 0);
-    propellerWidget->setLayout(propellerLayout);
+//    propellerWidget = new QWidget(splitter_4);
+//    propellerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//    QGridLayout *propellerLayout = new QGridLayout(propellerWidget);
+//    propellerLayout->setContentsMargins(0, 0, 0, 0);
+//    propellerWidget->setLayout(propellerLayout);
 
-    QWidget *mvCtrWidget = new QWidget(this);
-    QVBoxLayout *mvCtrLayout = new QVBoxLayout(mvCtrWidget);
-    mvCtrWidget->setLayout(mvCtrLayout);
-    mvCtrLayout->setContentsMargins(0, 0, 0, 0);
-    mvCtrLayout->setAlignment(Qt::AlignTop);
-    mvCtrLayout->addWidget(mvCtrLabel);
-    mvCtrLayout->addWidget(mvCtrSplitter);
-    mvCtrLayout->addWidget(propellerWidget);
+    QWidget *PropulsionSysWidget = new QWidget(this);
+    QVBoxLayout *PropulsionSysLayout = new QVBoxLayout(PropulsionSysWidget);
+    PropulsionSysWidget->setLayout(PropulsionSysLayout);
+    PropulsionSysLayout->setContentsMargins(0, 0, 0, 0);
+    PropulsionSysLayout->setAlignment(Qt::AlignTop);
+    PropulsionSysLayout->addWidget(PropulsionSysLabel);
+    PropulsionSysLayout->addWidget(PropulsionSysSplitter);
+    PropulsionSysLayout->addWidget(propellerWidget);
 
 
-//LOG
+//串口LOG
+
+    //log标签设置
     QLabel *logLabel = new QLabel(this);
-    logLabel->setText("LOG");
+    logLabel->setText("Log From Uart");
     logLabel->setFont(titleFont);
     logLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     logLabel->setStyleSheet("color:#2c2c2c");
@@ -218,29 +222,49 @@ void DataDisplayWidget::Init(){
     logSplitter->setFixedSize(30, 6);
     logSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-    ScrollAreaCustom *logDisplay = new ScrollAreaCustom(this);
-    logDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//    ScrollAreaCustom *logDisplay = new ScrollAreaCustom(this);
+//    logDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    //log框设置，包含PTE和LE，使用垂直布局
+    //用于显示接收串口传过来的数据
     logPTE = new QPlainTextEdit;
     logPTE->setReadOnly(true);
     logPTE->setMinimumSize(300,150);
-    logPTE->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #EDEDED;font: 20px 'Corbel Light'; border: 1px solid darkgray;");
+    logPTE->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000;font: 20px 'Corbel Light'; border: 1px solid darkgray;");
 
+    //串口发送行
+    logTII = new textInputItem("Send Line:",this);
 
     QWidget *logWidget = new QWidget(this);
-    QVBoxLayout *logLayout = new QVBoxLayout(this);
+    QVBoxLayout *logLayout = new QVBoxLayout(this); //垂直布局
     logWidget->setLayout(logLayout);
     logLayout->setContentsMargins(0, 0, 0, 0);
     logLayout->setAlignment(Qt::AlignTop);
     logLayout->addWidget(logLabel);
     logLayout->addWidget(logSplitter);
     logLayout->addWidget(logPTE);
-    logLayout->addWidget(logDisplay);
+    logLayout->addWidget(logTII);
+    //logLayout->addWidget(logDisplay);
 
-    splitter_4->addWidget(mvCtrWidget);
+    //底下两个按钮的设置，使用水平布局
+    textButton *SendBTN = new textButton("Send",this);
+    textButton *ClearBTN = new textButton("Clear",this);
+
+    //connect(SendBTN,&textButton::clicked,this,&DataDisplayWidget::SendData);
+    //connect(this,&DataDisplayWidget::SendDataSignal,&MainWindow::SerialDataSend);
+
+    QWidget *BTNWidget = new QWidget(this);
+    QHBoxLayout *BTNLayout = new QHBoxLayout(this); //水平布局
+    BTNWidget->setLayout(BTNLayout);
+    BTNLayout->addWidget(SendBTN);
+    BTNLayout->addWidget(ClearBTN);
+
+    //垂直布局，将PropulsionSysWidget、logWidget、BTNWidget摆放
+    splitter_4->addWidget(PropulsionSysWidget);
     splitter_4->addWidget(logWidget);
+    splitter_4->addWidget(BTNWidget);
 
-//3d
+//3d模型
     QLabel *model3DTitle = new QLabel(this);
     model3DTitle = new QLabel(this);
     model3DTitle->setText("3Dmodel");
@@ -305,8 +329,6 @@ void DataDisplayWidget::Init(){
     qt3dLayout->addWidget(model3DTitle);
     qt3dLayout->addWidget(model3DSplitter);
     qt3dLayout->addWidget(container);
-
-
 
     //获取了 Qt3D 中的一个 QWidget 的尺寸策略
     sizepolicy = qt3dWidget->sizePolicy();
@@ -383,8 +405,15 @@ void DataDisplayWidget::DataDisplayPTE(QString serialBuf)
 {
     logPTE->ensureCursorVisible();
     logPTE->insertPlainText(serialBuf);
-    qDebug()<<serialBuf;
+    //qDebug()<<serialBuf;
 }
+
+//发送按钮槽函数，向串口发送当前输入行内的数据
+//void DataDisplayWidget::SendData(QString DataBuf)
+//{
+//    DataBuf = logTII->value();
+//    emit SendDataSignal(DataBuf);
+//}
 
 void DataDisplayWidget::SaveToFile(const QString &path){
     QFile output(path);

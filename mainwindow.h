@@ -102,6 +102,9 @@ private slots:
     void CloseSerialPort(); //关闭串口
     void ReadData(); //读取串口数据
 
+public slots:
+    //void SerialDataSend(QString serialbuf);
+
 signals:
     void DataReadCplt(QString serialBuf);
 

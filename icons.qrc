@@ -6,5 +6,7 @@
         <file>icons/open.png</file>
         <file>icons/create.png</file>
         <file>icons/layers.svg</file>
+        <file>icons/DataDisplay.svg</file>
+        <file>icons/GamePad.svg</file>
     </qresource>
 </RCC>

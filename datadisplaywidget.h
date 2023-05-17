@@ -19,7 +19,7 @@
 
 #include "slidepage.h"
 #include "scenemodifier.h"
-#include "graph_view.h"
+#include "customWidgets.h"
 
 #if (QT_VERSION > QT_VERSION_CHECK(6,3,0))
 #include <QFileDialog>
@@ -46,20 +46,21 @@ private:
     QSplitter *splitter_3;
     QSplitter *splitter_4;
     QSplitter *splitter_5;
-    QLabel *axisTitle;
-    QLabel *stateTitle;
+    QLabel *JY901STitle;
+    QLabel *RM3100Title;
     QLabel *logTitle;
     QLabel *infoTitle;
 
     QString modeName;
     QString ctrDescrip;
 
-    QWidget *axisWidget = nullptr;
-    QWidget *stateWidget = nullptr;
+    QWidget *JY901SWidget = nullptr;
+    QWidget *RM3100Widget = nullptr;
     QWidget *propellerWidget = nullptr;
     QWidget *infoWidget;
 
     QPlainTextEdit *logPTE;
+    textInputItem *logTII;
 
     void Init();
     void SaveToFile(const QString &path);
@@ -78,12 +79,17 @@ public:
     QWidget *container = nullptr;
     SceneModifier *modifier = nullptr;
 
+    textButton *SendBTN;
+    textButton *ClearBTN;
+
 signals:
     void setDel(DataDisplayWidget* target);
+    //void SendDataSignal(QString DataBuf);
 
 public slots:
     void doModeChange(int);
     void DataDisplayPTE(QString serialBuf);
+    //void SendData(QString DataBuf);
 };
 
 #endif // DATADISPLAYWIDGET_H

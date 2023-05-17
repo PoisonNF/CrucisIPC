@@ -189,9 +189,9 @@ void MainWindow::InitDefaultPage()
     defaultPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     //放置两个大图标
-    bigIconButton *Data_display = new bigIconButton(":/icons/icons/create.png", "数据显示", 10, this);
+    bigIconButton *Data_display = new bigIconButton(":/icons/icons/DataDisplay.svg", "数据显示", 10, this);
     Data_display->setScale(0.9);
-    bigIconButton *Motion_control = new bigIconButton(":/icons/icons/open.png", "运动控制", 10, this);
+    bigIconButton *Motion_control = new bigIconButton(":/icons/icons/GamePad.svg", "运动控制", 10, this);
 
     //数据显示按钮槽函数连接
     connect(Data_display, &bigIconButton::clicked, this, [=](){
@@ -323,8 +323,11 @@ void MainWindow::InitSerialPage()
 
     QWidget *serialSetWidget = new QWidget(serialDialog);
     serialSetWidget->setMinimumHeight(200);
+    //创建布局器
     QGridLayout *serialSetWidgetLayout = new QGridLayout(serialSetWidget);
+    //布局器与QWidget之间的边际四周都为20
     serialSetWidgetLayout->setContentsMargins(20, 20, 20, 20);
+    //设置指定列的伸缩因子 第一个参数为列，第二个参数为伸缩比例
     serialSetWidgetLayout->setColumnStretch(0,1);
     serialSetWidgetLayout->setColumnStretch(1,2);
     serialSetWidgetLayout->setColumnStretch(2,2);
@@ -420,6 +423,7 @@ void MainWindow::InitSerialPage()
     connect(this,&MainWindow::DataReadCplt,dataDisplayWidget,&DataDisplayWidget::DataDisplayPTE);
 }
 
+/* 初始化数据显示窗口 */
 void MainWindow::InitDataDisplayWidget()
 {
     dataDisplayWidget = new DataDisplayWidget(cornerRadius,0, ui->mainWidget);
@@ -437,7 +441,7 @@ void MainWindow::ChangeDataDisplayWidget()
     ui->displayLayout->removeWidget(defaultPage);
     defaultPage->hide();
 
-    //切换新界面
+    //切换数据显示界面
     ui->displayLayout->addWidget(dataDisplayWidget);
     curSettingsPage = dataDisplayWidget->settingPage();
     Subtitle->setText("DataDisplay");
@@ -500,13 +504,18 @@ void MainWindow::CloseSerialPort()
 
 void MainWindow::ReadData()
 {
-    QString buf;    //接收到的数据
-    buf = QString(serial->readLine());
+    QString serialBuf;    //储存接收到的数据
+    serialBuf = QString(serial->readLine());
     //qDebug() << buf;
 
-    emit DataReadCplt(buf);
-    //dataDisplayWidget->AddLog(buf);
+    //发射信号给datadisplay窗口
+    emit DataReadCplt(serialBuf);
 }
+
+//void MainWindow::SerialDataSend(QString serialbuf)
+//{
+//    serial->write(serialbuf.toLocal8Bit().data());
+//}
 
 MainWindow::~MainWindow()
 {
