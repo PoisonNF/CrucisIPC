@@ -103,7 +103,6 @@ private slots:
     void ReadData(); //读取串口数据
 
 public slots:
-    //void SerialDataSend(QString serialbuf);
 
 signals:
     void DataReadCplt(QString serialBuf);
@@ -115,4 +114,7 @@ public:
 private:
     Ui::MainWindow *ui;
 };
+
+
+
 #endif // MAINWINDOW_H

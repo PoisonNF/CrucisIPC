@@ -250,8 +250,18 @@ void DataDisplayWidget::Init(){
     textButton *SendBTN = new textButton("Send",this);
     textButton *ClearBTN = new textButton("Clear",this);
 
-    //connect(SendBTN,&textButton::clicked,this,&DataDisplayWidget::SendData);
-    //connect(this,&DataDisplayWidget::SendDataSignal,&MainWindow::SerialDataSend);
+    //按下发送键，发送发送数据信号给主窗口
+    connect(SendBTN,&textButton::clicked,this,[=](){
+        emit SendDataSignal();
+    });
+
+    //按下清屏键，清除接收框和发送框所有的数据
+    connect(ClearBTN,&textButton::clicked,this,[=]()
+    {
+        logPTE->clear();
+        logTII->setValue("");
+        qDebug() << "Clear complete";
+    });
 
     QWidget *BTNWidget = new QWidget(this);
     QHBoxLayout *BTNLayout = new QHBoxLayout(this); //水平布局
@@ -408,12 +418,7 @@ void DataDisplayWidget::DataDisplayPTE(QString serialBuf)
     //qDebug()<<serialBuf;
 }
 
-//发送按钮槽函数，向串口发送当前输入行内的数据
-//void DataDisplayWidget::SendData(QString DataBuf)
-//{
-//    DataBuf = logTII->value();
-//    emit SendDataSignal(DataBuf);
-//}
+
 
 void DataDisplayWidget::SaveToFile(const QString &path){
     QFile output(path);

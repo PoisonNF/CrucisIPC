@@ -25,7 +25,6 @@
 #include <QFileDialog>
 #endif
 
-
 class DataDisplayWidget : public QWidget
 {
     Q_OBJECT
@@ -60,7 +59,6 @@ private:
     QWidget *infoWidget;
 
     QPlainTextEdit *logPTE;
-    textInputItem *logTII;
 
     void Init();
     void SaveToFile(const QString &path);
@@ -82,14 +80,16 @@ public:
     textButton *SendBTN;
     textButton *ClearBTN;
 
+    textInputItem *logTII;
+
 signals:
     void setDel(DataDisplayWidget* target);
-    //void SendDataSignal(QString DataBuf);
+    void SendDataSignal();
 
 public slots:
     void doModeChange(int);
     void DataDisplayPTE(QString serialBuf);
-    //void SendData(QString DataBuf);
+
 };
 
 #endif // DATADISPLAYWIDGET_H

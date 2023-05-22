@@ -420,7 +420,16 @@ void MainWindow::InitSerialPage()
     connect(closeSerialBtn, &textButton::clicked, this, &MainWindow::CloseSerialPort);
     connect(serial,&QSerialPort::readyRead,this,&MainWindow::ReadData);
 
+    //接收到读取完成信号，显示在接收框中
     connect(this,&MainWindow::DataReadCplt,dataDisplayWidget,&DataDisplayWidget::DataDisplayPTE);
+
+    //接收到发送信号，往串口中写入发送框的数据
+    connect(dataDisplayWidget,&DataDisplayWidget::SendDataSignal,this,[=]()
+    {
+        qDebug() << "串口开始发送";
+        serial->write(dataDisplayWidget->logTII->value().toLocal8Bit().data());
+        //qDebug() << dataDisplayWidget->logTII->value().toLocal8Bit().data();
+    });
 }
 
 /* 初始化数据显示窗口 */
@@ -449,6 +458,7 @@ void MainWindow::ChangeDataDisplayWidget()
 
 }
 
+/* 打开串口槽函数 */
 void MainWindow::OpenSerialPort()
 {
     if (serial->isOpen())
@@ -490,6 +500,7 @@ void MainWindow::OpenSerialPort()
         QMessageBox::warning(this,"错误","打开串口失败");
 }
 
+/* 关闭串口槽函数 */
 void MainWindow::CloseSerialPort()
 {
     if (serial->isOpen())
@@ -502,6 +513,7 @@ void MainWindow::CloseSerialPort()
     }
 }
 
+/* 数据读取发射信号槽函数 */
 void MainWindow::ReadData()
 {
     QString serialBuf;    //储存接收到的数据
@@ -511,11 +523,6 @@ void MainWindow::ReadData()
     //发射信号给datadisplay窗口
     emit DataReadCplt(serialBuf);
 }
-
-//void MainWindow::SerialDataSend(QString serialbuf)
-//{
-//    serial->write(serialbuf.toLocal8Bit().data());
-//}
 
 MainWindow::~MainWindow()
 {
