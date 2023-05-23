@@ -50,13 +50,19 @@ private:
     QLabel *logTitle;
     QLabel *infoTitle;
 
+    QLabel *JY901SDataAcc = new QLabel(this);    //显示JY901S中加速度数据
+    QLabel *JY901SDataGyro = new QLabel(this);   //显示JY901S中角速度数据
+    QLabel *JY901SDataAngle = new QLabel(this);  //显示JY901S中欧拉角数据
+    QLabel *JY901SDataMag = new QLabel(this);    //显示JY901S中磁场数据
+
     QString modeName;
     QString ctrDescrip;
 
     QWidget *JY901SWidget = nullptr;
     QWidget *RM3100Widget = nullptr;
-    QWidget *propellerWidget = nullptr;
-    QWidget *infoWidget;
+    QWidget *PropulsionSysWidget = nullptr;
+    QWidget *logWidget = nullptr;
+    QWidget *infoWidget = nullptr;
 
     QPlainTextEdit *logPTE;
 
@@ -64,7 +70,7 @@ private:
     void SaveToFile(const QString &path);
     void TestMvSetting(int r);
     void TestMvMode();
-
+    void DataSortConnect(); //数据分类链接函数
 
 public:
     explicit DataDisplayWidget(int radius, int modeKind, QWidget *parent = nullptr);
@@ -85,10 +91,14 @@ public:
 signals:
     void setDel(DataDisplayWidget* target);
     void SendDataSignal();
+    void StartDataSort(QStringList ProcessedData);
 
 public slots:
     void doModeChange(int);
     void DataDisplayPTE(QString serialBuf);
+
+private slots:
+    void JY901SDataSort(QStringList ProcessedData);  //JY901S数据分拣槽函数
 
 };
 

@@ -110,22 +110,56 @@ void DataDisplayWidget::Init(){
     JY901SSplitter->setFixedSize(30, 6);
     JY901SSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-//    AuvLocationGraph * graph = new AuvLocationGraph(this);
-//    graph->setSizePolicy(sizepolicy);
-//    graph->setMinimumSize(300,300);
-//    graph->setObjectName("graph");
-//    graph->setStyleSheet("QWidget#graph{border:1px solid #cfcfcf;border-radius:5px;}");
+    QLabel *JY901SAcc = new QLabel(this);    //JY901S加速度数据标签
+    QLabel *JY901SGyro = new QLabel(this);   //JY901S中角速度标签
+    QLabel *JY901SAngle = new QLabel(this);  //JY901S中欧拉角标签
+    QLabel *JY901SMag = new QLabel(this);    //JY901S中磁场标签
 
+    //设置字体和大小
+    QFont AccFont = QFont("Corbel", 15);
+    QFont GyroFont = QFont("Corbel", 15);
+    QFont AngleFont = QFont("Corbel", 15);
+    QFont MagFont = QFont("Corbel", 15);
+
+    JY901SAcc->setMinimumHeight(25);
+    JY901SAcc->setFont(AccFont);
+    JY901SGyro->setMinimumHeight(25);
+    JY901SGyro->setFont(AccFont);
+    JY901SAngle->setMinimumHeight(25);
+    JY901SAngle->setFont(AccFont);
+    JY901SMag->setMinimumHeight(25);
+    JY901SMag->setFont(AccFont);
+
+    JY901SDataAcc->setMinimumSize(300,25);
+    JY901SDataAcc->setFont(AccFont);
+    JY901SDataGyro->setMinimumSize(300,25);
+    JY901SDataGyro->setFont(GyroFont);
+    JY901SDataAngle->setMinimumSize(300,25);
+    JY901SDataAngle->setFont(AngleFont);
+    JY901SDataMag->setMinimumSize(300,25);
+    JY901SDataMag->setFont(MagFont);
+
+    JY901SAcc->setText("Acc:");
+    JY901SGyro->setText("Gyro:");
+    JY901SAngle->setText("Angle:");
+    JY901SMag->setText("Mag:");
 
     QWidget *JY901SDataWidget = new QWidget(this);
     JY901SDataWidget->setSizePolicy(sizepolicy);
     //设置最小大小
-    JY901SDataWidget->setMinimumSize(300,300);
-    QHBoxLayout *JY901SDataLayout = new QHBoxLayout(this);
+    JY901SDataWidget->setMinimumSize(450,300);
+    QVBoxLayout *JY901SDataLayout = new QVBoxLayout(this);
     JY901SDataWidget->setLayout(JY901SDataLayout);
     JY901SDataLayout->setContentsMargins(0, 0, 0, 0);
     JY901SDataLayout->setAlignment(Qt::AlignTop);
-    //JY901SDataLayout->addWidget(graph);
+    JY901SDataLayout->addWidget(JY901SAcc);
+    JY901SDataLayout->addWidget(JY901SDataAcc);
+    JY901SDataLayout->addWidget(JY901SGyro);
+    JY901SDataLayout->addWidget(JY901SDataGyro);
+    JY901SDataLayout->addWidget(JY901SAngle);
+    JY901SDataLayout->addWidget(JY901SDataAngle);
+    JY901SDataLayout->addWidget(JY901SMag);
+    JY901SDataLayout->addWidget(JY901SDataMag);
 
     JY901SWidget = new QWidget(this);
     JY901SWidget->setSizePolicy(sizepolicy);
@@ -156,7 +190,7 @@ void DataDisplayWidget::Init(){
 
     QWidget *RM3100DataWidget = new QWidget(this);
     RM3100DataWidget->setSizePolicy(sizepolicy);
-    RM3100DataWidget->setMinimumSize(150,300);
+    RM3100DataWidget->setMinimumSize(450,300);
     QHBoxLayout *RM3100DataLayout = new QHBoxLayout(this);
     RM3100DataWidget->setLayout(RM3100DataLayout);
     RM3100DataLayout->setContentsMargins(0, 0, 0, 0);
@@ -205,7 +239,7 @@ void DataDisplayWidget::Init(){
     PropulsionSysLayout->setAlignment(Qt::AlignTop);
     PropulsionSysLayout->addWidget(PropulsionSysLabel);
     PropulsionSysLayout->addWidget(PropulsionSysSplitter);
-    PropulsionSysLayout->addWidget(propellerWidget);
+    PropulsionSysLayout->addWidget(PropulsionSysWidget);
 
 
 //串口LOG
@@ -347,6 +381,8 @@ void DataDisplayWidget::Init(){
     //配置好的尺寸策略设置回QWidget ,下一次将其显示时，能够保持之前的尺寸大小。
     qt3dWidget->setSizePolicy(sizepolicy);
 
+    splitter_5->addWidget(qt3dWidget);
+
 //info
     infoTitle = new QLabel(this);
     infoTitle->setText("INFO");
@@ -370,7 +406,6 @@ void DataDisplayWidget::Init(){
     infoLayout->addWidget(infoTitle);
     infoLayout->addWidget(infoSplitter);
 
-    splitter_5->addWidget(qt3dWidget);
     splitter_5->addWidget(infoWidget);
 
     splitter_1->setStretchFactor(0,2);
@@ -385,6 +420,9 @@ void DataDisplayWidget::Init(){
 
     splitter_5->setStretchFactor(0,1);
     splitter_5->setStretchFactor(1,2);
+
+    //内部数据分拣逻辑连接
+    DataSortConnect();
 }
 
 
@@ -411,14 +449,61 @@ void DataDisplayWidget::TestMvMode()
 
 }
 
+void DataDisplayWidget::DataSortConnect()
+{
+    connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::JY901SDataSort);
+}
+
 void DataDisplayWidget::DataDisplayPTE(QString serialBuf)
 {
     logPTE->ensureCursorVisible();
     logPTE->insertPlainText(serialBuf);
     //qDebug()<<serialBuf;
+
+    //开始数据分拣
+    //以空格进行分割数据，用于判断数据来源
+    QStringList ProcessedData = serialBuf.split(u' ');
+    //qDebug() << ProcessedData;
+
+    emit StartDataSort(ProcessedData);
 }
 
-
+void DataDisplayWidget::JY901SDataSort(QStringList ProcessedData)
+{
+    //是JY901S的数据
+    if(ProcessedData.count() > 0 && ProcessedData.at(0) == "J")
+    {
+        //qDebug() << "JY901S的数据";
+        //是加速度
+        if(ProcessedData.at(1) == "Acc")
+        {
+            //qDebug() << "Acc的数据";
+            JY901SDataAcc->setText(QString("%1    %2    %3    %4")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+        //是角速度
+        if(ProcessedData.at(1) == "Gyro")
+        {
+            //qDebug() << "Gyro的数据";
+            JY901SDataGyro->setText(QString("%1    %2    %3    %4")
+                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+        //是欧拉角
+        if(ProcessedData.at(1) == "Angle")
+        {
+            //qDebug() << "Angle的数据";
+            JY901SDataAngle->setText(QString("%1    %2    %3    %4")
+                                     .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+        //是磁场
+        if(ProcessedData.at(1) == "Mag")
+        {
+            //qDebug() << "Mag的数据";
+            JY901SDataMag->setText(QString("%1    %2    %3    %4")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+    }
+}
 
 void DataDisplayWidget::SaveToFile(const QString &path){
     QFile output(path);
