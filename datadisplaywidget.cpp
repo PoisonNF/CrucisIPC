@@ -116,28 +116,25 @@ void DataDisplayWidget::Init(){
     QLabel *JY901SMag = new QLabel(this);    //JY901S中磁场标签
 
     //设置字体和大小
-    QFont AccFont = QFont("Corbel", 15);
-    QFont GyroFont = QFont("Corbel", 15);
-    QFont AngleFont = QFont("Corbel", 15);
-    QFont MagFont = QFont("Corbel", 15);
+    QFont JY901SDataFont = QFont("Corbel", 15);
 
     JY901SAcc->setMinimumHeight(25);
-    JY901SAcc->setFont(AccFont);
+    JY901SAcc->setFont(JY901SDataFont);
     JY901SGyro->setMinimumHeight(25);
-    JY901SGyro->setFont(AccFont);
+    JY901SGyro->setFont(JY901SDataFont);
     JY901SAngle->setMinimumHeight(25);
-    JY901SAngle->setFont(AccFont);
+    JY901SAngle->setFont(JY901SDataFont);
     JY901SMag->setMinimumHeight(25);
-    JY901SMag->setFont(AccFont);
+    JY901SMag->setFont(JY901SDataFont);
 
     JY901SDataAcc->setMinimumSize(300,25);
-    JY901SDataAcc->setFont(AccFont);
+    JY901SDataAcc->setFont(JY901SDataFont);
     JY901SDataGyro->setMinimumSize(300,25);
-    JY901SDataGyro->setFont(GyroFont);
+    JY901SDataGyro->setFont(JY901SDataFont);
     JY901SDataAngle->setMinimumSize(300,25);
-    JY901SDataAngle->setFont(AngleFont);
+    JY901SDataAngle->setFont(JY901SDataFont);
     JY901SDataMag->setMinimumSize(300,25);
-    JY901SDataMag->setFont(MagFont);
+    JY901SDataMag->setFont(JY901SDataFont);
 
     JY901SAcc->setText("Acc:");
     JY901SGyro->setText("Gyro:");
@@ -186,16 +183,53 @@ void DataDisplayWidget::Init(){
     RM3100Splitter->setFixedSize(30, 6);
     RM3100Splitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-    ScrollAreaCustom *RM3100Display = new ScrollAreaCustom(this);
+    QLabel *RM3100NO1 = new QLabel(this);    //RM3100 1号标签
+    QLabel *RM3100NO2 = new QLabel(this);    //RM3100 2号标签
+    QLabel *RM3100NO3 = new QLabel(this);    //RM3100 3号标签
+    QLabel *RM3100NO4 = new QLabel(this);    //RM3100 4号标签
+
+    //设置字体和大小
+    QFont RM3100DataFont = QFont("Corbel", 15);
+
+    RM3100NO1->setMinimumHeight(25);
+    RM3100NO1->setFont(RM3100DataFont);
+    RM3100NO2->setMinimumHeight(25);
+    RM3100NO2->setFont(RM3100DataFont);
+    RM3100NO3->setMinimumHeight(25);
+    RM3100NO3->setFont(RM3100DataFont);
+    RM3100NO4->setMinimumHeight(25);
+    RM3100NO4->setFont(RM3100DataFont);
+
+    RM3100DataNO1->setMinimumSize(300,25);
+    RM3100DataNO1->setFont(RM3100DataFont);
+    RM3100DataNO2->setMinimumSize(300,25);
+    RM3100DataNO2->setFont(RM3100DataFont);
+    RM3100DataNO3->setMinimumSize(300,25);
+    RM3100DataNO3->setFont(RM3100DataFont);
+    RM3100DataNO4->setMinimumSize(300,25);
+    RM3100DataNO4->setFont(RM3100DataFont);
+
+    RM3100NO1->setText("NO1:");
+    RM3100NO2->setText("NO2:");
+    RM3100NO3->setText("NO3:");
+    RM3100NO4->setText("NO4:");
 
     QWidget *RM3100DataWidget = new QWidget(this);
     RM3100DataWidget->setSizePolicy(sizepolicy);
     RM3100DataWidget->setMinimumSize(450,300);
-    QHBoxLayout *RM3100DataLayout = new QHBoxLayout(this);
+    QVBoxLayout *RM3100DataLayout = new QVBoxLayout(this);
     RM3100DataWidget->setLayout(RM3100DataLayout);
     RM3100DataLayout->setContentsMargins(0, 0, 0, 0);
     RM3100DataLayout->setAlignment(Qt::AlignTop);
-    RM3100DataLayout->addWidget(RM3100Display);
+    RM3100DataLayout->addWidget(RM3100NO1);
+    RM3100DataLayout->addWidget(RM3100DataNO1);
+    RM3100DataLayout->addWidget(RM3100NO2);
+    RM3100DataLayout->addWidget(RM3100DataNO2);
+    RM3100DataLayout->addWidget(RM3100NO3);
+    RM3100DataLayout->addWidget(RM3100DataNO3);
+    RM3100DataLayout->addWidget(RM3100NO4);
+    RM3100DataLayout->addWidget(RM3100DataNO4);
+
 
     RM3100Widget = new QWidget(this);
     RM3100Widget->setSizePolicy(sizepolicy);
@@ -207,9 +241,6 @@ void DataDisplayWidget::Init(){
     RM3100Layout->addWidget(RM3100Splitter);
     RM3100Layout->addWidget(RM3100DataWidget);
 
-    //AuvDepHeiWidget *depHeiWidget = new AuvDepHeiWidget(this);
-    //splitter_3为水平布局器，tempwidget将会出现在RM3100的右边
-    //QWidget *tempwidget = new QWidget(this);
     splitter_2->addWidget(RM3100Widget);
     //splitter_3->addWidget(RM3100Widget);
     //splitter_3->addWidget(tempwidget);
@@ -449,11 +480,14 @@ void DataDisplayWidget::TestMvMode()
 
 }
 
+//数据分类链接函数
 void DataDisplayWidget::DataSortConnect()
 {
     connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::JY901SDataSort);
+    connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::RM3100DataSort);
 }
 
+//数据显示到PlainTextEdit中，发起数据分拣信号
 void DataDisplayWidget::DataDisplayPTE(QString serialBuf)
 {
     logPTE->ensureCursorVisible();
@@ -482,24 +516,56 @@ void DataDisplayWidget::JY901SDataSort(QStringList ProcessedData)
                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
         }
         //是角速度
-        if(ProcessedData.at(1) == "Gyro")
+        else if(ProcessedData.at(1) == "Gyro")
         {
             //qDebug() << "Gyro的数据";
             JY901SDataGyro->setText(QString("%1    %2    %3    %4")
                                     .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
         }
         //是欧拉角
-        if(ProcessedData.at(1) == "Angle")
+        else if(ProcessedData.at(1) == "Angle")
         {
             //qDebug() << "Angle的数据";
             JY901SDataAngle->setText(QString("%1    %2    %3    %4")
                                      .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
         }
         //是磁场
-        if(ProcessedData.at(1) == "Mag")
+        else if(ProcessedData.at(1) == "Mag")
         {
             //qDebug() << "Mag的数据";
             JY901SDataMag->setText(QString("%1    %2    %3    %4")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+    }
+}
+
+void DataDisplayWidget::RM3100DataSort(QStringList ProcessedData)
+{
+    //是RM3100的数据
+    if(ProcessedData.at(0) == "R")
+    {
+        if(ProcessedData.at(1) == "1")
+        {
+            //qDebug() << "NO1的数据";
+            RM3100DataNO1->setText(QString("%1    %2    %3    %4")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+        if(ProcessedData.at(1) == "2")
+        {
+            //qDebug() << "NO2的数据";
+            RM3100DataNO2->setText(QString("%1    %2    %3    %4")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+        if(ProcessedData.at(1) == "3")
+        {
+            //qDebug() << "NO3的数据";
+            RM3100DataNO3->setText(QString("%1    %2    %3    %4")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+        if(ProcessedData.at(1) == "4")
+        {
+            //qDebug() << "NO4的数据";
+            RM3100DataNO4->setText(QString("%1    %2    %3    %4")
                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
         }
     }

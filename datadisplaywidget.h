@@ -55,6 +55,11 @@ private:
     QLabel *JY901SDataAngle = new QLabel(this);  //显示JY901S中欧拉角数据
     QLabel *JY901SDataMag = new QLabel(this);    //显示JY901S中磁场数据
 
+    QLabel *RM3100DataNO1 = new QLabel(this);   //RM3100 1号数据
+    QLabel *RM3100DataNO2 = new QLabel(this);   //RM3100 2号数据
+    QLabel *RM3100DataNO3 = new QLabel(this);   //RM3100 3号数据
+    QLabel *RM3100DataNO4 = new QLabel(this);   //RM3100 4号数据
+
     QString modeName;
     QString ctrDescrip;
 
@@ -99,6 +104,7 @@ public slots:
 
 private slots:
     void JY901SDataSort(QStringList ProcessedData);  //JY901S数据分拣槽函数
+    void RM3100DataSort(QStringList ProcessedData);  //RM3100数据分拣槽函数
 
 };
 
