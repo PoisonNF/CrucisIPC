@@ -60,6 +60,16 @@ private:
     QLabel *RM3100DataNO3 = new QLabel(this);   //RM3100 3号数据
     QLabel *RM3100DataNO4 = new QLabel(this);   //RM3100 4号数据
 
+    QLabel *ThrusterData1 = new QLabel(this);   //1号推进器的数据
+    QLabel *ThrusterData2 = new QLabel(this);   //2号推进器的数据
+    QLabel *ThrusterData3 = new QLabel(this);   //3号推进器的数据
+    QLabel *ThrusterData4 = new QLabel(this);   //4号推进器的数据
+
+    QLabel *ServoData1 = new QLabel(this);  //1号舵机的数据
+    QLabel *ServoData2 = new QLabel(this);  //2号舵机的数据
+    QLabel *ServoData3 = new QLabel(this);  //3号舵机的数据
+    QLabel *ServoData4 = new QLabel(this);  //4号舵机的数据
+
     QString modeName;
     QString ctrDescrip;
 
@@ -105,6 +115,7 @@ public slots:
 private slots:
     void JY901SDataSort(QStringList ProcessedData);  //JY901S数据分拣槽函数
     void RM3100DataSort(QStringList ProcessedData);  //RM3100数据分拣槽函数
+    void PropulsionSysDataSort(QStringList ProcessedData);  //动力系统数据分拣槽函数
 
 };
 

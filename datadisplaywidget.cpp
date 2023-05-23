@@ -110,10 +110,10 @@ void DataDisplayWidget::Init(){
     JY901SSplitter->setFixedSize(30, 6);
     JY901SSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-    QLabel *JY901SAcc = new QLabel(this);    //JY901S加速度数据标签
-    QLabel *JY901SGyro = new QLabel(this);   //JY901S中角速度标签
-    QLabel *JY901SAngle = new QLabel(this);  //JY901S中欧拉角标签
-    QLabel *JY901SMag = new QLabel(this);    //JY901S中磁场标签
+    QLabel *JY901SAcc = new QLabel("Acc:",this);    //JY901S加速度数据标签
+    QLabel *JY901SGyro = new QLabel("Gyro:",this);   //JY901S中角速度标签
+    QLabel *JY901SAngle = new QLabel("Angle:",this);  //JY901S中欧拉角标签
+    QLabel *JY901SMag = new QLabel("Mag:",this);    //JY901S中磁场标签
 
     //设置字体和大小
     QFont JY901SDataFont = QFont("Corbel", 15);
@@ -135,11 +135,6 @@ void DataDisplayWidget::Init(){
     JY901SDataAngle->setFont(JY901SDataFont);
     JY901SDataMag->setMinimumSize(300,25);
     JY901SDataMag->setFont(JY901SDataFont);
-
-    JY901SAcc->setText("Acc:");
-    JY901SGyro->setText("Gyro:");
-    JY901SAngle->setText("Angle:");
-    JY901SMag->setText("Mag:");
 
     QWidget *JY901SDataWidget = new QWidget(this);
     JY901SDataWidget->setSizePolicy(sizepolicy);
@@ -183,10 +178,10 @@ void DataDisplayWidget::Init(){
     RM3100Splitter->setFixedSize(30, 6);
     RM3100Splitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-    QLabel *RM3100NO1 = new QLabel(this);    //RM3100 1号标签
-    QLabel *RM3100NO2 = new QLabel(this);    //RM3100 2号标签
-    QLabel *RM3100NO3 = new QLabel(this);    //RM3100 3号标签
-    QLabel *RM3100NO4 = new QLabel(this);    //RM3100 4号标签
+    QLabel *RM3100NO1 = new QLabel("NO1:",this);    //RM3100 1号标签
+    QLabel *RM3100NO2 = new QLabel("NO2:",this);    //RM3100 2号标签
+    QLabel *RM3100NO3 = new QLabel("NO3:",this);    //RM3100 3号标签
+    QLabel *RM3100NO4 = new QLabel("NO4:",this);    //RM3100 4号标签
 
     //设置字体和大小
     QFont RM3100DataFont = QFont("Corbel", 15);
@@ -208,11 +203,6 @@ void DataDisplayWidget::Init(){
     RM3100DataNO3->setFont(RM3100DataFont);
     RM3100DataNO4->setMinimumSize(300,25);
     RM3100DataNO4->setFont(RM3100DataFont);
-
-    RM3100NO1->setText("NO1:");
-    RM3100NO2->setText("NO2:");
-    RM3100NO3->setText("NO3:");
-    RM3100NO4->setText("NO4:");
 
     QWidget *RM3100DataWidget = new QWidget(this);
     RM3100DataWidget->setSizePolicy(sizepolicy);
@@ -257,11 +247,113 @@ void DataDisplayWidget::Init(){
     PropulsionSysSplitter->setFixedSize(30, 6);
     PropulsionSysSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
+    //推进器名称标签和数据标签设置
+    QLabel *Thruster1 = new QLabel("Thruster1",this);
+    QLabel *Thruster2 = new QLabel("Thruster2",this);
+    QLabel *Thruster3 = new QLabel("Thruster3",this);
+    QLabel *Thruster4 = new QLabel("Thruster4",this);
+
+    //设置字体和大小
+    QFont ThrusterDataFont = QFont("Corbel", 15);
+
+    Thruster1->setMinimumHeight(25);
+    Thruster1->setFont(ThrusterDataFont);
+    Thruster2->setMinimumHeight(25);
+    Thruster2->setFont(ThrusterDataFont);
+    Thruster3->setMinimumHeight(25);
+    Thruster3->setFont(ThrusterDataFont);
+    Thruster4->setMinimumHeight(25);
+    Thruster4->setFont(ThrusterDataFont);
+
+    ThrusterData1->setMinimumSize(100,20);
+    ThrusterData1->setFont(ThrusterDataFont);
+    ThrusterData2->setMinimumSize(100,20);
+    ThrusterData2->setFont(ThrusterDataFont);
+    ThrusterData3->setMinimumSize(100,20);
+    ThrusterData3->setFont(ThrusterDataFont);
+    ThrusterData4->setMinimumSize(100,20);
+    ThrusterData4->setFont(ThrusterDataFont);
+
+    //舵机名称标签和数据标签设置
+    QLabel *Servo1 = new QLabel("Servo1",this);
+    QLabel *Servo2 = new QLabel("Servo2",this);
+    QLabel *Servo3 = new QLabel("Servo3",this);
+    QLabel *Servo4 = new QLabel("Servo4",this);
+
+    //设置字体和大小
+    QFont ServoDataFont = QFont("Corbel", 15);
+
+    Servo1->setMinimumHeight(25);
+    Servo1->setFont(ServoDataFont);
+    Servo2->setMinimumHeight(25);
+    Servo2->setFont(ServoDataFont);
+    Servo3->setMinimumHeight(25);
+    Servo3->setFont(ServoDataFont);
+    Servo4->setMinimumHeight(25);
+    Servo4->setFont(ServoDataFont);
+
+    ServoData1->setMinimumSize(100,20);
+    ServoData1->setFont(ServoDataFont);
+    ServoData2->setMinimumSize(100,20);
+    ServoData2->setFont(ServoDataFont);
+    ServoData3->setMinimumSize(100,20);
+    ServoData3->setFont(ServoDataFont);
+    ServoData4->setMinimumSize(100,20);
+    ServoData4->setFont(ServoDataFont);
+
 //    propellerWidget = new QWidget(splitter_4);
 //    propellerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 //    QGridLayout *propellerLayout = new QGridLayout(propellerWidget);
 //    propellerLayout->setContentsMargins(0, 0, 0, 0);
 //    propellerWidget->setLayout(propellerLayout);
+    //将推进器相关的控件垂直布局
+    QWidget *ThrusterDataWidget = new QWidget(this);
+    QVBoxLayout *ThrusterDataLayout = new QVBoxLayout(this);
+    ThrusterDataWidget->setLayout(ThrusterDataLayout);
+    ThrusterDataLayout->setContentsMargins(0, 0, 0, 0);
+    ThrusterDataLayout->setAlignment(Qt::AlignTop);
+    ThrusterDataLayout->addWidget(Thruster1);
+    ThrusterDataLayout->addWidget(ThrusterData1);
+    ThrusterDataLayout->addWidget(Thruster2);
+    ThrusterDataLayout->addWidget(ThrusterData2);
+    ThrusterDataLayout->addWidget(Thruster3);
+    ThrusterDataLayout->addWidget(ThrusterData3);
+    ThrusterDataLayout->addWidget(Thruster4);
+    ThrusterDataLayout->addWidget(ThrusterData4);
+
+    //将舵机相关的控件垂直布局
+    QWidget *ServoDataWidget = new QWidget(this);
+    QVBoxLayout *ServoDataLayout = new QVBoxLayout(this);
+    ServoDataWidget->setLayout(ServoDataLayout);
+    ServoDataLayout->setContentsMargins(0, 0, 0, 0);
+    ServoDataLayout->setAlignment(Qt::AlignTop);
+    ServoDataLayout->addWidget(Servo1);
+    ServoDataLayout->addWidget(ServoData1);
+    ServoDataLayout->addWidget(Servo2);
+    ServoDataLayout->addWidget(ServoData2);
+    ServoDataLayout->addWidget(Servo3);
+    ServoDataLayout->addWidget(ServoData3);
+    ServoDataLayout->addWidget(Servo4);
+    ServoDataLayout->addWidget(ServoData4);
+
+    //将推进器和舵机的布局再进行水平布局
+    QWidget *PropulsionSysDataWidget = new QWidget(this);
+    QHBoxLayout *PropulsionSysDataLayout = new QHBoxLayout(this);
+    PropulsionSysDataWidget->setLayout(PropulsionSysDataLayout);
+    PropulsionSysDataLayout->setContentsMargins(0, 0, 0, 0);
+    PropulsionSysDataLayout->setAlignment(Qt::AlignTop);
+    PropulsionSysDataLayout->addWidget(ThrusterDataWidget);
+    PropulsionSysDataLayout->addWidget(ServoDataWidget);
+
+//    ThrusterData1->setText("ddd");
+//    ThrusterData2->setText("ddd");
+//    ThrusterData3->setText("ddd");
+//    ThrusterData4->setText("ddd");
+
+//    ServoData1->setText("ddd");
+//    ServoData2->setText("ddd");
+//    ServoData3->setText("ddd");
+//    ServoData4->setText("ddd");
 
     QWidget *PropulsionSysWidget = new QWidget(this);
     QVBoxLayout *PropulsionSysLayout = new QVBoxLayout(PropulsionSysWidget);
@@ -270,11 +362,11 @@ void DataDisplayWidget::Init(){
     PropulsionSysLayout->setAlignment(Qt::AlignTop);
     PropulsionSysLayout->addWidget(PropulsionSysLabel);
     PropulsionSysLayout->addWidget(PropulsionSysSplitter);
-    PropulsionSysLayout->addWidget(PropulsionSysWidget);
+    PropulsionSysLayout->addWidget(PropulsionSysDataWidget);
 
+    splitter_4->addWidget(PropulsionSysWidget);
 
 //串口LOG
-
     //log标签设置
     QLabel *logLabel = new QLabel(this);
     logLabel->setText("Log From Uart");
@@ -294,7 +386,7 @@ void DataDisplayWidget::Init(){
     //用于显示接收串口传过来的数据
     logPTE = new QPlainTextEdit;
     logPTE->setReadOnly(true);
-    logPTE->setMinimumSize(300,150);
+    logPTE->setMinimumSize(300,185);
     logPTE->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000;font: 20px 'Corbel Light'; border: 1px solid darkgray;");
 
     //串口发送行
@@ -303,7 +395,7 @@ void DataDisplayWidget::Init(){
     QWidget *logWidget = new QWidget(this);
     QVBoxLayout *logLayout = new QVBoxLayout(this); //垂直布局
     logWidget->setLayout(logLayout);
-    logLayout->setContentsMargins(0, 0, 0, 0);
+    logWidget->setContentsMargins(0, 0, 0, 0);
     logLayout->setAlignment(Qt::AlignTop);
     logLayout->addWidget(logLabel);
     logLayout->addWidget(logSplitter);
@@ -334,8 +426,7 @@ void DataDisplayWidget::Init(){
     BTNLayout->addWidget(SendBTN);
     BTNLayout->addWidget(ClearBTN);
 
-    //垂直布局，将PropulsionSysWidget、logWidget、BTNWidget摆放
-    splitter_4->addWidget(PropulsionSysWidget);
+    //垂直布局，将logWidget、BTNWidget摆放
     splitter_4->addWidget(logWidget);
     splitter_4->addWidget(BTNWidget);
 
@@ -414,7 +505,7 @@ void DataDisplayWidget::Init(){
 
     splitter_5->addWidget(qt3dWidget);
 
-//info
+//info 显示深度、GPS、电量百分比
     infoTitle = new QLabel(this);
     infoTitle->setText("INFO");
     infoTitle->setFont(titleFont);
@@ -485,6 +576,7 @@ void DataDisplayWidget::DataSortConnect()
 {
     connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::JY901SDataSort);
     connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::RM3100DataSort);
+    connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::PropulsionSysDataSort);
 }
 
 //数据显示到PlainTextEdit中，发起数据分拣信号
@@ -550,23 +642,83 @@ void DataDisplayWidget::RM3100DataSort(QStringList ProcessedData)
             RM3100DataNO1->setText(QString("%1    %2    %3    %4")
                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
         }
-        if(ProcessedData.at(1) == "2")
+        else if(ProcessedData.at(1) == "2")
         {
             //qDebug() << "NO2的数据";
             RM3100DataNO2->setText(QString("%1    %2    %3    %4")
                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
         }
-        if(ProcessedData.at(1) == "3")
+        else if(ProcessedData.at(1) == "3")
         {
             //qDebug() << "NO3的数据";
             RM3100DataNO3->setText(QString("%1    %2    %3    %4")
                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
         }
-        if(ProcessedData.at(1) == "4")
+        else if(ProcessedData.at(1) == "4")
         {
             //qDebug() << "NO4的数据";
             RM3100DataNO4->setText(QString("%1    %2    %3    %4")
                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+        }
+    }
+}
+
+void DataDisplayWidget::PropulsionSysDataSort(QStringList ProcessedData)
+{
+    //是推进器的数据
+    if(ProcessedData.at(0) == "T")
+    {
+        if(ProcessedData.at(1) == "1")
+        {
+            //qDebug() << "NO1的数据";
+            ThrusterData1->setText(QString("%1")
+                                   .arg(ProcessedData.at(2)));
+        }
+        else if(ProcessedData.at(1) == "2")
+        {
+            //qDebug() << "NO2的数据";
+            ThrusterData2->setText(QString("%1")
+                                   .arg(ProcessedData.at(2)));
+        }
+        else if(ProcessedData.at(1) == "3")
+        {
+            //qDebug() << "NO3的数据";
+            ThrusterData3->setText(QString("%1")
+                                   .arg(ProcessedData.at(2)));
+        }
+        else if(ProcessedData.at(1) == "4")
+        {
+            //qDebug() << "NO4的数据";
+            ThrusterData4->setText(QString("%1")
+                                   .arg(ProcessedData.at(2)));
+        }
+    }
+    //是舵机的数据
+    else if(ProcessedData.at(0) == "S")
+    {
+        if(ProcessedData.at(1) == "1")
+        {
+            //qDebug() << "NO1的数据";
+            ServoData1->setText(QString("%1")
+                                   .arg(ProcessedData.at(2)));
+        }
+        else if(ProcessedData.at(1) == "2")
+        {
+            //qDebug() << "NO2的数据";
+            ServoData2->setText(QString("%1")
+                                   .arg(ProcessedData.at(2)));
+        }
+        else if(ProcessedData.at(1) == "3")
+        {
+            //qDebug() << "NO3的数据";
+            ServoData3->setText(QString("%1")
+                                   .arg(ProcessedData.at(2)));
+        }
+        else if(ProcessedData.at(1) == "4")
+        {
+            //qDebug() << "NO4的数据";
+            ServoData4->setText(QString("%1")
+                                   .arg(ProcessedData.at(2)));
         }
     }
 }
