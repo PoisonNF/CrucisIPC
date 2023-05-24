@@ -1,5 +1,5 @@
-#ifndef DATADISPLAYWIDGET_H
-#define DATADISPLAYWIDGET_H
+#ifndef MONTIONCONTROLWIDGET_H
+#define MONTIONCONTROLWIDGET_H
 
 #include <QWidget>
 #include <QGridLayout>
@@ -16,6 +16,7 @@
 #include <QtGui/QScreen>
 #include <QGuiApplication>
 #include <QPlainTextEdit>
+#include <QMessageBox>
 
 #include "slidepage.h"
 #include "scenemodifier.h"
@@ -50,6 +51,10 @@ private:
     QLabel *RM3100Title;
     QLabel *logTitle;
     QLabel *infoTitle;
+
+    QLabel *CurrPID_P = new QLabel("P:",this);
+    QLabel *CurrPID_I = new QLabel("I:",this);
+    QLabel *CurrPID_D = new QLabel("D:",this);
 
     QLabel *RM3100DataNO1 = new QLabel(this);   //RM3100 1号数据
     QLabel *RM3100DataNO2 = new QLabel(this);   //RM3100 2号数据
@@ -102,12 +107,13 @@ public:
     textInputItem *PID_I_TII;   //PID I值输入框
     textInputItem *PID_D_TII;   //PID D值输入框
 
-    textButton *SetPIDBTN;  //设置PID值
+    textButton *SetPIDBTN;  //设置PID值按钮
 
 signals:
-    void SendDataSignal();
+    void SendDataSignal();  //发送数据信号往主窗口
     void StartDataSort(QStringList ProcessedData);
     void AttitudeChange(QString pitch, QString yaw, QString roll);
+    void SetPIDSignal();   //设置PID信号往主窗口
 
 public slots:
     void DataDisplayPTE(QString serialBuf);
@@ -117,4 +123,4 @@ private slots:
 
 };
 
-#endif // DATADISPLAYWIDGET_H
+#endif // MONTIONCONTROLWIDGET_H

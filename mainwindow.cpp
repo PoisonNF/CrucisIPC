@@ -428,12 +428,39 @@ void MainWindow::InitSerialPage()
     //接收到读取完成信号，显示在接收框中
     connect(this,&MainWindow::DataReadCplt,dataDisplayWidget,&DataDisplayWidget::DataDisplayPTE);
 
-    //接收到发送信号，往串口中写入发送框的数据
+    //接收到数据显示界面发送信号，往串口中写入发送框的数据
     connect(dataDisplayWidget,&DataDisplayWidget::SendDataSignal,this,[=]()
     {
-        qDebug() << "串口开始发送";
-        serial->write(dataDisplayWidget->logTII->value().toLocal8Bit().data());
-        //qDebug() << dataDisplayWidget->logTII->value().toLocal8Bit().data();
+        if(!dataDisplayWidget->isHidden())  //如果数据显示界面没有被隐藏
+        {
+            qDebug() << "从数据显示界面获取，串口开始发送";
+            serial->write(dataDisplayWidget->logTII->value().toLocal8Bit().data());
+            //qDebug() << dataDisplayWidget->logTII->value().toLocal8Bit().data();
+        }
+    });
+
+    //接收到运动控制发送信号，往串口中写入发送框的数据
+    connect(motionControlWidget,&MotionControlWidget::SendDataSignal,this,[=]()
+    {
+        if(!motionControlWidget->isHidden())    //如果运动控制界面没有被隐藏
+        {
+            qDebug() << "从运动控制界面获取，串口开始发送";
+            serial->write(motionControlWidget->logTII->value().toLocal8Bit().data());
+            //qDebug() << dataDisplayWidget->logTII->value().toLocal8Bit().data();
+        }
+    });
+
+    //接收到PID设置信号，往串口中写入PID值
+    connect(motionControlWidget,&MotionControlWidget::SetPIDSignal,this,[=](){
+        qDebug() << "设置PID值";
+        //根据协议传输PID值
+        QString PIDValue;
+        PIDValue = "PID "
+                 + QString(motionControlWidget->PID_P_TII->value()) + " "
+                 + QString(motionControlWidget->PID_I_TII->value()) + " "
+                 + QString(motionControlWidget->PID_D_TII->value()) + "\r\n";
+        qDebug() << PIDValue;
+        serial->write(PIDValue.toLocal8Bit().data());
     });
 }
 

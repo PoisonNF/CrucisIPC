@@ -109,27 +109,55 @@ void MotionControlWidget::Init(){
     //设置字体和大小
     QFont PIDDataFont = QFont("Corbel", 15);
 
-    QLabel *CurrentPID = new QLabel("Current:",this);
-
-
-    QLabel *PID_P = new QLabel("P:",this);  //PID P标签
-    QLabel *PID_I = new QLabel("I:",this);  //PID I标签
-    QLabel *PID_D = new QLabel("D:",this);  //PID D标签
-
-    CurrentPID->setMinimumHeight(25);
+    //当前PID值标签
+    QLabel *CurrentPID = new QLabel("Current PID",this);
+    CurrentPID->setMinimumHeight(20);
     CurrentPID->setFont(PIDDataFont);
-    PID_P->setMinimumHeight(25);
-    PID_P->setFont(PIDDataFont);
-    PID_I->setMinimumHeight(25);
-    PID_I->setFont(PIDDataFont);
-    PID_D->setMinimumHeight(25);
-    PID_D->setFont(PIDDataFont);
 
-    PID_P_TII = new textInputItem("SET P:",this);
-    PID_I_TII = new textInputItem("SET I:",this);
-    PID_D_TII = new textInputItem("SET D:",this);
+    CurrPID_P->setMinimumHeight(20);
+    CurrPID_P->setFont(PIDDataFont);
+    CurrPID_I->setMinimumHeight(20);
+    CurrPID_I->setFont(PIDDataFont);
+    CurrPID_D->setMinimumHeight(20);
+    CurrPID_D->setFont(PIDDataFont);
 
+    //设置PID值标签
+    QLabel *SetPID = new QLabel("Set PID",this);
+    SetPID->setMinimumHeight(20);
+    SetPID->setFont(PIDDataFont);
+    //PID值的输入框
+    PID_P_TII = new textInputItem("Set P:",this);
+    PID_I_TII = new textInputItem("Set I:",this);
+    PID_D_TII = new textInputItem("Set D:",this);
+
+    PID_P_TII->setMaximumWidth(420);
+    PID_P_TII->setMaximumWidth(420);
+    PID_P_TII->setMaximumWidth(420);
+
+    //设置PID值的按钮
     textButton *SetPIDBTN = new textButton("SetPID",this);
+    SetPIDBTN->setMaximumWidth(420);
+
+    //连接函数，按下按钮时，发送信号给主窗口，将PID值从串口发出。同时设置当前PID值的标签
+    connect(SetPIDBTN,&textButton::clicked,this,[=](){
+
+        //判断输入的是否是数字
+        if(!PID_P_TII->value().toInt() || !PID_I_TII->value().toInt() || !PID_D_TII->value().toInt())
+        {
+            qDebug() << "不是数字";
+            QMessageBox::warning(this,"错误","请输入数字");
+        }
+        else
+        {
+            emit SetPIDSignal();    //发射信号
+
+            //保存PID值为现PID值
+            CurrPID_P->setText(QString("P:     %1").arg(PID_P_TII->value()));
+            CurrPID_I->setText(QString("I:     %1").arg(PID_I_TII->value()));
+            CurrPID_D->setText(QString("D:     %1").arg(PID_D_TII->value()));
+
+        }
+    });
 
     QWidget *PIDDataWidget = new QWidget(this);
     PIDDataWidget->setSizePolicy(sizepolicy);
@@ -140,9 +168,10 @@ void MotionControlWidget::Init(){
     PIDDataLayout->setContentsMargins(0, 0, 0, 0);
     PIDDataLayout->setAlignment(Qt::AlignTop);
     PIDDataLayout->addWidget(CurrentPID);
-    PIDDataLayout->addWidget(PID_P);
-    PIDDataLayout->addWidget(PID_I);
-    PIDDataLayout->addWidget(PID_D);
+    PIDDataLayout->addWidget(CurrPID_P);
+    PIDDataLayout->addWidget(CurrPID_I);
+    PIDDataLayout->addWidget(CurrPID_D);
+    PIDDataLayout->addWidget(SetPID);
     PIDDataLayout->addWidget(PID_P_TII);
     PIDDataLayout->addWidget(PID_I_TII);
     PIDDataLayout->addWidget(PID_D_TII);
@@ -160,7 +189,6 @@ void MotionControlWidget::Init(){
     PIDLayout->addWidget(PIDDataWidget);
 
     splitter_2->addWidget(PIDWidget);
-    //splitter_2->addWidget(splitter_3);
 
 //按键显示和读取，发送动作命令
     RM3100Title = new QLabel(this);
@@ -228,8 +256,6 @@ void MotionControlWidget::Init(){
     RM3100Layout->addWidget(RM3100DataWidget);
 
     splitter_2->addWidget(RM3100Widget);
-    //splitter_3->addWidget(RM3100Widget);
-    //splitter_3->addWidget(tempwidget);
 
 //动力系统
     QLabel *PropulsionSysLabel = new QLabel(this);
@@ -340,16 +366,6 @@ void MotionControlWidget::Init(){
     PropulsionSysDataLayout->setAlignment(Qt::AlignTop);
     PropulsionSysDataLayout->addWidget(ThrusterDataWidget);
     PropulsionSysDataLayout->addWidget(ServoDataWidget);
-
-//    ThrusterData1->setText("ddd");
-//    ThrusterData2->setText("ddd");
-//    ThrusterData3->setText("ddd");
-//    ThrusterData4->setText("ddd");
-
-//    ServoData1->setText("ddd");
-//    ServoData2->setText("ddd");
-//    ServoData3->setText("ddd");
-//    ServoData4->setText("ddd");
 
     QWidget *PropulsionSysWidget = new QWidget(this);
     QVBoxLayout *PropulsionSysLayout = new QVBoxLayout(PropulsionSysWidget);
