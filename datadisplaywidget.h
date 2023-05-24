@@ -45,7 +45,7 @@ private:
     QSplitter *splitter_2;
     QSplitter *splitter_3;
     QSplitter *splitter_4;
-    QSplitter *splitter_5;
+
     QLabel *JY901STitle;
     QLabel *RM3100Title;
     QLabel *logTitle;
@@ -105,7 +105,6 @@ public:
     textInputItem *logTII;
 
 signals:
-    void setDel(DataDisplayWidget* target);
     void SendDataSignal();
     void StartDataSort(QStringList ProcessedData);
     void AttitudeChange(QString pitch, QString yaw, QString roll);

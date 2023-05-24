@@ -35,6 +35,7 @@ void MainWindow::Init(){
     InitDefaultSettingsPage(); //默认设置界面初始化
     InitLayersPage();   //层页界面和按钮初始化
     InitDataDisplayWidget();    //数据显示界面初始化
+    InitMotionControlWidget();  //运动控制界面初始化
     InitSerialPage();   //串口设置界面初始化
 }
 
@@ -204,6 +205,7 @@ void MainWindow::InitDefaultPage()
     connect(Motion_control, &bigIconButton::clicked, this, [=](){
         //右图标事件槽函数
         qDebug() << "Motion_controlBtn";
+        ChangeMotionControlWidget();
     });
 
     //两个大按钮进行水平布局
@@ -301,7 +303,10 @@ void MainWindow::InitLayersPage()
             ChangeDataDisplayWidget();
         }
         else if(Switch_Mode == MOTIONCONTROl)
+        {
             qDebug()<<"进入运动控制界面";
+            ChangeMotionControlWidget();
+        }
 
         layersPage->slideOut();
     });
@@ -442,6 +447,15 @@ void MainWindow::InitDataDisplayWidget()
 
 }
 
+/* 初始化运动控制窗口 */
+void MainWindow::InitMotionControlWidget()
+{
+    motionControlWidget = new MotionControlWidget(cornerRadius,0, ui->mainWidget);
+    motionControlWidget->hide();
+    motionControlWidget->settingPage()->setParent(ui->mainWidget);
+    pageList.push_back(motionControlWidget->settingPage());
+}
+
 /* 切换到数据显示窗口 */
 void MainWindow::ChangeDataDisplayWidget()
 {
@@ -449,6 +463,7 @@ void MainWindow::ChangeDataDisplayWidget()
     //旧界面隐藏
     ui->displayLayout->removeWidget(defaultPage);
     defaultPage->hide();
+    motionControlWidget->hide();
 
     //切换数据显示界面
     ui->displayLayout->addWidget(dataDisplayWidget);
@@ -456,6 +471,20 @@ void MainWindow::ChangeDataDisplayWidget()
     Subtitle->setText("DataDisplay");
     dataDisplayWidget->show();
 
+}
+
+void MainWindow::ChangeMotionControlWidget()
+{
+    //旧界面隐藏
+    ui->displayLayout->removeWidget(defaultPage);
+    defaultPage->hide();
+    dataDisplayWidget->hide();
+
+    //切换到运动控制界面
+    ui->displayLayout->addWidget(motionControlWidget);
+    curSettingsPage = motionControlWidget->settingPage();
+    Subtitle->setText("MotionControl");
+    motionControlWidget->show();
 }
 
 /* 打开串口槽函数 */

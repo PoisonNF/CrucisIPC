@@ -30,15 +30,16 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_MainWindow_t {
-    uint offsetsAndSizes[16];
+    uint offsetsAndSizes[18];
     char stringdata0[11];
     char stringdata1[13];
     char stringdata2[1];
     char stringdata3[10];
     char stringdata4[24];
-    char stringdata5[15];
-    char stringdata6[16];
-    char stringdata7[9];
+    char stringdata5[26];
+    char stringdata6[15];
+    char stringdata7[16];
+    char stringdata8[9];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_MainWindow_t::offsetsAndSizes) + ofs), len 
@@ -49,15 +50,17 @@ Q_CONSTINIT static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_Main
         QT_MOC_LITERAL(24, 0),  // ""
         QT_MOC_LITERAL(25, 9),  // "serialBuf"
         QT_MOC_LITERAL(35, 23),  // "ChangeDataDisplayWidget"
-        QT_MOC_LITERAL(59, 14),  // "OpenSerialPort"
-        QT_MOC_LITERAL(74, 15),  // "CloseSerialPort"
-        QT_MOC_LITERAL(90, 8)   // "ReadData"
+        QT_MOC_LITERAL(59, 25),  // "ChangeMotionControlWidget"
+        QT_MOC_LITERAL(85, 14),  // "OpenSerialPort"
+        QT_MOC_LITERAL(100, 15),  // "CloseSerialPort"
+        QT_MOC_LITERAL(116, 8)   // "ReadData"
     },
     "MainWindow",
     "DataReadCplt",
     "",
     "serialBuf",
     "ChangeDataDisplayWidget",
+    "ChangeMotionControlWidget",
     "OpenSerialPort",
     "CloseSerialPort",
     "ReadData"
@@ -71,7 +74,7 @@ Q_CONSTINIT static const uint qt_meta_data_MainWindow[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -79,18 +82,20 @@ Q_CONSTINIT static const uint qt_meta_data_MainWindow[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   44,    2, 0x06,    1 /* Public */,
+       1,    1,   50,    2, 0x06,    1 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       4,    0,   47,    2, 0x08,    3 /* Private */,
-       5,    0,   48,    2, 0x08,    4 /* Private */,
-       6,    0,   49,    2, 0x08,    5 /* Private */,
-       7,    0,   50,    2, 0x08,    6 /* Private */,
+       4,    0,   53,    2, 0x08,    3 /* Private */,
+       5,    0,   54,    2, 0x08,    4 /* Private */,
+       6,    0,   55,    2, 0x08,    5 /* Private */,
+       7,    0,   56,    2, 0x08,    6 /* Private */,
+       8,    0,   57,    2, 0x08,    7 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString,    3,
 
  // slots: parameters
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -113,6 +118,8 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<QString, std::false_type>,
         // method 'ChangeDataDisplayWidget'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'ChangeMotionControlWidget'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'OpenSerialPort'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'CloseSerialPort'
@@ -131,9 +138,10 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         switch (_id) {
         case 0: _t->DataReadCplt((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 1: _t->ChangeDataDisplayWidget(); break;
-        case 2: _t->OpenSerialPort(); break;
-        case 3: _t->CloseSerialPort(); break;
-        case 4: _t->ReadData(); break;
+        case 2: _t->ChangeMotionControlWidget(); break;
+        case 3: _t->OpenSerialPort(); break;
+        case 4: _t->CloseSerialPort(); break;
+        case 5: _t->ReadData(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -167,13 +175,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 6;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 5)
+        if (_id < 6)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 5;
+        _id -= 6;
     }
     return _id;
 }

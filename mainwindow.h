@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include "slidedialog.h"
 #include "datadisplaywidget.h"
+#include "motioncontrolwidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,6 +28,7 @@ private:
     QWidget *titleWidget;       //标题栏
 
     DataDisplayWidget *dataDisplayWidget = nullptr; //数据采集窗口对象
+    MotionControlWidget *motionControlWidget = nullptr; //运动控制窗口对象
 
     QGraphicsDropShadowEffect *windowShadow;
     QColor mainBackGround = QColor(251, 251, 251);
@@ -69,6 +71,7 @@ private:
     void InitLayersPage();  //换层页初始化
     void InitSerialPage();  //串口设置界面初始化
     void InitDataDisplayWidget();   //初始化数据显示窗口
+    void InitMotionControlWidget(); //初始化运动控制窗口
 
     //模式枚举类型
     enum MODE{DATADISPLAY = 1, MOTIONCONTROl = 2};
@@ -98,6 +101,7 @@ private:
     void controlWindowScale();
 private slots:
     void ChangeDataDisplayWidget();  //切换到数据显示的窗口槽函数
+    void ChangeMotionControlWidget();   //切换到运动控制串口槽函数
     void OpenSerialPort();  //打开串口
     void CloseSerialPort(); //关闭串口
     void ReadData(); //读取串口数据

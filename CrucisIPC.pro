@@ -19,6 +19,7 @@ SOURCES += \
     graph_view.cpp \
     main.cpp \
     mainwindow.cpp \
+    motioncontrolwidget.cpp \
     scenemodifier.cpp \
     slidedialog.cpp \
     slidepage.cpp
@@ -30,6 +31,7 @@ HEADERS += \
     graph_implement.h \
     graph_view.h \
     mainwindow.h \
+    motioncontrolwidget.h \
     scenemodifier.h \
     slidedialog.h \
     slidepage.h

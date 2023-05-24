@@ -1,5 +1,4 @@
 #include "datadisplaywidget.h"
-#include "customWidgets.h"
 
 DataDisplayWidget::DataDisplayWidget(int radius, int modeKind, QWidget *parent) :
     QWidget(parent), modeKind_(modeKind)
@@ -70,22 +69,20 @@ void DataDisplayWidget::TestMvSetting(int radius){
 void DataDisplayWidget::Init(){
 //layout
 
-    //1为最大的布局器，2，4，5分别为垂直布局器，对应左中右 3是水平布局器，包括在2内，在RM3100中使用
+    //1为最大的布局器，2，3，4分别为垂直布局器，对应左中右
     splitter_1 = new QSplitter(this);
     splitter_1->setOrientation(Qt::Horizontal);
     splitter_2 = new QSplitter(splitter_1);
     splitter_2->setOrientation(Qt::Vertical);
-    splitter_3 = new QSplitter(splitter_2);
-    splitter_3->setOrientation(Qt::Horizontal);
+    splitter_3 = new QSplitter(splitter_1);
+    splitter_3->setOrientation(Qt::Vertical);
     splitter_4 = new QSplitter(splitter_1);
     splitter_4->setOrientation(Qt::Vertical);
-    splitter_5 = new QSplitter(splitter_1);
-    splitter_5->setOrientation(Qt::Vertical);
 
     mainLayout->addWidget(splitter_1);
     splitter_1->addWidget(splitter_2);
+    splitter_1->addWidget(splitter_3);
     splitter_1->addWidget(splitter_4);
-    splitter_1->addWidget(splitter_5);
 
     QSizePolicy sizepolicy = QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Minimum);
     sizepolicy.setVerticalPolicy(QSizePolicy::Expanding);
@@ -95,7 +92,6 @@ void DataDisplayWidget::Init(){
     splitter_2->setSizePolicy(sizepolicy);
     splitter_3->setSizePolicy(sizepolicy);
     splitter_4->setSizePolicy(sizepolicy);
-    splitter_5->setSizePolicy(sizepolicy);
 
 //JY901S
     QFont titleFont = QFont("Corbel", 20);
@@ -301,11 +297,6 @@ void DataDisplayWidget::Init(){
     ServoData4->setMinimumSize(100,20);
     ServoData4->setFont(ServoDataFont);
 
-//    propellerWidget = new QWidget(splitter_4);
-//    propellerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-//    QGridLayout *propellerLayout = new QGridLayout(propellerWidget);
-//    propellerLayout->setContentsMargins(0, 0, 0, 0);
-//    propellerWidget->setLayout(propellerLayout);
     //将推进器相关的控件垂直布局
     QWidget *ThrusterDataWidget = new QWidget(this);
     QVBoxLayout *ThrusterDataLayout = new QVBoxLayout(this);
@@ -364,7 +355,7 @@ void DataDisplayWidget::Init(){
     PropulsionSysLayout->addWidget(PropulsionSysSplitter);
     PropulsionSysLayout->addWidget(PropulsionSysDataWidget);
 
-    splitter_4->addWidget(PropulsionSysWidget);
+    splitter_3->addWidget(PropulsionSysWidget);
 
 //串口LOG
     //log标签设置
@@ -427,8 +418,8 @@ void DataDisplayWidget::Init(){
     BTNLayout->addWidget(ClearBTN);
 
     //垂直布局，将logWidget、BTNWidget摆放
-    splitter_4->addWidget(logWidget);
-    splitter_4->addWidget(BTNWidget);
+    splitter_3->addWidget(logWidget);
+    splitter_3->addWidget(BTNWidget);
 
 //3d模型
     QLabel *model3DTitle = new QLabel(this);
@@ -503,7 +494,7 @@ void DataDisplayWidget::Init(){
     //配置好的尺寸策略设置回QWidget ,下一次将其显示时，能够保持之前的尺寸大小。
     qt3dWidget->setSizePolicy(sizepolicy);
 
-    splitter_5->addWidget(qt3dWidget);
+    splitter_4->addWidget(qt3dWidget);
 
 //info 显示深度、GPS、电量百分比
     infoTitle = new QLabel(this);
@@ -528,7 +519,7 @@ void DataDisplayWidget::Init(){
     infoLayout->addWidget(infoTitle);
     infoLayout->addWidget(infoSplitter);
 
-    splitter_5->addWidget(infoWidget);
+    splitter_4->addWidget(infoWidget);
 
     splitter_1->setStretchFactor(0,2);
     splitter_1->setStretchFactor(1,7);
@@ -537,11 +528,11 @@ void DataDisplayWidget::Init(){
     splitter_2->setStretchFactor(0,1);
     splitter_2->setStretchFactor(1,1);
 
-    splitter_4->setStretchFactor(0,5);
-    splitter_4->setStretchFactor(1,1);
+    splitter_3->setStretchFactor(0,5);
+    splitter_3->setStretchFactor(1,1);
 
-    splitter_5->setStretchFactor(0,1);
-    splitter_5->setStretchFactor(1,2);
+    splitter_4->setStretchFactor(0,1);
+    splitter_4->setStretchFactor(1,2);
 
     //内部数据分拣逻辑连接
     DataSortConnect();
