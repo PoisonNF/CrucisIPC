@@ -425,8 +425,9 @@ void MainWindow::InitSerialPage()
     connect(closeSerialBtn, &textButton::clicked, this, &MainWindow::CloseSerialPort);
     connect(serial,&QSerialPort::readyRead,this,&MainWindow::ReadData);
 
-    //接收到读取完成信号，显示在接收框中
+    //接收到读取完成信号，根据界面隐藏情况，显示在不同界面的接收框中
     connect(this,&MainWindow::DataReadCplt,dataDisplayWidget,&DataDisplayWidget::DataDisplayPTE);
+    connect(this,&MainWindow::DataReadCplt,motionControlWidget,&MotionControlWidget::DataDisplayPTE);
 
     //接收到数据显示界面发送信号，往串口中写入发送框的数据
     connect(dataDisplayWidget,&DataDisplayWidget::SendDataSignal,this,[=]()

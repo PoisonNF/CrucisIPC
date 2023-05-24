@@ -575,16 +575,19 @@ void DataDisplayWidget::DataSortConnect()
 //数据显示到PlainTextEdit中，发起数据分拣信号
 void DataDisplayWidget::DataDisplayPTE(QString serialBuf)
 {
-    logPTE->ensureCursorVisible();
-    logPTE->insertPlainText(serialBuf);
-    //qDebug()<<serialBuf;
+    if(!this->isHidden())
+    {
+        logPTE->ensureCursorVisible();
+        logPTE->insertPlainText(serialBuf);
+        //qDebug()<<serialBuf;
 
-    //开始数据分拣
-    //以空格进行分割数据，用于判断数据来源
-    QStringList ProcessedData = serialBuf.split(u' ');
-    //qDebug() << ProcessedData;
+        //开始数据分拣
+        //以空格进行分割数据，用于判断数据来源
+        QStringList ProcessedData = serialBuf.split(u' ');
+        //qDebug() << ProcessedData;
 
-    emit StartDataSort(ProcessedData);
+        emit StartDataSort(ProcessedData);
+    }
 }
 
 void DataDisplayWidget::JY901SDataSort(QStringList ProcessedData)
@@ -628,7 +631,7 @@ void DataDisplayWidget::JY901SDataSort(QStringList ProcessedData)
 void DataDisplayWidget::RM3100DataSort(QStringList ProcessedData)
 {
     //是RM3100的数据
-    if(ProcessedData.at(0) == "R")
+    if(ProcessedData.count() > 0 && ProcessedData.at(0) == "R")
     {
         if(ProcessedData.at(1) == "1")
         {
@@ -660,7 +663,7 @@ void DataDisplayWidget::RM3100DataSort(QStringList ProcessedData)
 void DataDisplayWidget::PropulsionSysDataSort(QStringList ProcessedData)
 {
     //是推进器的数据
-    if(ProcessedData.at(0) == "T")
+    if(ProcessedData.count() > 0 && ProcessedData.at(0) == "T")
     {
         if(ProcessedData.at(1) == "1")
         {
@@ -688,7 +691,7 @@ void DataDisplayWidget::PropulsionSysDataSort(QStringList ProcessedData)
         }
     }
     //是舵机的数据
-    else if(ProcessedData.at(0) == "S")
+    else if(ProcessedData.count() > 0 && ProcessedData.at(0) == "S")
     {
         if(ProcessedData.at(1) == "1")
         {

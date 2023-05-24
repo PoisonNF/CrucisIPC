@@ -31,7 +31,7 @@ MotionControlWidget::MotionControlWidget(QTextStream &ts, int radius, QWidget *p
 
 }
 
-//在数据显示界面的设置栏
+//在数据显示界面的设置栏this->parentWidget());
 void MotionControlWidget::TestMvSetting(int radius){
     /* create settings page */
     modeName = "测试模式";
@@ -530,6 +530,17 @@ void MotionControlWidget::Init(){
     infoSplitter->setFixedSize(30, 6);
     infoSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
+    QFont InfoDataFont = QFont("Corbel", 15);
+
+    //姿态信息标题
+    QLabel *AttitudeInfo = new QLabel(this);
+    AttitudeInfo->setText("Angle:");
+    AttitudeInfo->setMinimumHeight(25);
+    AttitudeInfo->setFont(InfoDataFont);
+
+    AttitudeDataInfo->setMinimumHeight(25);
+    AttitudeDataInfo->setFont(InfoDataFont);
+
     infoWidget = new QWidget(this);
     infoWidget->setSizePolicy(sizepolicy);
     QVBoxLayout *infoLayout = new QVBoxLayout(infoWidget);
@@ -539,6 +550,8 @@ void MotionControlWidget::Init(){
     infoLayout->setAlignment(Qt::AlignTop);
     infoLayout->addWidget(infoTitle);
     infoLayout->addWidget(infoSplitter);
+    infoLayout->addWidget(AttitudeInfo);
+    infoLayout->addWidget(AttitudeDataInfo);
 
     splitter_4->addWidget(infoWidget);
 
@@ -562,26 +575,31 @@ void MotionControlWidget::Init(){
 //数据分类链接函数
 void MotionControlWidget::DataSortConnect()
 {
-    //connect(this,&MotionControlWidget::StartDataSort,this,&MotionControlWidget::PIDDataSort);
-    //connect(this,&MotionControlWidget::StartDataSort,this,&MotionControlWidget::RM3100DataSort);
+    //姿态分拣
+    connect(this,&MotionControlWidget::StartDataSort,this,&MotionControlWidget::AttitudeDataSort);
+    //推进力分拣
     connect(this,&MotionControlWidget::StartDataSort,this,&MotionControlWidget::PropulsionSysDataSort);
 
+    //根据姿态，3D模型转向
     connect(this,&MotionControlWidget::AttitudeChange,modifier,&SceneModifier::OnSetRotation);
 }
 
 //数据显示到PlainTextEdit中，发起数据分拣信号
 void MotionControlWidget::DataDisplayPTE(QString serialBuf)
 {
-    logPTE->ensureCursorVisible();
-    logPTE->insertPlainText(serialBuf);
-    //qDebug()<<serialBuf;
+    if(!this->isHidden())
+    {
+        logPTE->ensureCursorVisible();
+        logPTE->insertPlainText(serialBuf);
+        //qDebug()<<serialBuf;
 
-    //开始数据分拣
-    //以空格进行分割数据，用于判断数据来源
-    QStringList ProcessedData = serialBuf.split(u' ');
-    //qDebug() << ProcessedData;
+        //开始数据分拣
+        //以空格进行分割数据，用于判断数据来源
+        QStringList ProcessedData = serialBuf.split(u' ');
+        //qDebug() << ProcessedData;
 
-    emit StartDataSort(ProcessedData);
+        emit StartDataSort(ProcessedData);
+    }
 }
 
 void MotionControlWidget::PropulsionSysDataSort(QStringList ProcessedData)
@@ -640,6 +658,22 @@ void MotionControlWidget::PropulsionSysDataSort(QStringList ProcessedData)
             //qDebug() << "NO4的数据";
             ServoData4->setText(QString("%1")
                                    .arg(ProcessedData.at(2)));
+        }
+    }
+}
+
+void MotionControlWidget::AttitudeDataSort(QStringList ProcessedData)
+{
+    //如果是JY901S的数据
+    if(ProcessedData.count() > 0 && ProcessedData.at(0) == "J")
+    {
+        //如果是姿态角数据
+        if(ProcessedData.at(1) == "Angle")
+        {
+            //qDebug() << "姿态角";
+            AttitudeDataInfo->setText(QString("Roll%1    Pitch%2    Yaw%3")
+                                     .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));    //Roll Pitch Yaw
+            emit AttitudeChange(ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(2));   //发射信号，改变3D模型朝向
         }
     }
 }

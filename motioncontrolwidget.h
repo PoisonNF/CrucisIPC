@@ -71,6 +71,8 @@ private:
     QLabel *ServoData3 = new QLabel(this);  //3号舵机的数据
     QLabel *ServoData4 = new QLabel(this);  //4号舵机的数据
 
+    QLabel *AttitudeDataInfo = new QLabel(this);    //Info姿态数据
+
     QString modeName;
     QString ctrDescrip;
 
@@ -81,6 +83,7 @@ private:
     QWidget *infoWidget = nullptr;
 
     QPlainTextEdit *logPTE;
+
 
     void Init();
     void SaveToFile(const QString &path);
@@ -120,6 +123,7 @@ public slots:
 
 private slots:
     void PropulsionSysDataSort(QStringList ProcessedData);  //动力系统数据分拣槽函数
+    void AttitudeDataSort(QStringList ProcessedData);   //分拣JY901S中的姿态数据
 
 };
 
