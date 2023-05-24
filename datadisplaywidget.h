@@ -20,6 +20,7 @@
 #include "slidepage.h"
 #include "scenemodifier.h"
 #include "customWidgets.h"
+#include "scenemodifier.h"
 
 #if (QT_VERSION > QT_VERSION_CHECK(6,3,0))
 #include <QFileDialog>
@@ -107,6 +108,7 @@ signals:
     void setDel(DataDisplayWidget* target);
     void SendDataSignal();
     void StartDataSort(QStringList ProcessedData);
+    void AttitudeChange(QString pitch, QString yaw, QString roll);
 
 public slots:
     void doModeChange(int);

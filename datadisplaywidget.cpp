@@ -464,7 +464,7 @@ void DataDisplayWidget::Init(){
     //设置了相机的投影方式为透视投影,该函数的第一个参数是视野角度（单位为度），第二个参数是宽高比，第三个和第四个参数分别是近平面和远平面的距离。
     camEntity->lens()->setPerspectiveProjection(10.0f, 9.0f / 9.0f, 0.1f, 1000.0f);
     //设置了相机的位置,为xyz
-    camEntity->setPosition(QVector3D(0, -10.0f, 5.0f));
+    camEntity->setPosition(QVector3D(0, -10.0f, 0.0f));
     //设置了相机的上方向
     camEntity->setUpVector(QVector3D(0, 1, 0));
     //设置了相机的视点中心,视点中心用于确定相机的注视点
@@ -577,6 +577,8 @@ void DataDisplayWidget::DataSortConnect()
     connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::JY901SDataSort);
     connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::RM3100DataSort);
     connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::PropulsionSysDataSort);
+
+    connect(this,&DataDisplayWidget::AttitudeChange,modifier,&SceneModifier::OnSetRotation);
 }
 
 //数据显示到PlainTextEdit中，发起数据分拣信号
@@ -604,29 +606,30 @@ void DataDisplayWidget::JY901SDataSort(QStringList ProcessedData)
         if(ProcessedData.at(1) == "Acc")
         {
             //qDebug() << "Acc的数据";
-            JY901SDataAcc->setText(QString("%1    %2    %3    %4")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+            JY901SDataAcc->setText(QString("%1    %2    %3")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
         }
         //是角速度
         else if(ProcessedData.at(1) == "Gyro")
         {
             //qDebug() << "Gyro的数据";
-            JY901SDataGyro->setText(QString("%1    %2    %3    %4")
-                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+            JY901SDataGyro->setText(QString("%1    %2    %3")
+                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
         }
         //是欧拉角
         else if(ProcessedData.at(1) == "Angle")
         {
             //qDebug() << "Angle的数据";
-            JY901SDataAngle->setText(QString("%1    %2    %3    %4")
-                                     .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+            JY901SDataAngle->setText(QString("%1    %2    %3")
+                                     .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));    //Roll Pitch Yaw
+            emit AttitudeChange(ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(2));  //姿态改变，对应的3D模型进行旋转  Pitch Yaw Roll
         }
         //是磁场
         else if(ProcessedData.at(1) == "Mag")
         {
             //qDebug() << "Mag的数据";
-            JY901SDataMag->setText(QString("%1    %2    %3    %4")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+            JY901SDataMag->setText(QString("%1    %2    %3")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
         }
     }
 }
@@ -639,26 +642,26 @@ void DataDisplayWidget::RM3100DataSort(QStringList ProcessedData)
         if(ProcessedData.at(1) == "1")
         {
             //qDebug() << "NO1的数据";
-            RM3100DataNO1->setText(QString("%1    %2    %3    %4")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+            RM3100DataNO1->setText(QString("%1    %2    %3")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
         }
         else if(ProcessedData.at(1) == "2")
         {
             //qDebug() << "NO2的数据";
-            RM3100DataNO2->setText(QString("%1    %2    %3    %4")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+            RM3100DataNO2->setText(QString("%1    %2    %3")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
         }
         else if(ProcessedData.at(1) == "3")
         {
             //qDebug() << "NO3的数据";
-            RM3100DataNO3->setText(QString("%1    %2    %3    %4")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+            RM3100DataNO3->setText(QString("%1    %2    %3")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
         }
         else if(ProcessedData.at(1) == "4")
         {
             //qDebug() << "NO4的数据";
-            RM3100DataNO4->setText(QString("%1    %2    %3    %4")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(5)));
+            RM3100DataNO4->setText(QString("%1    %2    %3")
+                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
         }
     }
 }
