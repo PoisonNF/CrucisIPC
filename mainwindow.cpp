@@ -451,6 +451,13 @@ void MainWindow::InitSerialPage()
         }
     });
 
+    //接收到按键或者鼠标点击发送信号，往串口中写入信号携带的数据
+    connect(motionControlWidget,&MotionControlWidget::SendControlSignal,this,[=](QString str)
+    {
+        qDebug() << "获取控制信号，串口开始发送" << str;
+        serial->write(QString("C " + str + "\r\n").toLocal8Bit().data());
+    });
+
     //接收到PID设置信号，往串口中写入PID值
     connect(motionControlWidget,&MotionControlWidget::SetPIDSignal,this,[=](){
         qDebug() << "设置PID值";

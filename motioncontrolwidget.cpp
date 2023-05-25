@@ -47,7 +47,7 @@ void MotionControlWidget::TestMvSetting(int radius){
     whiteSpace_2->setFixedHeight(30);
     textButton *saveBtn = new textButton("Save to file", this);
 //    connect(saveBtn, &textButton::clicked, this, [=](){
-//        QString savePath = QFileDialog::getSaveFileName(this, tr("Save map"), " ", tr("Map file(*.map)"));
+//        QString savePath = QFileDialog::getSaveFileName(this, tr("Save file"), " ", tr("TXT file(*.txt)"));
 //        if(!savePath.isEmpty())
 //            SaveToFile(savePath);
 //    });
@@ -57,11 +57,13 @@ void MotionControlWidget::TestMvSetting(int radius){
     settings->AddContent(redesc);
     settings->AddContent(rename);
     settings->show();
-    /* create settings page */
 
-    /* create widgets */
+    //创建定时器
     QTimer *delay = new QTimer(this);
-    connect(delay, &QTimer::timeout, this, [=](){Init();});
+    connect(delay, &QTimer::timeout, this, [=](){
+        Init();
+        delay->deleteLater();   //超时后释放内存
+    });
     delay->setSingleShot(true);
     delay->start(10);
 }
@@ -131,8 +133,22 @@ void MotionControlWidget::Init(){
     PID_D_TII = new textInputItem("Set D:",this);
 
     PID_P_TII->setMaximumWidth(420);
-    PID_P_TII->setMaximumWidth(420);
-    PID_P_TII->setMaximumWidth(420);
+    PID_I_TII->setMaximumWidth(420);
+    PID_D_TII->setMaximumWidth(420);
+
+    //使用验证器来避免输入字符
+    /* `[0-9]*` 表示匹配 0 到多个数字，其中方括号 `[]` 中的字符为可以匹配的字符集合，`0-9` 表示匹配 0 到 9 的任意数字，
+    * `*` 表示匹配 0 到多个该字符集合中的字符。
+    `(\\.[0-9]*)?` 表示一个可选的小数部分，其中的第一个括号 `()` 表示这是一个组，
+    并且 `\\.` 表示匹配小数点，因为小数点是一个特殊的字符，需要用反斜线转义来表示；`[0-9]*` 同上，表示匹配 0 到多个数字，`?` 表示匹配 0 到 1 个该字符。
+    整个正则表达式最外层的方括号 `[]` 表示匹配一个字符集合，其中的 `*` 表示匹配 0 到多个字符。
+    因此整个正则表达式表示匹配 0 到多个数字，加上一个可选的小数部分。 */
+
+    QRegularExpression regExp("[0-9]*(\\.[0-9]*)?"); // 创建正则表达式，表示允许带有小数点的数，放止输入字符
+    QRegularExpressionValidator *validator = new QRegularExpressionValidator(regExp, this); // 创建验证器
+    PID_P_TII->setValidator(validator); // 设置验证器
+    PID_I_TII->setValidator(validator); // 设置验证器
+    PID_D_TII->setValidator(validator); // 设置验证器
 
     //设置PID值的按钮
     textButton *SetPIDBTN = new textButton("SetPID",this);
@@ -141,22 +157,12 @@ void MotionControlWidget::Init(){
     //连接函数，按下按钮时，发送信号给主窗口，将PID值从串口发出。同时设置当前PID值的标签
     connect(SetPIDBTN,&textButton::clicked,this,[=](){
 
-        //判断输入的是否是数字
-        if(!PID_P_TII->value().toInt() || !PID_I_TII->value().toInt() || !PID_D_TII->value().toInt())
-        {
-            qDebug() << "不是数字";
-            QMessageBox::warning(this,"错误","请输入数字");
-        }
-        else
-        {
-            emit SetPIDSignal();    //发射信号
+        emit SetPIDSignal();    //发射信号
 
-            //保存PID值为现PID值
-            CurrPID_P->setText(QString("P:     %1").arg(PID_P_TII->value()));
-            CurrPID_I->setText(QString("I:     %1").arg(PID_I_TII->value()));
-            CurrPID_D->setText(QString("D:     %1").arg(PID_D_TII->value()));
-
-        }
+        //保存PID值为现PID值
+        CurrPID_P->setText(QString("P:     %1").arg(PID_P_TII->value()));
+        CurrPID_I->setText(QString("I:     %1").arg(PID_I_TII->value()));
+        CurrPID_D->setText(QString("D:     %1").arg(PID_D_TII->value()));
     });
 
     QWidget *PIDDataWidget = new QWidget(this);
@@ -190,72 +196,125 @@ void MotionControlWidget::Init(){
 
     splitter_2->addWidget(PIDWidget);
 
-//按键显示和读取，发送动作命令
-    RM3100Title = new QLabel(this);
-    RM3100Title->setText("RM3100");
-    RM3100Title->setFont(titleFont);
-    RM3100Title->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    RM3100Title->setStyleSheet("color:#2c2c2c");
+//按键显示和读取，或者使用鼠标点击，发送动作命令
+    ControlTitle = new QLabel(this);
+    ControlTitle->setText("Control");
+    ControlTitle->setFont(titleFont);
+    ControlTitle->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    ControlTitle->setStyleSheet("color:#2c2c2c");
 
     //小横条设置
-    QWidget *RM3100Splitter = new QWidget(this);
-    RM3100Splitter->setFixedSize(30, 6);
-    RM3100Splitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
+    QWidget *ControlSplitter = new QWidget(this);
+    ControlSplitter->setFixedSize(30, 6);
+    ControlSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-    QLabel *RM3100NO1 = new QLabel("NO1:",this);    //RM3100 1号标签
-    QLabel *RM3100NO2 = new QLabel("NO2:",this);    //RM3100 2号标签
-    QLabel *RM3100NO3 = new QLabel("NO3:",this);    //RM3100 3号标签
-    QLabel *RM3100NO4 = new QLabel("NO4:",this);    //RM3100 4号标签
+    /* customIcon构造函数有问题，不能初始化radius和iconHint */
+    /* 六个键盘按键的初始化 */
+    WIcon = new customIcon(":/icons/icons/W.svg", "W", 0, this);
+    WIcon->setMinimumSize(QSize(70,70));
+    AIcon = new customIcon(":/icons/icons/A.svg", "A", 0, this);
+    AIcon->setMinimumSize(QSize(70,70));
+    SIcon = new customIcon(":/icons/icons/S.svg", "S", 0, this);
+    SIcon->setMinimumSize(QSize(70,70));
+    DIcon = new customIcon(":/icons/icons/D.svg", "D", 0, this);
+    DIcon->setMinimumSize(QSize(70,70));
+    QIcon = new customIcon(":/icons/icons/Q.svg", "Q", 0, this);
+    QIcon->setMinimumSize(QSize(70,70));
+    EIcon = new customIcon(":/icons/icons/E.svg", "E", 0, this);
+    EIcon->setMinimumSize(QSize(70,70));
 
-    //设置字体和大小
-    QFont RM3100DataFont = QFont("Corbel", 15);
+    //鼠标点击图标也可以发送信号
+    connect(WIcon,&customIcon::clicked,this,[=]()
+    {
+        ControlData->setText("Key W Press");
+        ControlState->setText("Forward");
+        emit SendControlSignal("W");
+    });
+    connect(AIcon,&customIcon::clicked,this,[=]()
+    {
+        ControlData->setText("Key A Press");
+        ControlState->setText("Left");
+        emit SendControlSignal("A");
+    });
+    connect(SIcon,&customIcon::clicked,this,[=]()
+    {
+        ControlData->setText("Key S Press");
+        ControlState->setText("Draw back");
+        emit SendControlSignal("S");
+    });
+    connect(DIcon,&customIcon::clicked,this,[=]()
+    {
+        ControlData->setText("Key D Press");
+        ControlState->setText("Right");
+        emit SendControlSignal("D");
+    });
+    connect(QIcon,&customIcon::clicked,this,[=]()
+    {
+        ControlData->setText("Key Q Press");
+        ControlState->setText("Float");
+        emit SendControlSignal("Q");
+    });
+    connect(EIcon,&customIcon::clicked,this,[=]()
+    {
+        ControlData->setText("Key E Press");
+        ControlState->setText("Sink");
+        emit SendControlSignal("E");
+    });
 
-    RM3100NO1->setMinimumHeight(25);
-    RM3100NO1->setFont(RM3100DataFont);
-    RM3100NO2->setMinimumHeight(25);
-    RM3100NO2->setFont(RM3100DataFont);
-    RM3100NO3->setMinimumHeight(25);
-    RM3100NO3->setFont(RM3100DataFont);
-    RM3100NO4->setMinimumHeight(25);
-    RM3100NO4->setFont(RM3100DataFont);
 
-    RM3100DataNO1->setMinimumSize(300,25);
-    RM3100DataNO1->setFont(RM3100DataFont);
-    RM3100DataNO2->setMinimumSize(300,25);
-    RM3100DataNO2->setFont(RM3100DataFont);
-    RM3100DataNO3->setMinimumSize(300,25);
-    RM3100DataNO3->setFont(RM3100DataFont);
-    RM3100DataNO4->setMinimumSize(300,25);
-    RM3100DataNO4->setFont(RM3100DataFont);
+    //第一排按键水平布局
+    QWidget *Key1Widget = new QWidget(this);
+    Key1Widget->setSizePolicy(sizepolicy);
+    QHBoxLayout *Key1Layout = new QHBoxLayout(this);
+    Key1Widget->setMaximumSize(250,70);
+    Key1Widget->setLayout(Key1Layout);
+    Key1Layout->setContentsMargins(0, 0, 0, 0);
+    Key1Layout->setAlignment(Qt::AlignCenter);
+    Key1Layout->addWidget(QIcon);
+    Key1Layout->addWidget(WIcon);
+    Key1Layout->addWidget(EIcon);
 
-    QWidget *RM3100DataWidget = new QWidget(this);
-    RM3100DataWidget->setSizePolicy(sizepolicy);
-    RM3100DataWidget->setMinimumSize(450,300);
-    QVBoxLayout *RM3100DataLayout = new QVBoxLayout(this);
-    RM3100DataWidget->setLayout(RM3100DataLayout);
-    RM3100DataLayout->setContentsMargins(0, 0, 0, 0);
-    RM3100DataLayout->setAlignment(Qt::AlignTop);
-    RM3100DataLayout->addWidget(RM3100NO1);
-    RM3100DataLayout->addWidget(RM3100DataNO1);
-    RM3100DataLayout->addWidget(RM3100NO2);
-    RM3100DataLayout->addWidget(RM3100DataNO2);
-    RM3100DataLayout->addWidget(RM3100NO3);
-    RM3100DataLayout->addWidget(RM3100DataNO3);
-    RM3100DataLayout->addWidget(RM3100NO4);
-    RM3100DataLayout->addWidget(RM3100DataNO4);
+    QWidget *Key2Widget = new QWidget(this);
+    Key2Widget->setSizePolicy(sizepolicy);
+    QHBoxLayout *Key2Layout = new QHBoxLayout(this);
+    Key2Widget->setMaximumSize(250,70);
+    Key2Widget->setLayout(Key2Layout);
+    Key2Layout->setContentsMargins(0, 0, 0, 0);
+    Key2Layout->setAlignment(Qt::AlignCenter);
+    Key2Layout->addWidget(AIcon);
+    Key2Layout->addWidget(SIcon);
+    Key2Layout->addWidget(DIcon);
+
+    ControlData->setMaximumHeight(25);
+    ControlData->setFont(QFont("Corbel", 15));
+
+    ControlState->setMaximumHeight(25);
+    ControlState->setFont(QFont("Corbel", 15));
+
+    QWidget *ControlDataWidget = new QWidget(this);
+    ControlDataWidget->setSizePolicy(sizepolicy);
+    ControlDataWidget->setMinimumSize(450,300);
+    QVBoxLayout *ControlDataLayout = new QVBoxLayout(this);
+    ControlDataWidget->setLayout(ControlDataLayout);
+    ControlDataLayout->setContentsMargins(0, 0, 0, 0);
+    ControlDataLayout->setAlignment(Qt::AlignCenter);
+    ControlDataLayout->addWidget(Key1Widget);
+    ControlDataLayout->addWidget(Key2Widget);
+    ControlDataLayout->addWidget(ControlData);
+    ControlDataLayout->addWidget(ControlState);
 
 
-    RM3100Widget = new QWidget(this);
-    RM3100Widget->setSizePolicy(sizepolicy);
-    QVBoxLayout *RM3100Layout = new QVBoxLayout(this);
-    RM3100Widget->setLayout(RM3100Layout);
-    RM3100Layout->setContentsMargins(0, 0, 0, 0);
-    RM3100Layout->setAlignment(Qt::AlignTop);
-    RM3100Layout->addWidget(RM3100Title);
-    RM3100Layout->addWidget(RM3100Splitter);
-    RM3100Layout->addWidget(RM3100DataWidget);
+    ControlWidget = new QWidget(this);
+    ControlWidget->setSizePolicy(sizepolicy);
+    QVBoxLayout *ControlLayout = new QVBoxLayout(this);
+    ControlWidget->setLayout(ControlLayout);
+    ControlLayout->setContentsMargins(0, 0, 0, 0);
+    ControlLayout->setAlignment(Qt::AlignTop);
+    ControlLayout->addWidget(ControlTitle);
+    ControlLayout->addWidget(ControlSplitter);
+    ControlLayout->addWidget(ControlDataWidget);
 
-    splitter_2->addWidget(RM3100Widget);
+    splitter_2->addWidget(ControlWidget);
 
 //动力系统
     QLabel *PropulsionSysLabel = new QLabel(this);
@@ -582,6 +641,57 @@ void MotionControlWidget::DataSortConnect()
 
     //根据姿态，3D模型转向
     connect(this,&MotionControlWidget::AttitudeChange,modifier,&SceneModifier::OnSetRotation);
+}
+
+void MotionControlWidget::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_W: //W键被按下
+        CurrentKey = Qt::Key_W;
+        qDebug() << CurrentKey << "被按下";
+        ControlData->setText("Key W Press");
+        ControlState->setText("Forward");
+        emit SendControlSignal("W");
+        break;
+    case Qt::Key_A: //A键被按下
+        CurrentKey = Qt::Key_A;
+        qDebug() << CurrentKey << "被按下";
+        ControlData->setText("Key A Press");
+        ControlState->setText("Left");
+        emit SendControlSignal("A");
+        break;
+    case Qt::Key_S: //S键被按下
+        CurrentKey = Qt::Key_S;
+        qDebug() << CurrentKey << "被按下";
+        ControlData->setText("Key S Press");
+        ControlState->setText("Draw back");
+        emit SendControlSignal("S");
+        break;
+    case Qt::Key_D: //D键被按下        
+        CurrentKey = Qt::Key_D;
+        qDebug() << CurrentKey << "被按下";
+        ControlData->setText("Key D Press");
+        ControlState->setText("Right");
+        emit SendControlSignal("D");
+        break;
+    case Qt::Key_Q: //Q键被按下
+        CurrentKey = Qt::Key_Q;
+        qDebug() << CurrentKey << "被按下";
+        ControlData->setText("Key Q Press");
+        ControlState->setText("Float");
+        emit SendControlSignal("Q");
+        break;
+    case Qt::Key_E: //E键被按下
+        CurrentKey = Qt::Key_E;
+        qDebug() << CurrentKey << "被按下";
+        ControlData->setText("Key E Press");
+        ControlState->setText("Sink");
+        emit SendControlSignal("E");
+        break;
+    default:
+        QWidget::keyPressEvent(event);   //必须调用父类函数
+        break;
+    }
 }
 
 //数据显示到PlainTextEdit中，发起数据分拣信号

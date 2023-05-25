@@ -85,7 +85,6 @@ private:
     void Init();
     void SaveToFile(const QString &path);
     void TestMvSetting(int r);
-    void TestMvMode();
     void DataSortConnect(); //数据分类链接函数
 
 public:
@@ -99,10 +98,10 @@ public:
     QWidget *container = nullptr;
     SceneModifier *modifier = nullptr;
 
-    textButton *SendBTN;
-    textButton *ClearBTN;
+    textButton *SendBTN;    //串口发送按钮
+    textButton *ClearBTN;   //串口清空按钮
 
-    textInputItem *logTII;
+    textInputItem *logTII;  //串口发送栏
 
 signals:
     void SendDataSignal();
@@ -110,7 +109,6 @@ signals:
     void AttitudeChange(QString pitch, QString yaw, QString roll);
 
 public slots:
-    void doModeChange(int);
     void DataDisplayPTE(QString serialBuf);
 
 private slots:

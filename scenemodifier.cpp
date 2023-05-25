@@ -14,7 +14,7 @@ SceneModifier::SceneModifier(Qt3DCore::QEntity *rootEntity)
 //                                                    + relativePath);
 //    qDebug() << absolutePath;
     mesh = new Qt3DRender::QMesh();
-    mesh->setSource(QUrl("file:///E:/Desktop/CrucisIPC/Crucis3D.obj"));
+    mesh->setSource(QUrl("file:///E:/Desktop/CrucisIPC/Crucis3D.obj")); //路径要随着存储位置进行更改，目前只能使用绝对路径
 
     material = new Qt3DExtras::QPhongMaterial();
     material->setDiffuse(QColor(QRgb(0xbeb32b)));						//漫反射颜色

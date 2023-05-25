@@ -48,18 +48,23 @@ private:
     QSplitter *splitter_4;
 
     QLabel *PIDTitle;
-    QLabel *RM3100Title;
+    QLabel *ControlTitle;
     QLabel *logTitle;
     QLabel *infoTitle;
 
-    QLabel *CurrPID_P = new QLabel("P:",this);
-    QLabel *CurrPID_I = new QLabel("I:",this);
-    QLabel *CurrPID_D = new QLabel("D:",this);
+    QLabel *CurrPID_P = new QLabel("P:",this);   //当前P值显示标签
+    QLabel *CurrPID_I = new QLabel("I:",this);   //当前I值显示标签
+    QLabel *CurrPID_D = new QLabel("D:",this);   //当前D值显示标签
 
-    QLabel *RM3100DataNO1 = new QLabel(this);   //RM3100 1号数据
-    QLabel *RM3100DataNO2 = new QLabel(this);   //RM3100 2号数据
-    QLabel *RM3100DataNO3 = new QLabel(this);   //RM3100 3号数据
-    QLabel *RM3100DataNO4 = new QLabel(this);   //RM3100 4号数据
+    customIcon *WIcon = nullptr;    //按键W图标
+    customIcon *AIcon = nullptr;    //按键A图标
+    customIcon *SIcon = nullptr;    //按键S图标
+    customIcon *DIcon = nullptr;    //按键D图标
+    customIcon *QIcon = nullptr;    //按键Q图标
+    customIcon *EIcon = nullptr;    //按键E图标
+
+    QLabel *ControlData = new QLabel(this);   //当前控制情况标签
+    QLabel *ControlState = new QLabel(this);    //当前控制状态标签
 
     QLabel *ThrusterData1 = new QLabel(this);   //1号推进器的数据
     QLabel *ThrusterData2 = new QLabel(this);   //2号推进器的数据
@@ -77,18 +82,21 @@ private:
     QString ctrDescrip;
 
     QWidget *PIDWidget = nullptr;
-    QWidget *RM3100Widget = nullptr;
+    QWidget *ControlWidget = nullptr;
     QWidget *PropulsionSysWidget = nullptr;
     QWidget *logWidget = nullptr;
     QWidget *infoWidget = nullptr;
 
-    QPlainTextEdit *logPTE;
+    QPlainTextEdit *logPTE; //串口数据显示框
 
+    Qt::Key CurrentKey; //当前按下按键的键值
 
     void Init();
     void SaveToFile(const QString &path);
     void TestMvSetting(int r);
     void DataSortConnect(); //数据分类链接函数
+
+    void keyPressEvent(QKeyEvent *event);   //重写键盘按下事件
 
 public:
     explicit MotionControlWidget(int radius, int modeKind, QWidget *parent = nullptr);
@@ -101,10 +109,9 @@ public:
     QWidget *container = nullptr;
     SceneModifier *modifier = nullptr;
 
-    textButton *SendBTN;
-    textButton *ClearBTN;
-
-    textInputItem *logTII;
+    textButton *SendBTN;        //串口发送按钮
+    textButton *ClearBTN;       //串口清空按钮
+    textInputItem *logTII;      //串口发送栏
 
     textInputItem *PID_P_TII;   //PID P值输入框
     textInputItem *PID_I_TII;   //PID I值输入框
@@ -117,6 +124,7 @@ signals:
     void StartDataSort(QStringList ProcessedData);
     void AttitudeChange(QString pitch, QString yaw, QString roll);
     void SetPIDSignal();   //设置PID信号往主窗口
+    void SendControlSignal(QString str);  //发送控制信号往主窗口
 
 public slots:
     void DataDisplayPTE(QString serialBuf);

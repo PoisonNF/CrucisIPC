@@ -538,30 +538,6 @@ void DataDisplayWidget::Init(){
     DataSortConnect();
 }
 
-
-void DataDisplayWidget::doModeChange(int modeKind)
-{
-    if(modeKind_ == modeKind)
-        return;
-
-    switch (modeKind)
-    {
-    case MODE::TEST_MV_CTR:
-        TestMvMode();
-        break;
-    default:
-        break;
-    }
-
-    modeKind_ = modeKind;
-}
-
-
-void DataDisplayWidget::TestMvMode()
-{
-
-}
-
 //数据分类链接函数
 void DataDisplayWidget::DataSortConnect()
 {

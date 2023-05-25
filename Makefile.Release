@@ -172,13 +172,19 @@ release/qrc_fonts.cpp: fonts.qrc \
 
 release/qrc_icons.cpp: icons.qrc \
 		D:/QT/6.4.1/mingw_64/bin/rcc.exe \
+		icons/D.svg \
 		icons/DataDisplay.svg \
 		icons/settings.svg \
 		icons/layers.svg \
 		icons/open.png \
 		icons/back.svg \
+		icons/W.svg \
+		icons/S.svg \
 		icons/open.svg \
+		icons/A.svg \
 		icons/GamePad.svg \
+		icons/Q.svg \
+		icons/E.svg \
 		icons/create.png
 	D:\QT\6.4.1\mingw_64\bin\rcc.exe -name icons --no-zstd icons.qrc -o release\qrc_icons.cpp
 
@@ -3270,6 +3276,9 @@ release/moc_motioncontrolwidget.cpp: motioncontrolwidget.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qplaintextedit.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qtextedit.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/QT/6.4.1/mingw_64/include/QtWidgets/QMessageBox \
+		D:/QT/6.4.1/mingw_64/include/QtWidgets/qmessagebox.h \
+		D:/QT/6.4.1/mingw_64/include/QtWidgets/qdialog.h \
 		slidepage.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QLabel \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qlabel.h \
@@ -3318,7 +3327,6 @@ release/moc_motioncontrolwidget.cpp: motioncontrolwidget.h \
 		D:/QT/6.4.1/mingw_64/include/QtCore/QDir \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QFileDialog \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qfiledialog.h \
-		D:/QT/6.4.1/mingw_64/include/QtWidgets/qdialog.h \
 		release/moc_predefs.h \
 		D:/QT/6.4.1/mingw_64/bin/moc.exe
 	D:\QT\6.4.1\mingw_64\bin\moc.exe $(DEFINES) --include E:/Desktop/CrucisIPC/release/moc_predefs.h -ID:/QT/6.4.1/mingw_64/mkspecs/win32-g++ -IE:/Desktop/CrucisIPC -ID:/QT/6.4.1/mingw_64/include -ID:/QT/6.4.1/mingw_64/include/QtSvg -ID:/QT/6.4.1/mingw_64/include/Qt3DExtras -ID:/QT/6.4.1/mingw_64/include/Qt3DRender -ID:/QT/6.4.1/mingw_64/include/Qt3DInput -ID:/QT/6.4.1/mingw_64/include/Qt3DLogic -ID:/QT/6.4.1/mingw_64/include/Qt3DCore -ID:/QT/6.4.1/mingw_64/include/QtOpenGL -ID:/QT/6.4.1/mingw_64/include/QtWidgets -ID:/QT/6.4.1/mingw_64/include/QtGui -ID:/QT/6.4.1/mingw_64/include/QtConcurrent -ID:/QT/6.4.1/mingw_64/include/QtNetwork -ID:/QT/6.4.1/mingw_64/include/QtSerialPort -ID:/QT/6.4.1/mingw_64/include/QtCore -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -ID:/QT/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -ID:/QT/Tools/mingw1120_64/x86_64-w64-mingw32/include motioncontrolwidget.h -o release\moc_motioncontrolwidget.cpp
@@ -8449,6 +8457,9 @@ release/motioncontrolwidget.o: motioncontrolwidget.cpp MotionControlWidget.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qplaintextedit.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qtextedit.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/QT/6.4.1/mingw_64/include/QtWidgets/QMessageBox \
+		D:/QT/6.4.1/mingw_64/include/QtWidgets/qmessagebox.h \
+		D:/QT/6.4.1/mingw_64/include/QtWidgets/qdialog.h \
 		slidepage.h \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QLabel \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/qlabel.h \
@@ -8496,8 +8507,7 @@ release/motioncontrolwidget.o: motioncontrolwidget.cpp MotionControlWidget.h \
 		D:/QT/6.4.1/mingw_64/include/QtCore/QCoreApplication \
 		D:/QT/6.4.1/mingw_64/include/QtCore/QDir \
 		D:/QT/6.4.1/mingw_64/include/QtWidgets/QFileDialog \
-		D:/QT/6.4.1/mingw_64/include/QtWidgets/qfiledialog.h \
-		D:/QT/6.4.1/mingw_64/include/QtWidgets/qdialog.h
+		D:/QT/6.4.1/mingw_64/include/QtWidgets/qfiledialog.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\motioncontrolwidget.o motioncontrolwidget.cpp
 
 release/scenemodifier.o: scenemodifier.cpp scenemodifier.h \
