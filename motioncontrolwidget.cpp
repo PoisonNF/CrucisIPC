@@ -1,10 +1,8 @@
 #include "MotionControlWidget.h"
 
-MotionControlWidget::MotionControlWidget(int radius, int modeKind, QWidget *parent) :
-    QWidget(parent), modeKind_(modeKind)
+MotionControlWidget::MotionControlWidget(int radius, QWidget *parent) :
+    QWidget(parent)
 {
-    /* create canvas */
-
     mainLayout = new QVBoxLayout(this);
     mainLayout -> setContentsMargins(0, 0, 0, 0);
     this->setLayout(mainLayout);
@@ -14,15 +12,23 @@ MotionControlWidget::MotionControlWidget(int radius, int modeKind, QWidget *pare
 
     this->setFocusPolicy(Qt::ClickFocus);
 
+    //初始化模式选择界面
+    ModeSelectPage(radius);
 
-    TestMvSetting(radius);
+    //定时器延时10ms后，初始化运动控制界面
+    QTimer *delay = new QTimer(this);
+    connect(delay, &QTimer::timeout, this, [=](){
+        Init();
+        delay->deleteLater();   //超时后释放内存
+    });
+    delay->setSingleShot(true);
+    delay->start(10);
 }
 
+//该构造函数不使用
 MotionControlWidget::MotionControlWidget(QTextStream &ts, int radius, QWidget *parent) :
     QWidget(parent)
 {
-
-    /* create canvas */
     mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(mainLayout);
@@ -32,7 +38,7 @@ MotionControlWidget::MotionControlWidget(QTextStream &ts, int radius, QWidget *p
 }
 
 //在数据显示界面的设置栏this->parentWidget());
-void MotionControlWidget::TestMvSetting(int radius){
+void MotionControlWidget::ModeSelectPage(int radius){
     /* create settings page */
     modeName = "测试模式";
     ctrDescrip = "运动控制";
@@ -57,15 +63,6 @@ void MotionControlWidget::TestMvSetting(int radius){
     settings->AddContent(redesc);
     settings->AddContent(rename);
     settings->show();
-
-    //创建定时器
-    QTimer *delay = new QTimer(this);
-    connect(delay, &QTimer::timeout, this, [=](){
-        Init();
-        delay->deleteLater();   //超时后释放内存
-    });
-    delay->setSingleShot(true);
-    delay->start(10);
 }
 
 void MotionControlWidget::Init(){
@@ -86,6 +83,7 @@ void MotionControlWidget::Init(){
     splitter_1->addWidget(splitter_3);
     splitter_1->addWidget(splitter_4);
 
+    //设置布局策略
     QSizePolicy sizepolicy = QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Minimum);
     sizepolicy.setVerticalPolicy(QSizePolicy::Expanding);
     sizepolicy.setHorizontalPolicy(QSizePolicy::Expanding);
@@ -183,7 +181,7 @@ void MotionControlWidget::Init(){
     PIDDataLayout->addWidget(PID_D_TII);
     PIDDataLayout->addWidget(SetPIDBTN);
 
-
+    //PIDWidget将上面所有控件收入
     PIDWidget = new QWidget(this);
     PIDWidget->setSizePolicy(sizepolicy);
     QVBoxLayout *PIDLayout = new QVBoxLayout(this);
@@ -261,7 +259,6 @@ void MotionControlWidget::Init(){
         emit SendControlSignal("E");
     });
 
-
     //第一排按键水平布局
     QWidget *Key1Widget = new QWidget(this);
     Key1Widget->setSizePolicy(sizepolicy);
@@ -285,9 +282,11 @@ void MotionControlWidget::Init(){
     Key2Layout->addWidget(SIcon);
     Key2Layout->addWidget(DIcon);
 
+    //显示按键数据的标签
     ControlData->setMaximumHeight(25);
     ControlData->setFont(QFont("Corbel", 15));
 
+    //显示产生状态的标签
     ControlState->setMaximumHeight(25);
     ControlState->setFont(QFont("Corbel", 15));
 
@@ -382,11 +381,6 @@ void MotionControlWidget::Init(){
     ServoData4->setMinimumSize(100,20);
     ServoData4->setFont(ServoDataFont);
 
-//    propellerWidget = new QWidget(splitter_3);
-//    propellerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-//    QGridLayout *propellerLayout = new QGridLayout(propellerWidget);
-//    propellerLayout->setContentsMargins(0, 0, 0, 0);
-//    propellerWidget->setLayout(propellerLayout);
     //将推进器相关的控件垂直布局
     QWidget *ThrusterDataWidget = new QWidget(this);
     QVBoxLayout *ThrusterDataLayout = new QVBoxLayout(this);
@@ -450,9 +444,6 @@ void MotionControlWidget::Init(){
     logSplitter->setFixedSize(30, 6);
     logSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-//    ScrollAreaCustom *logDisplay = new ScrollAreaCustom(this);
-//    logDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     //log框设置，包含PTE和LE，使用垂直布局
     //用于显示接收串口传过来的数据
     logPTE = new QPlainTextEdit;
@@ -472,7 +463,6 @@ void MotionControlWidget::Init(){
     logLayout->addWidget(logSplitter);
     logLayout->addWidget(logPTE);
     logLayout->addWidget(logTII);
-    //logLayout->addWidget(logDisplay);
 
     //底下两个按钮的设置，使用水平布局
     textButton *SendBTN = new textButton("Send",this);
@@ -516,7 +506,7 @@ void MotionControlWidget::Init(){
     model3DSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
     view = new Qt3DExtras::Qt3DWindow();
-     //设置背景颜色
+    //设置背景颜色
     view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x4d4d4f)));
     //静态创建了一个 QWidget容器以便将其嵌入到其他 QWidget 界面中。
     container = QWidget::createWindowContainer(view);
@@ -529,6 +519,7 @@ void MotionControlWidget::Init(){
     QSize screenSize = view->screen()->size();
     container->setMaximumSize(screenSize);
 
+    //创建实体
     mRootEntity = new Qt3DCore::QEntity;
 
     Qt3DRender::QCamera* camEntity = view->camera();
@@ -712,6 +703,7 @@ void MotionControlWidget::DataDisplayPTE(QString serialBuf)
     }
 }
 
+//推进系统数据分拣
 void MotionControlWidget::PropulsionSysDataSort(QStringList ProcessedData)
 {
     //是推进器的数据
@@ -772,6 +764,7 @@ void MotionControlWidget::PropulsionSysDataSort(QStringList ProcessedData)
     }
 }
 
+//姿态数据分拣
 void MotionControlWidget::AttitudeDataSort(QStringList ProcessedData)
 {
     //如果是JY901S的数据
@@ -788,6 +781,7 @@ void MotionControlWidget::AttitudeDataSort(QStringList ProcessedData)
     }
 }
 
+//暂不使用
 void MotionControlWidget::SaveToFile(const QString &path){
     QFile output(path);
     output.open(QIODevice::WriteOnly | QIODevice::Text);

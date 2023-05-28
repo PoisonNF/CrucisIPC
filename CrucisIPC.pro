@@ -1,4 +1,4 @@
-QT       += core gui
+QT += core gui
 QT += svg
 QT += 3dcore 3drender 3dinput 3dextras
 QT += serialport
@@ -39,7 +39,7 @@ HEADERS += \
 FORMS += \
     mainwindow.ui
 
-RC_ICONS = logo.ico
+RC_ICONS = ico.ico
 
 
 # Default rules for deployment.

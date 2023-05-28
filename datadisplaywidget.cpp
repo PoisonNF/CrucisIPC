@@ -1,10 +1,8 @@
 #include "datadisplaywidget.h"
 
-DataDisplayWidget::DataDisplayWidget(int radius, int modeKind, QWidget *parent) :
-    QWidget(parent), modeKind_(modeKind)
+DataDisplayWidget::DataDisplayWidget(int radius, QWidget *parent) :
+    QWidget(parent)
 {
-    /* create canvas */
-
     mainLayout = new QVBoxLayout(this);
     mainLayout -> setContentsMargins(0, 0, 0, 0);
     this->setLayout(mainLayout);
@@ -14,15 +12,23 @@ DataDisplayWidget::DataDisplayWidget(int radius, int modeKind, QWidget *parent) 
 
     this->setFocusPolicy(Qt::ClickFocus);
 
+    //初始化模式选择界面
+    ModeSelectPage(radius);
 
-    TestMvSetting(radius);
+    //定时器延时10ms后，初始化数据显示界面
+    QTimer *delay = new QTimer(this);
+    connect(delay, &QTimer::timeout, this, [=](){
+        Init();
+        delay->deleteLater();   //超时后释放内存
+    });
+    delay->setSingleShot(true);
+    delay->start(10);
 }
 
+//该构造函数不使用
 DataDisplayWidget::DataDisplayWidget(QTextStream &ts, int radius, QWidget *parent) :
     QWidget(parent)
 {
-
-    /* create canvas */
     mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(mainLayout);
@@ -32,7 +38,7 @@ DataDisplayWidget::DataDisplayWidget(QTextStream &ts, int radius, QWidget *paren
 }
 
 //在数据显示界面的设置栏
-void DataDisplayWidget::TestMvSetting(int radius){
+void DataDisplayWidget::ModeSelectPage(int radius){
     /* create settings page */
     modeName = "测试模式";
     ctrDescrip = "运动控制";
@@ -57,13 +63,6 @@ void DataDisplayWidget::TestMvSetting(int radius){
     settings->AddContent(redesc);
     settings->AddContent(rename);
     settings->show();
-    /* create settings page */
-
-    /* create widgets */
-    QTimer *delay = new QTimer(this);
-    connect(delay, &QTimer::timeout, this, [=](){Init();});
-    delay->setSingleShot(true);
-    delay->start(10);
 }
 
 void DataDisplayWidget::Init(){
@@ -228,8 +227,6 @@ void DataDisplayWidget::Init(){
     RM3100Layout->addWidget(RM3100DataWidget);
 
     splitter_2->addWidget(RM3100Widget);
-    //splitter_3->addWidget(RM3100Widget);
-    //splitter_3->addWidget(tempwidget);
 
 //动力系统
     QLabel *PropulsionSysLabel = new QLabel(this);
@@ -336,16 +333,6 @@ void DataDisplayWidget::Init(){
     PropulsionSysDataLayout->addWidget(ThrusterDataWidget);
     PropulsionSysDataLayout->addWidget(ServoDataWidget);
 
-//    ThrusterData1->setText("ddd");
-//    ThrusterData2->setText("ddd");
-//    ThrusterData3->setText("ddd");
-//    ThrusterData4->setText("ddd");
-
-//    ServoData1->setText("ddd");
-//    ServoData2->setText("ddd");
-//    ServoData3->setText("ddd");
-//    ServoData4->setText("ddd");
-
     QWidget *PropulsionSysWidget = new QWidget(this);
     QVBoxLayout *PropulsionSysLayout = new QVBoxLayout(PropulsionSysWidget);
     PropulsionSysWidget->setLayout(PropulsionSysLayout);
@@ -370,9 +357,6 @@ void DataDisplayWidget::Init(){
     logSplitter->setFixedSize(30, 6);
     logSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-//    ScrollAreaCustom *logDisplay = new ScrollAreaCustom(this);
-//    logDisplay->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     //log框设置，包含PTE和LE，使用垂直布局
     //用于显示接收串口传过来的数据
     logPTE = new QPlainTextEdit;
@@ -392,7 +376,6 @@ void DataDisplayWidget::Init(){
     logLayout->addWidget(logSplitter);
     logLayout->addWidget(logPTE);
     logLayout->addWidget(logTII);
-    //logLayout->addWidget(logDisplay);
 
     //底下两个按钮的设置，使用水平布局
     textButton *SendBTN = new textButton("Send",this);
@@ -566,6 +549,7 @@ void DataDisplayWidget::DataDisplayPTE(QString serialBuf)
     }
 }
 
+//JY901S数据分拣
 void DataDisplayWidget::JY901SDataSort(QStringList ProcessedData)
 {
     //是JY901S的数据
@@ -604,6 +588,7 @@ void DataDisplayWidget::JY901SDataSort(QStringList ProcessedData)
     }
 }
 
+//RM3100数据分拣
 void DataDisplayWidget::RM3100DataSort(QStringList ProcessedData)
 {
     //是RM3100的数据
@@ -636,6 +621,7 @@ void DataDisplayWidget::RM3100DataSort(QStringList ProcessedData)
     }
 }
 
+//推进系统数据分拣
 void DataDisplayWidget::PropulsionSysDataSort(QStringList ProcessedData)
 {
     //是推进器的数据
@@ -696,6 +682,7 @@ void DataDisplayWidget::PropulsionSysDataSort(QStringList ProcessedData)
     }
 }
 
+//暂不使用
 void DataDisplayWidget::SaveToFile(const QString &path){
     QFile output(path);
     output.open(QIODevice::WriteOnly | QIODevice::Text);

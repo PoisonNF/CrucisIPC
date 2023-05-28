@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->verticalLayout->setContentsMargins(0, 0, 0, 0);
     cornerRadius = 0;
 #endif
+
+    //定时器延时10ms后，初始化所有界面
     QTimer *t = new QTimer(this);
     connect(t, &QTimer::timeout, this, [=](){Init();});
     t->setSingleShot(true);
@@ -28,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->adjSizeBtn, &QPushButton::clicked, this, [=](){controlWindowScale();});
 }
 
+/* 初始化 */
 void MainWindow::Init(){
 
     InitFrame();    //框架初始化
@@ -39,6 +42,7 @@ void MainWindow::Init(){
     InitSerialPage();   //串口设置界面初始化
 }
 
+/* 框架初始化 */
 void MainWindow::InitFrame()
 {
     /* 创建主窗口小部件并设置掩码、样式表和阴影 */
@@ -56,6 +60,7 @@ void MainWindow::InitFrame()
     ui->mainWidget->setObjectName("mainWidget");
     mainStyle = "QWidget#mainWidget{background-color:" + mainBackGround.name() + QString::asprintf(";border-radius:%dpx", cornerRadius) + "}";
     ui->mainWidget->setStyleSheet(mainStyle);
+
 #if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
 #ifdef Q_OS_WINDOWS
     //增加窗口阴影
@@ -66,7 +71,6 @@ void MainWindow::InitFrame()
     ui->mainWidget->setGraphicsEffect(windowShadow);
 #endif
 #endif
-    /**********************************************************/
 
     /* 创建边界以覆盖区域的锯齿形边缘 */
 #ifdef Q_OS_WINDOWS
@@ -81,7 +85,7 @@ void MainWindow::InitFrame()
 #endif
 }
 
-
+/* 默认设置界面初始化 */
 void MainWindow::InitDefaultSettingsPage()
 {
     /* 创建设置关于页 */
@@ -111,7 +115,7 @@ void MainWindow::InitDefaultSettingsPage()
     pageList.push_back(defaultSettingsPage);
 }
 
-//默认主界面初始化
+/* 默认主界面初始化 */
 void MainWindow::InitDefaultPage()
 {
     /* 初始化主界面上部标题栏 */
@@ -162,8 +166,6 @@ void MainWindow::InitDefaultPage()
     layersIcon = new customIcon(":/icons/icons/layers.svg", "layers", 5, this);
     layersIcon->setMinimumHeight(Heading->height() * 0.7);
     layersIcon->setMaximumWidth(Heading->height() * 0.7);
-
-    /*****************************************************************/
 
     /* 布局配置 */
     QWidget *titleInnerWidget = new QWidget(this);
@@ -222,7 +224,7 @@ void MainWindow::InitDefaultPage()
 
 }
 
-//层页初始化函数
+/* 层页初始化函数 */
 void MainWindow::InitLayersPage()
 {
     layersPage = new SlidePage(cornerRadius, "功能选择", ui->mainWidget);
@@ -237,20 +239,10 @@ void MainWindow::InitLayersPage()
     modeSelGroup->AddItem(DDModeItem);
     modeSelGroup->AddItem(MotionModeItem);
 
-//    subModeSelGroup = new singleSelectGroup("控制", layersPage);
-//    selectionItem *mvCtrItem = new selectionItem("运动控制", "待填", layersPage);
-//    selectionItem *balCtrItem = new selectionItem("调平控制", "待填", layersPage);
-//    selectionItem *actCtrItem = new selectionItem("动作控制", "待填", layersPage);
-
-//    subModeSelGroup->AddItem(mvCtrItem);
-//    subModeSelGroup->AddItem(balCtrItem);
-//    subModeSelGroup->AddItem(actCtrItem);
-
     textButton *ensureBtn = new textButton("确认", layersPage);
 
     //按照从下到上的顺序排布
     layersPage->AddContent(ensureBtn);          //确认按钮
-    //layersPage->AddContent(subModeSelGroup);  //副模式组
     layersPage->AddContent(modeSelGroup);       //主模式组
     layersPage->AddContent(whiteSpace);         //留白
     layersPage->show(); //界面显示
@@ -262,41 +254,19 @@ void MainWindow::InitLayersPage()
     connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
 
     connect(DDModeItem, &selectionItem::selected, this, [=](){
-        //modeKind = MODE::TEST_MV_CTR;
-        //subModeSelGroup->SetSelection(mvCtrItem);
-        //emit ModeKindChange(modeKind);
+        //模式标志置数据显示
         Switch_Mode = DATADISPLAY;
 
     });
     connect(MotionModeItem, &selectionItem::selected, this, [=](){
-        //modeKind = MODE::TRAVEL_MV_CTR;
-        //subModeSelGroup->SetSelection(mvCtrItem);
-        //emit ModeKindChange(modeKind);
+        //模式标志置运动控制
         Switch_Mode = MOTIONCONTROl;
 
     });
-//    connect(mvCtrItem, &selectionItem::selected, this, [=](){
-//        //modeKind = MODE::TEST_MV_CTR;
-//        //emit ModeKindChange(modeKind);
 
-//        qDebug()<<"modeKind = TEST_MV_CTR";
-//    });
-//    connect(balCtrItem, &selectionItem::selected, this, [=](){
-//        //modeKind = MODE::TEST_BAL_CTR;
-//        //emit ModeKindChange(modeKind);
-
-//        qDebug()<<"modeKind = TEST_BAL_CTR";
-//    });
-//    connect(actCtrItem, &selectionItem::selected, this, [=](){
-//        //modeKind = MODE::TEST_ACT_CTR;
-//        //emit ModeKindChange(modeKind);
-
-//        qDebug()<<"modeKind = TEST_ACT_CTR";
-//    });
-
-    //connectPage3DLight(layersPage);
+    //按下确定键会根据模式标志切换到不同的界面
     connect(ensureBtn, &textButton::clicked, this, [=](){
-        //ChangeMyWidget(); //切换界面
+
         if(Switch_Mode == DATADISPLAY)
         {
             qDebug()<<"进入数据显示界面";
@@ -312,6 +282,7 @@ void MainWindow::InitLayersPage()
     });
 }
 
+/* 串口界面初始化 */
 void MainWindow::InitSerialPage()
 {
     //串口配置按钮 还有个 空出的按钮
@@ -413,7 +384,9 @@ void MainWindow::InitSerialPage()
 
     pageList.push_back(serialDialog);
 
+    //按下串口设置按钮时，设置串口串口滑入
     connect(serialBtn, &textButton::clicked, serialDialog, &SlidePage::slideIn);
+    //按下串口设置按钮时，设置界面中comPortCBox的值
     connect(serialBtn, &textButton::clicked, this, [=](){
         comPortCBox->clear();
         foreach(QSerialPortInfo portInfo, QSerialPortInfo::availablePorts())
@@ -421,8 +394,12 @@ void MainWindow::InitSerialPage()
         openSerialBtn->setEnabled(comPortCBox->count()>0);
         serial->setPortName(comPortCBox->currentText());
     });
+
+    //按下打开串口按钮时，打开串口
     connect(openSerialBtn, &textButton::clicked, this, &MainWindow::OpenSerialPort);
+    //按下关闭串口按钮时，关闭串口
     connect(closeSerialBtn, &textButton::clicked, this, &MainWindow::CloseSerialPort);
+    //当串口数据准备可读时，读取其中的数据
     connect(serial,&QSerialPort::readyRead,this,&MainWindow::ReadData);
 
     //接收到读取完成信号，根据界面隐藏情况，显示在不同界面的接收框中
@@ -436,7 +413,6 @@ void MainWindow::InitSerialPage()
         {
             qDebug() << "从数据显示界面获取，串口开始发送";
             serial->write(dataDisplayWidget->logTII->value().toLocal8Bit().data());
-            //qDebug() << dataDisplayWidget->logTII->value().toLocal8Bit().data();
         }
     });
 
@@ -461,7 +437,7 @@ void MainWindow::InitSerialPage()
     //接收到PID设置信号，往串口中写入PID值
     connect(motionControlWidget,&MotionControlWidget::SetPIDSignal,this,[=](){
         qDebug() << "设置PID值";
-        //根据协议传输PID值
+        //根据协议传输PID值 形如PID X X X
         QString PIDValue;
         PIDValue = "PID "
                  + QString(motionControlWidget->PID_P_TII->value()) + " "
@@ -475,7 +451,7 @@ void MainWindow::InitSerialPage()
 /* 初始化数据显示窗口 */
 void MainWindow::InitDataDisplayWidget()
 {
-    dataDisplayWidget = new DataDisplayWidget(cornerRadius,0, ui->mainWidget);
+    dataDisplayWidget = new DataDisplayWidget(cornerRadius, ui->mainWidget);
     dataDisplayWidget->hide();
     dataDisplayWidget->settingPage()->setParent(ui->mainWidget);
     pageList.push_back(dataDisplayWidget->settingPage());
@@ -485,7 +461,7 @@ void MainWindow::InitDataDisplayWidget()
 /* 初始化运动控制窗口 */
 void MainWindow::InitMotionControlWidget()
 {
-    motionControlWidget = new MotionControlWidget(cornerRadius,0, ui->mainWidget);
+    motionControlWidget = new MotionControlWidget(cornerRadius, ui->mainWidget);
     motionControlWidget->hide();
     motionControlWidget->settingPage()->setParent(ui->mainWidget);
     pageList.push_back(motionControlWidget->settingPage());

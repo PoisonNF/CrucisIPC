@@ -1,6 +1,6 @@
 #include <windows.h>
 
-IDI_ICON1	ICON	"E:\\Desktop\\CrucisIPC\\logo.ico"
+IDI_ICON1	ICON	"E:\\Desktop\\CrucisIPC\\ico.ico"
 
 VS_VERSION_INFO VERSIONINFO
 	FILEVERSION 0,0,0,0

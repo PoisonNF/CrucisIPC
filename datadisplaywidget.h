@@ -31,14 +31,11 @@ class DataDisplayWidget : public QWidget
     Q_OBJECT
 private:
     enum MODE{TEST_MV_CTR, TEST_BAL_CTR, TEST_ACT_CTR, TRAVEL_MV_CTR, TRAVEL_BAL_CTR, TRAVEL_ACT_CTR};
-    int modeKind_;
 
     SlidePage *settings;
     Qt3DCore::QEntity *mRootEntity;
     Qt3DCore::QEntity *lightEntity;
     Qt3DRender::QPointLight *light;
-
-    //For display
 
     QVBoxLayout *mainLayout;
     QSplitter *splitter_1;
@@ -84,11 +81,11 @@ private:
 
     void Init();
     void SaveToFile(const QString &path);
-    void TestMvSetting(int r);
+    void ModeSelectPage(int r);  //模式选择页
     void DataSortConnect(); //数据分类链接函数
 
 public:
-    explicit DataDisplayWidget(int radius, int modeKind, QWidget *parent = nullptr);
+    explicit DataDisplayWidget(int radius, QWidget *parent = nullptr);
     DataDisplayWidget(QTextStream &ts, int radius, QWidget *parent = nullptr);
 
     SlidePage *settingPage(){return settings;}

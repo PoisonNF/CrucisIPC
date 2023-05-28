@@ -32,14 +32,11 @@ class MotionControlWidget : public QWidget
     Q_OBJECT
 private:
     enum MODE{TEST_MV_CTR, TEST_BAL_CTR, TEST_ACT_CTR, TRAVEL_MV_CTR, TRAVEL_BAL_CTR, TRAVEL_ACT_CTR};
-    int modeKind_;
 
     SlidePage *settings;
     Qt3DCore::QEntity *mRootEntity;
     Qt3DCore::QEntity *lightEntity;
     Qt3DRender::QPointLight *light;
-
-    //For display
 
     QVBoxLayout *mainLayout;
     QSplitter *splitter_1;
@@ -93,13 +90,13 @@ private:
 
     void Init();
     void SaveToFile(const QString &path);
-    void TestMvSetting(int r);
-    void DataSortConnect(); //数据分类链接函数
+    void ModeSelectPage(int r); //模式选择页
+    void DataSortConnect();     //数据分类链接函数
 
     void keyPressEvent(QKeyEvent *event);   //重写键盘按下事件
 
 public:
-    explicit MotionControlWidget(int radius, int modeKind, QWidget *parent = nullptr);
+    explicit MotionControlWidget(int radius, QWidget *parent = nullptr);
     MotionControlWidget(QTextStream &ts, int radius, QWidget *parent = nullptr);
 
     SlidePage *settingPage(){return settings;}
