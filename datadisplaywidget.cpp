@@ -29,6 +29,8 @@ DataDisplayWidget::DataDisplayWidget(int radius, QWidget *parent) :
 DataDisplayWidget::DataDisplayWidget(QTextStream &ts, int radius, QWidget *parent) :
     QWidget(parent)
 {
+    Q_UNUSED(ts);
+    Q_UNUSED(radius);
     mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(mainLayout);
@@ -405,79 +407,7 @@ void DataDisplayWidget::Init(){
     splitter_3->addWidget(BTNWidget);
 
 //3d模型
-    QLabel *model3DTitle = new QLabel(this);
-    model3DTitle = new QLabel(this);
-    model3DTitle->setText("3Dmodel");
-    model3DTitle->setFont(titleFont);
-    model3DTitle->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    model3DTitle->setStyleSheet("color:#2c2c2c");
 
-    //info底下的小横条
-    QWidget *model3DSplitter = new QWidget(this);
-    //info底下的小横条长度30，高度6
-    model3DSplitter->setFixedSize(30, 6);
-    model3DSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
-
-    view = new Qt3DExtras::Qt3DWindow();
-     //设置背景颜色
-    view->defaultFrameGraph()->setClearColor(QColor(QRgb(0x4d4d4f)));
-    //静态创建了一个 QWidget容器以便将其嵌入到其他 QWidget 界面中。
-    container = QWidget::createWindowContainer(view);
-    //将容器设置为当前窗口的子窗口
-    container->setParent(this);
-
-    //最小容器
-    container->setMinimumSize(300,300);
-    //最大容器为全屏
-    QSize screenSize = view->screen()->size();
-    container->setMaximumSize(screenSize);
-
-    mRootEntity = new Qt3DCore::QEntity;
-
-    Qt3DRender::QCamera* camEntity = view->camera();
-    //设置了相机的投影方式为透视投影,该函数的第一个参数是视野角度（单位为度），第二个参数是宽高比，第三个和第四个参数分别是近平面和远平面的距离。
-    camEntity->lens()->setPerspectiveProjection(10.0f, 9.0f / 9.0f, 0.1f, 1000.0f);
-    //设置了相机的位置,为xyz
-    camEntity->setPosition(QVector3D(0, -10.0f, 0.0f));
-    //设置了相机的上方向
-    camEntity->setUpVector(QVector3D(0, 1, 0));
-    //设置了相机的视点中心,视点中心用于确定相机的注视点
-    camEntity->setViewCenter(QVector3D(0, 0, 0));
-    //相机实体与轨道摄像机控制器关联起来,可以使用鼠标或手指控制相机的旋转和缩放
-    Qt3DExtras::QOrbitCameraController *camController = new Qt3DExtras::QOrbitCameraController(mRootEntity);
-    camController->setCamera(camEntity);
-
-    //灯光配置
-    lightEntity = new Qt3DCore::QEntity(mRootEntity);
-    light = new Qt3DRender::QPointLight(lightEntity);
-    light->setColor("white");
-    light->setIntensity(1.2f);
-    lightEntity->addComponent(light);
-
-    Qt3DCore::QTransform *lightTransform = new Qt3DCore::QTransform(lightEntity);
-    lightTransform->setTranslation(camEntity->position());
-    lightEntity->addComponent(lightTransform);
-
-    view->setRootEntity(mRootEntity);
-    modifier = new SceneModifier(mRootEntity);
-
-    QWidget *qt3dWidget = new QWidget(this);
-    QVBoxLayout *qt3dLayout = new QVBoxLayout(this);
-    qt3dWidget->setLayout(qt3dLayout);
-    qt3dLayout->setContentsMargins(10, 0, 0, 0);
-    qt3dLayout->setAlignment(Qt::AlignTop);
-    qt3dLayout->addWidget(model3DTitle);
-    qt3dLayout->addWidget(model3DSplitter);
-    qt3dLayout->addWidget(container);
-
-    //获取了 Qt3D 中的一个 QWidget 的尺寸策略
-    sizepolicy = qt3dWidget->sizePolicy();
-    //获取了 Qt3D 中的一个 QWidget 的尺寸策略
-    sizepolicy.setRetainSizeWhenHidden(true);
-    //配置好的尺寸策略设置回QWidget ,下一次将其显示时，能够保持之前的尺寸大小。
-    qt3dWidget->setSizePolicy(sizepolicy);
-
-    splitter_4->addWidget(qt3dWidget);
 
 //info 显示深度、GPS、电量百分比
     infoTitle = new QLabel(this);
@@ -528,7 +458,7 @@ void DataDisplayWidget::DataSortConnect()
     connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::RM3100DataSort);
     connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::PropulsionSysDataSort);
 
-    connect(this,&DataDisplayWidget::AttitudeChange,modifier,&SceneModifier::OnSetRotation);
+    //connect(this,&DataDisplayWidget::AttitudeChange,modifier,&SceneModifier::OnSetRotation);
 }
 
 //数据显示到PlainTextEdit中，发起数据分拣信号

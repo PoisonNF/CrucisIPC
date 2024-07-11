@@ -17,11 +17,15 @@
 #include <QGuiApplication>
 #include <QPlainTextEdit>
 #include <QMessageBox>
+#include <QComboBox>
+#include <QListView>
+#include <QTextCursor>
 
-#include "slidepage.h"
-#include "scenemodifier.h"
-#include "customWidgets.h"
-#include "scenemodifier.h"
+#include "./frame/slidepage.h"
+#include "./frame/customWidgets.h"
+#include "QJoysticks.h"
+#include "joysticks.h"
+#include "./Log/log.h"
 
 #if (QT_VERSION > QT_VERSION_CHECK(6,3,0))
 #include <QFileDialog>
@@ -38,31 +42,56 @@ private:
     Qt3DCore::QEntity *lightEntity;
     Qt3DRender::QPointLight *light;
 
+    QSizePolicy sizepolicy;
+    QFont TitleFont = QFont("Corbel", 20);
+
     QVBoxLayout *mainLayout;
     QSplitter *splitter_1;
     QSplitter *splitter_2;
     QSplitter *splitter_3;
     QSplitter *splitter_4;
 
+    //PID
     QLabel *PIDTitle;
     QLabel *ControlTitle;
     QLabel *logTitle;
     QLabel *infoTitle;
 
-    QLabel *CurrPID_P = new QLabel("P:",this);   //当前P值显示标签
-    QLabel *CurrPID_I = new QLabel("I:",this);   //当前I值显示标签
-    QLabel *CurrPID_D = new QLabel("D:",this);   //当前D值显示标签
+    QComboBox *PIDComboBox = new QComboBox(this);
 
-    customIcon *WIcon = nullptr;    //按键W图标
-    customIcon *AIcon = nullptr;    //按键A图标
-    customIcon *SIcon = nullptr;    //按键S图标
-    customIcon *DIcon = nullptr;    //按键D图标
-    customIcon *QIcon = nullptr;    //按键Q图标
-    customIcon *EIcon = nullptr;    //按键E图标
+public:
+    typedef struct
+    {
+        double P;
+        double I;
+        double D;
+    }CurrPIDstore;  //存储不同PID环中的PID数值
 
-    QLabel *ControlData = new QLabel(this);   //当前控制情况标签
+    typedef enum
+    {
+        DepthPID,
+        YawPID,
+        AngleLoopPID,
+        PositionLoopPID,
+        LinePatrolPID
+    }PIDtype;
+
+private:
+    CurrPIDstore DepthPIDstore; //储存深度环PID
+    CurrPIDstore YawPIDstore;   //储存艏向环PID
+    CurrPIDstore AngleLoopPIDstore;   //储存角度环PID
+    CurrPIDstore PositionLoopPIDstore;   //储存位置环PID
+    CurrPIDstore LinePatrolPIDstore; //储存巡线环PID
+
+    QLabel *CurrPID_P = new QLabel("P:              0",this);   //当前P值显示标签
+    QLabel *CurrPID_I = new QLabel("I:              0",this);   //当前I值显示标签
+    QLabel *CurrPID_D = new QLabel("D:              0",this);   //当前D值显示标签
+
+    //control
+    QLabel *ControlData = new QLabel(this);    //当前控制数据标签
     QLabel *ControlState = new QLabel(this);    //当前控制状态标签
 
+    //PropulsionSys
     QLabel *ThrusterData1 = new QLabel(this);   //1号推进器的数据
     QLabel *ThrusterData2 = new QLabel(this);   //2号推进器的数据
     QLabel *ThrusterData3 = new QLabel(this);   //3号推进器的数据
@@ -73,7 +102,18 @@ private:
     QLabel *ServoData3 = new QLabel(this);  //3号舵机的数据
     QLabel *ServoData4 = new QLabel(this);  //4号舵机的数据
 
+    //log
+    QTextCursor TextCursor;
+    QPlainTextEdit *logPTE; //串口数据显示框
+
+    //YOLO
+    QLabel *YOLOlogLabel; //YOLO串口数据显示标签
+
+    //Info
     QLabel *AttitudeDataInfo = new QLabel(this);    //Info姿态数据
+    QLabel *DepthDataInfo = new QLabel(this);       //Info深度数据
+    QLabel *JoystickAxisDataInfo = new QLabel(this);        //Info手柄坐标数据
+    QLabel *JoystickButtonDataInfo = new QLabel(this);        //Info手柄按键数据
 
     QString modeName;
     QString ctrDescrip;
@@ -82,33 +122,34 @@ private:
     QWidget *ControlWidget = nullptr;
     QWidget *PropulsionSysWidget = nullptr;
     QWidget *logWidget = nullptr;
+    QWidget *YOLOlogWidget = nullptr;
     QWidget *infoWidget = nullptr;
-
-    QPlainTextEdit *logPTE; //串口数据显示框
 
     Qt::Key CurrentKey; //当前按下按键的键值
 
+    QJoysticks* m_joystick;
+    Joysticks *JSwork;
+
     void Init();
+    void InitJoysticks();           //初始化手柄
+    void InitLayout();              //初始化总体布局
+    void InitPIDWidget();           //初始化PID窗口
+    void InitControlWidget();       //初始化控制窗口
+    void InitPropulsionSysWidget(); //初始化动力系统窗口
+    void InitLogWidget();           //初始化串口log窗口
+    void InitYOLOLogWidget();       //初始化YOLO串口log窗口
+    void InitInfoWidget();          //初始化信息窗口
+
+
     void SaveToFile(const QString &path);
     void ModeSelectPage(int r); //模式选择页
-    void DataSortConnect();     //数据分类链接函数
 
     void keyPressEvent(QKeyEvent *event);   //重写键盘按下事件
 
 public:
     explicit MotionControlWidget(int radius, QWidget *parent = nullptr);
-    MotionControlWidget(QTextStream &ts, int radius, QWidget *parent = nullptr);
 
     SlidePage *settingPage(){return settings;}
-    Qt3DRender::QPointLight *Light(){return light;}
-
-    Qt3DExtras::Qt3DWindow *view;
-    QWidget *container = nullptr;
-    SceneModifier *modifier = nullptr;
-
-    textButton *SendBTN;        //串口发送按钮
-    textButton *ClearBTN;       //串口清空按钮
-    textInputItem *logTII;      //串口发送栏
 
     textInputItem *PID_P_TII;   //PID P值输入框
     textInputItem *PID_I_TII;   //PID I值输入框
@@ -116,20 +157,26 @@ public:
 
     textButton *SetPIDBTN;  //设置PID值按钮
 
+    textButton *SendBTN;        //串口发送按钮
+    textButton *ClearBTN;       //串口清空按钮
+    textInputItem *logTII;      //串口发送栏
+
 signals:
-    void SendDataSignal();  //发送数据信号往主窗口
-    void StartDataSort(QStringList ProcessedData);
-    void AttitudeChange(QString pitch, QString yaw, QString roll);
-    void SetPIDSignal();   //设置PID信号往主窗口
-    void SendControlSignal(QString str);  //发送控制信号往主窗口
+    void sigLogDataSend();  //发送数据信号往主窗口
+    //void AttitudeChange(QString pitch, QString yaw, QString roll);
+    void sigSendPIDSignal(MotionControlWidget::CurrPIDstore PIDstore,MotionControlWidget::PIDtype PIDtype);   //设置PID信号往主窗口
+    void sigSendControlSignal(QString str);  //发送控制信号往主窗口
+    void sigJoyAxisSend(QString str);     //发送手柄坐标数据往主窗口
+    void sigJoyButtonSend(QString str);   //发送手柄按键数据往主窗口
 
 public slots:
-    void DataDisplayPTE(QString serialBuf);
+    void slotLogDataDisplay(std::string serialBuf);
+    void slotYOLOLogDataDisplay(QString serialBuf);
+    void slotAngleDataDisplay(std::vector<std::string> ProcessedData);
+    void slotDepthDataDisplay(std::vector<std::string> ProcessedData);
+    void slotThrusterDataDisplay(std::vector<std::string> ProcessedData);
 
 private slots:
-    void PropulsionSysDataSort(QStringList ProcessedData);  //动力系统数据分拣槽函数
-    void AttitudeDataSort(QStringList ProcessedData);   //分拣JY901S中的姿态数据
-
 };
 
 #endif // MONTIONCONTROLWIDGET_H

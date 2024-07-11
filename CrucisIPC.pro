@@ -12,29 +12,37 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    customScrollContainer.cpp \
-    customWidgets.cpp \
     datadisplaywidget.cpp \
-    graph_implement.cpp \
-    graph_view.cpp \
+    frame/customScrollContainer.cpp \
+    frame/customWidgets.cpp \
+    frame/graph_implement.cpp \
+    frame/graph_view.cpp \
+    frame/slidedialog.cpp \
+    frame/slidepage.cpp \
+    joysticks.cpp \
+    log/log.cpp \
     main.cpp \
     mainwindow.cpp \
     motioncontrolwidget.cpp \
-    scenemodifier.cpp \
-    slidedialog.cpp \
-    slidepage.cpp
+    serialdataanalyze.cpp \
+    serialreaddata.cpp \
+    yoloserialreaddata.cpp
 
 HEADERS += \
-    customScrollContainer.h \
-    customWidgets.h \
     datadisplaywidget.h \
-    graph_implement.h \
-    graph_view.h \
+    frame/customScrollContainer.h \
+    frame/customWidgets.h \
+    frame/graph_implement.h \
+    frame/graph_view.h \
+    frame/slidedialog.h \
+    frame/slidepage.h \
+    joysticks.h \
+    log/log.h \
     mainwindow.h \
     motioncontrolwidget.h \
-    scenemodifier.h \
-    slidedialog.h \
-    slidepage.h
+    serialdataanalyze.h \
+    serialreaddata.h \
+    yoloserialreaddata.h
 
 FORMS += \
     mainwindow.ui
@@ -50,3 +58,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     fonts.qrc \
     icons.qrc
+
+include(Qjoysticks/Qjoysticks.pri)

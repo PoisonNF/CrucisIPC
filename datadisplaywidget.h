@@ -17,10 +17,8 @@
 #include <QGuiApplication>
 #include <QPlainTextEdit>
 
-#include "slidepage.h"
-#include "scenemodifier.h"
-#include "customWidgets.h"
-#include "scenemodifier.h"
+#include "./frame/slidepage.h"
+#include "./frame/customWidgets.h"
 
 #if (QT_VERSION > QT_VERSION_CHECK(6,3,0))
 #include <QFileDialog>
@@ -93,7 +91,6 @@ public:
 
     Qt3DExtras::Qt3DWindow *view;
     QWidget *container = nullptr;
-    SceneModifier *modifier = nullptr;
 
     textButton *SendBTN;    //串口发送按钮
     textButton *ClearBTN;   //串口清空按钮
