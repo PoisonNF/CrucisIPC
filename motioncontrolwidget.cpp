@@ -511,31 +511,31 @@ void MotionControlWidget::InitPropulsionSysWidget()
     ThrusterData4->setFont(ThrusterDataFont);
 
     //舵机名称标签和数据标签设置
-    //    QLabel *Servo1 = new QLabel("Servo1",this);
-    //    QLabel *Servo2 = new QLabel("Servo2",this);
-    //    QLabel *Servo3 = new QLabel("Servo3",this);
-    //    QLabel *Servo4 = new QLabel("Servo4",this);
+    QLabel *Servo1 = new QLabel("Servo1",this);
+    QLabel *Servo2 = new QLabel("Servo2",this);
+    QLabel *Servo3 = new QLabel("Servo3",this);
+    QLabel *Servo4 = new QLabel("Servo4",this);
 
-    //    //设置字体和大小
-    //    QFont ServoDataFont = QFont("Corbel", 15);
+    //设置字体和大小
+    QFont ServoDataFont = QFont("Corbel", 15);
 
-    //    Servo1->setMinimumHeight(25);
-    //    Servo1->setFont(ServoDataFont);
-    //    Servo2->setMinimumHeight(25);
-    //    Servo2->setFont(ServoDataFont);
-    //    Servo3->setMinimumHeight(25);
-    //    Servo3->setFont(ServoDataFont);
-    //    Servo4->setMinimumHeight(25);
-    //    Servo4->setFont(ServoDataFont);
+    Servo1->setMinimumHeight(25);
+    Servo1->setFont(ServoDataFont);
+    Servo2->setMinimumHeight(25);
+    Servo2->setFont(ServoDataFont);
+    Servo3->setMinimumHeight(25);
+    Servo3->setFont(ServoDataFont);
+    Servo4->setMinimumHeight(25);
+    Servo4->setFont(ServoDataFont);
 
-    //    ServoData1->setMinimumSize(100,20);
-    //    ServoData1->setFont(ServoDataFont);
-    //    ServoData2->setMinimumSize(100,20);
-    //    ServoData2->setFont(ServoDataFont);
-    //    ServoData3->setMinimumSize(100,20);
-    //    ServoData3->setFont(ServoDataFont);
-    //    ServoData4->setMinimumSize(100,20);
-    //    ServoData4->setFont(ServoDataFont);
+    ServoData1->setMinimumSize(100,20);
+    ServoData1->setFont(ServoDataFont);
+    ServoData2->setMinimumSize(100,20);
+    ServoData2->setFont(ServoDataFont);
+    ServoData3->setMinimumSize(100,20);
+    ServoData3->setFont(ServoDataFont);
+    ServoData4->setMinimumSize(100,20);
+    ServoData4->setFont(ServoDataFont);
 
     //将推进器相关的控件垂直布局
     QWidget *ThrusterDataWidget = new QWidget(this);
@@ -553,19 +553,19 @@ void MotionControlWidget::InitPropulsionSysWidget()
     ThrusterDataLayout->addWidget(ThrusterData4);
 
     //将舵机相关的控件垂直布局
-    //    QWidget *ServoDataWidget = new QWidget(this);
-    //    QVBoxLayout *ServoDataLayout = new QVBoxLayout(this);
-    //    ServoDataWidget->setLayout(ServoDataLayout);
-    //    ServoDataLayout->setContentsMargins(0, 0, 0, 0);
-    //    ServoDataLayout->setAlignment(Qt::AlignTop);
-    //    ServoDataLayout->addWidget(Servo1);
-    //    ServoDataLayout->addWidget(ServoData1);
-    //    ServoDataLayout->addWidget(Servo2);
-    //    ServoDataLayout->addWidget(ServoData2);
-    //    ServoDataLayout->addWidget(Servo3);
-    //    ServoDataLayout->addWidget(ServoData3);
-    //    ServoDataLayout->addWidget(Servo4);
-    //    ServoDataLayout->addWidget(ServoData4);
+    QWidget *ServoDataWidget = new QWidget(this);
+    QVBoxLayout *ServoDataLayout = new QVBoxLayout(this);
+    ServoDataWidget->setLayout(ServoDataLayout);
+    ServoDataLayout->setContentsMargins(0, 0, 0, 0);
+    ServoDataLayout->setAlignment(Qt::AlignTop);
+    ServoDataLayout->addWidget(Servo1);
+    ServoDataLayout->addWidget(ServoData1);
+    ServoDataLayout->addWidget(Servo2);
+    ServoDataLayout->addWidget(ServoData2);
+    ServoDataLayout->addWidget(Servo3);
+    ServoDataLayout->addWidget(ServoData3);
+    ServoDataLayout->addWidget(Servo4);
+    ServoDataLayout->addWidget(ServoData4);
 
     //将推进器和舵机的布局再进行水平布局
     QWidget *PropulsionSysDataWidget = new QWidget(this);
@@ -574,7 +574,7 @@ void MotionControlWidget::InitPropulsionSysWidget()
     PropulsionSysDataLayout->setContentsMargins(0, 0, 0, 0);
     PropulsionSysDataLayout->setAlignment(Qt::AlignTop);
     PropulsionSysDataLayout->addWidget(ThrusterDataWidget);
-    //PropulsionSysDataLayout->addWidget(ServoDataWidget);
+    PropulsionSysDataLayout->addWidget(ServoDataWidget);
 
     QWidget *PropulsionSysWidget = new QWidget(this);
     QVBoxLayout *PropulsionSysLayout = new QVBoxLayout(PropulsionSysWidget);

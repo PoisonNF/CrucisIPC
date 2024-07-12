@@ -40,8 +40,7 @@ void MainWindow::Init(){
     InitDataDisplayWidget();    //数据显示界面初始化
     InitMotionControlWidget();  //运动控制界面初始化
     InitSerialPage();           //串口设置界面初始化
-    InitSerialYOLOPage();       //串口YOLO设置界面初始化
-
+    //InitSerialYOLOPage();       //串口YOLO设置界面初始化
 }
 
 /* 框架初始化 */
@@ -126,11 +125,11 @@ void MainWindow::InitDefaultPage()
     QFontMetrics titleFm(titleFont);
     Heading = new QLineEdit(this);
     Heading->setFont(titleFont);
-    Heading->setText("UniversalControlIPC");
+    Heading->setText("CrucisIPC");
     Heading->setMaxLength(20);
     Heading->setReadOnly(true);
     Heading->setMinimumHeight(titleFm.height());
-    Heading->setMaximumWidth(titleFm.size(Qt::TextSingleLine, "UniversalControlIPC").width() + 10);
+    Heading->setMaximumWidth(titleFm.size(Qt::TextSingleLine, "CrucisIPC").width() + 10);
     Heading->setStyleSheet("background-color:#00000000;border-style:none;border-width:0px;margin-left:1px;");
     connect(Heading, &QLineEdit::textEdited, Heading, [=](QString text){Heading->setMaximumWidth(titleFm.size(Qt::TextSingleLine, text).width());});
 
@@ -201,14 +200,14 @@ void MainWindow::InitDefaultPage()
     //数据显示按钮槽函数连接
     connect(Data_display, &bigIconButton::clicked, this, [=](){
         //左图标事件槽函数
-//        qDebug() << "Data_displayBtn";
-//        ChangeDataDisplayWidget();
+        qDebug() << "Data_displayBtn";
+        ChangeDataDisplayWidget();
     });
 
     //运动控制按钮槽函数连接
     connect(Motion_control, &bigIconButton::clicked, this, [=](){
         //右图标事件槽函数
-        //qDebug() << "Motion_controlBtn";
+        qDebug() << "Motion_controlBtn";
         ChangeMotionControlWidget();
     });
 
@@ -272,7 +271,7 @@ void MainWindow::InitLayersPage()
         if(Switch_Mode == DATADISPLAY)
         {
             qDebug()<<"进入数据显示界面";
-            //ChangeDataDisplayWidget();
+            ChangeDataDisplayWidget();
         }
         else if(Switch_Mode == MOTIONCONTROl)
         {
