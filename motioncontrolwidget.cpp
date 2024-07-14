@@ -60,7 +60,7 @@ void MotionControlWidget::Init(){
     InitControlWidget();        //初始化控制窗口
     InitPropulsionSysWidget();  //初始化动力系统窗口
     InitLogWidget();            //初始化串口log窗口
-    InitYOLOLogWidget();        //初始化YOLO串口log窗口
+    //InitYOLOLogWidget();        //初始化YOLO串口log窗口
     InitInfoWidget();           //初始化信息窗口
 }
 
@@ -746,6 +746,16 @@ void MotionControlWidget::InitInfoWidget()
     DepthDataInfo->setFont(InfoDataFont);
     DepthDataInfo->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000; border: 1px solid darkgray;");
 
+    //GPS信息
+    QLabel *GPSInfo = new QLabel(this);
+    GPSInfo->setText("GPS:");
+    GPSInfo->setMinimumHeight(25);
+    GPSInfo->setFont(InfoTitleFont);
+
+    GPSDataInfo->setMinimumHeight(25);
+    GPSDataInfo->setFont(InfoDataFont);
+    GPSDataInfo->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000; border: 1px solid darkgray;");
+
     //手柄数据输出
     QLabel *JoystickInfo = new QLabel(this);
     JoystickInfo->setText("Joystick:");
@@ -773,6 +783,8 @@ void MotionControlWidget::InitInfoWidget()
     infoLayout->addWidget(AttitudeDataInfo);
     infoLayout->addWidget(DepthInfo);
     infoLayout->addWidget(DepthDataInfo);
+    infoLayout->addWidget(GPSInfo);
+    infoLayout->addWidget(GPSDataInfo);
     infoLayout->addWidget(JoystickInfo);
     infoLayout->addWidget(JoystickAxisDataInfo);
     infoLayout->addWidget(JoystickButtonDataInfo);
@@ -832,15 +844,15 @@ void MotionControlWidget::keyPressEvent(QKeyEvent *event)
 }
 
 //数据显示到PlainTextEdit中
-void MotionControlWidget::slotLogDataDisplay(std::string serialBuf)
+void MotionControlWidget::slotLogDataDisplay(QByteArray serialBuf)
 {
     if(!this->isHidden())
     {
         logPTE->ensureCursorVisible();
         TextCursor.movePosition(QTextCursor::End);
-        TextCursor.insertText(QString::fromStdString(serialBuf));
+        TextCursor.insertText(QString(serialBuf));
     }
-    LOG_INFO((char*)"串口数据显示");
+//    LOG_INFO((char*)"串口数据显示");
 }
 
 void MotionControlWidget::slotYOLOLogDataDisplay(QString serialBuf)
@@ -852,45 +864,50 @@ void MotionControlWidget::slotYOLOLogDataDisplay(QString serialBuf)
     LOG_INFO((char*)"YOLO串口数据显示");
 }
 
-void MotionControlWidget::slotAngleDataDisplay(std::vector<std::string> ProcessedData)
+void MotionControlWidget::slotAngleDataDisplay(QByteArray ProcessedData)
 {
-    if(!this->isHidden())
-    {
-        AttitudeDataInfo->setText(QString("Roll%1    Pitch%2    Yaw%3")
-                                 .arg(QString::fromStdString(ProcessedData.at(2))
-                                      ,QString::fromStdString(ProcessedData.at(3))
-                                      ,QString::fromStdString(ProcessedData.at(4))));    //Roll Pitch Yaw
-    }
-    LOG_INFO((char*)"姿态数据显示");
+//    if(!this->isHidden())
+//    {
+//        AttitudeDataInfo->setText(QString("Roll%1    Pitch%2    Yaw%3")
+//                                 .arg(QString::fromStdString(ProcessedData.at(2))
+//                                      ,QString::fromStdString(ProcessedData.at(3))
+//                                      ,QString::fromStdString(ProcessedData.at(4))));    //Roll Pitch Yaw
+//    }
+//    LOG_INFO((char*)"姿态数据显示");
 }
 
-void MotionControlWidget::slotDepthDataDisplay(std::vector<std::string> ProcessedData)
+void MotionControlWidget::slotDepthDataDisplay(QByteArray ProcessedData)
 {
-    if(!this->isHidden())
-    {
-        DepthDataInfo->setText(QString("%1cm")
-                                 .arg(QString::fromStdString(ProcessedData.at(1))));    //深度cm
-    }
-    LOG_INFO((char*)"深度数据显示");
+//    if(!this->isHidden())
+//    {
+//        DepthDataInfo->setText(QString("%1cm")
+//                                 .arg(QString::fromStdString(ProcessedData.at(1))));    //深度cm
+//    }
+//    LOG_INFO((char*)"深度数据显示");
 }
 
-void MotionControlWidget::slotThrusterDataDisplay(std::vector<std::string> ProcessedData)
+void MotionControlWidget::slotGPSDataDisplay(QByteArray ProcessedData)
 {
-    if(!this->isHidden())
-    {
-        ThrusterData1->setText(QString("%1")
-                               .arg(QString::fromStdString(ProcessedData.at(1))));
 
-        ThrusterData2->setText(QString("%1")
-                               .arg(QString::fromStdString(ProcessedData.at(2))));
+}
 
-        ThrusterData3->setText(QString("%1")
-                               .arg(QString::fromStdString(ProcessedData.at(3))));
+void MotionControlWidget::slotThrusterDataDisplay(QByteArray ProcessedData)
+{
+//    if(!this->isHidden())
+//    {
+//        ThrusterData1->setText(QString("%1")
+//                               .arg(QString::fromStdString(ProcessedData.at(1))));
 
-        ThrusterData4->setText(QString("%1")
-                               .arg(QString::fromStdString(ProcessedData.at(4))));
-    }
-    LOG_INFO((char*)"推进器数据显示");
+//        ThrusterData2->setText(QString("%1")
+//                               .arg(QString::fromStdString(ProcessedData.at(2))));
+
+//        ThrusterData3->setText(QString("%1")
+//                               .arg(QString::fromStdString(ProcessedData.at(3))));
+
+//        ThrusterData4->setText(QString("%1")
+//                               .arg(QString::fromStdString(ProcessedData.at(4))));
+//    }
+//    LOG_INFO((char*)"推进器数据显示");
 }
 
 

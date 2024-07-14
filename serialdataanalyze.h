@@ -17,16 +17,16 @@ class SerialDataAnalyze : public QObject
 public:
     explicit SerialDataAnalyze(QObject *parent = nullptr);
 
-    void SDAworking(std::string serialBuf);
+    void SDAworking(QByteArray serialBuf);
 private:
-    std::vector<std::string> m_ProcessedData;    //临时存放数据
 
-signals:
-    void sigAngleDataAnalyze(std::vector<std::string> ProcessedData);
-    void sigDepthDataAnalyze(std::vector<std::string> ProcessedData);
-    void sigThrusterDataAnalyze(std::vector<std::string> ProcessedData);
+signals: 
+    void sigLogDataDisplay(QByteArray serialBuf);
+    void sigAngleDataAnalyze(QByteArray ProcessedData);
+    void sigDepthDataAnalyze(QByteArray ProcessedData);
+    void sigGPSDataAnalyze(QByteArray ProcessedData);
+    void sigThrusterDataAnalyze(QByteArray ProcessedData);
 
-    void sigOtherDataDisplay(std::string serialBuf);
 };
 
 #endif // SERIALDATAANALYZE_H

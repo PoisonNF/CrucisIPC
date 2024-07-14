@@ -9,16 +9,13 @@ SerialReadData::SerialReadData(QSerialPort *serial,QObject *parent)
     qDebug() << "串口复制" << m_pserial;
 }
 
-//读取数据线程任务函数
 void SerialReadData::SRDworking()
 {
-    serialBuf = m_pserial->readLine().toStdString();
+    serialBuf = m_pserial->readLine();
 
-    qDebug() << QString::fromStdString(serialBuf);
-    //LOG_INFO((char *)"串口收到数据%s",QString(serialBuf).toStdString().c_str());
+    //qDebug() << serialBuf.toHex();
+    //LOG_INFO((char *)"串口收到数据%s",serialBuf.toStdString());
 
-    //发射信号给datadisplay窗口
-    //emit sigLogDataDisplay(serialBuf);        //log显示数据太占资源了，导致显示落后于实际
     //发射信号给数据分拣线程
     emit sigDataSort(serialBuf);
 }

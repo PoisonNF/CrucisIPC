@@ -17,14 +17,12 @@ class SerialReadData : public QObject
 public:
     explicit SerialReadData(QSerialPort *serial = nullptr,QObject *parent = nullptr);
 
-    QSerialPort *m_pserial;
-    std::string serialBuf;  //储存接收到的数据
     void SRDworking();    //线程任务函数
 private:
-
+    QSerialPort *m_pserial;
+    QByteArray serialBuf;  //储存接收到的数据
 signals:
-    void sigLogDataDisplay(std::string serialBuf);
-    void sigDataSort(std::string serialBuf);
+    void sigDataSort(QByteArray serialBuf);
 };
 
 #endif // SERIALREADDATA_H

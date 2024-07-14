@@ -25,7 +25,7 @@
 #include "./frame/customWidgets.h"
 #include "QJoysticks.h"
 #include "joysticks.h"
-#include "./Log/log.h"
+#include "./log/log.h"
 
 #if (QT_VERSION > QT_VERSION_CHECK(6,3,0))
 #include <QFileDialog>
@@ -112,6 +112,7 @@ private:
     //Info
     QLabel *AttitudeDataInfo = new QLabel(this);    //Info姿态数据
     QLabel *DepthDataInfo = new QLabel(this);       //Info深度数据
+    QLabel *GPSDataInfo = new QLabel(this);         //InfoGPS数据
     QLabel *JoystickAxisDataInfo = new QLabel(this);        //Info手柄坐标数据
     QLabel *JoystickButtonDataInfo = new QLabel(this);        //Info手柄按键数据
 
@@ -170,11 +171,12 @@ signals:
     void sigJoyButtonSend(QString str);   //发送手柄按键数据往主窗口
 
 public slots:
-    void slotLogDataDisplay(std::string serialBuf);
+    void slotLogDataDisplay(QByteArray serialBuf);
     void slotYOLOLogDataDisplay(QString serialBuf);
-    void slotAngleDataDisplay(std::vector<std::string> ProcessedData);
-    void slotDepthDataDisplay(std::vector<std::string> ProcessedData);
-    void slotThrusterDataDisplay(std::vector<std::string> ProcessedData);
+    void slotAngleDataDisplay(QByteArray ProcessedData);
+    void slotDepthDataDisplay(QByteArray ProcessedData);
+    void slotGPSDataDisplay(QByteArray ProcessedData);
+    void slotThrusterDataDisplay(QByteArray ProcessedData);
 
 private slots:
 };

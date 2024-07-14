@@ -716,11 +716,11 @@ void MainWindow::OpenSerialPort()
         connect(SRDwork,&SerialReadData::sigDataSort,SDAwork,&SerialDataAnalyze::SDAworking);
 
         //当线程完成读取时，要求显示在MotionControlWidget的Log控件中
-        connect(SRDwork,&SerialReadData::sigLogDataDisplay,motionControlWidget,&MotionControlWidget::slotLogDataDisplay);
-        connect(SDAwork,&SerialDataAnalyze::sigOtherDataDisplay,motionControlWidget,&MotionControlWidget::slotLogDataDisplay);
+        connect(SDAwork,&SerialDataAnalyze::sigLogDataDisplay,motionControlWidget,&MotionControlWidget::slotLogDataDisplay);
         //当线程完成分析时，发送给MotionControlWidget显示在对应的控件中
         connect(SDAwork,&SerialDataAnalyze::sigAngleDataAnalyze,motionControlWidget,&MotionControlWidget::slotAngleDataDisplay);
         connect(SDAwork,&SerialDataAnalyze::sigDepthDataAnalyze,motionControlWidget,&MotionControlWidget::slotDepthDataDisplay);
+        connect(SDAwork,&SerialDataAnalyze::sigGPSDataAnalyze,motionControlWidget,&MotionControlWidget::slotGPSDataDisplay);
         connect(SDAwork,&SerialDataAnalyze::sigThrusterDataAnalyze,motionControlWidget,&MotionControlWidget::slotThrusterDataDisplay);
 
         //线程资源释放
