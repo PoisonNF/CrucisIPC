@@ -866,48 +866,80 @@ void MotionControlWidget::slotYOLOLogDataDisplay(QString serialBuf)
 
 void MotionControlWidget::slotAngleDataDisplay(QByteArray ProcessedData)
 {
-//    if(!this->isHidden())
-//    {
-//        AttitudeDataInfo->setText(QString("Roll%1    Pitch%2    Yaw%3")
-//                                 .arg(QString::fromStdString(ProcessedData.at(2))
-//                                      ,QString::fromStdString(ProcessedData.at(3))
-//                                      ,QString::fromStdString(ProcessedData.at(4))));    //Roll Pitch Yaw
-//    }
+    if(!this->isHidden())
+    {
+        float Roll,Pitch,Yaw;
+        //拷贝数据
+        std::memcpy(&Roll,&ProcessedData[ANGLE_BASE],FLOAT_SIZE);
+        std::memcpy(&Pitch,&ProcessedData[ANGLE_BASE + FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&Yaw,&ProcessedData[ANGLE_BASE + 2 * FLOAT_SIZE],FLOAT_SIZE);
+        AttitudeDataInfo->setText(QString("Roll%1    Pitch%2    Yaw%3")
+                                  .arg(QString::number(Roll, 'f', 2))  // 横滚角，格式化为2位小数
+                                  .arg(QString::number(Pitch, 'f', 2))  // 俯仰角，格式化为2位小数
+                                  .arg(QString::number(Yaw, 'f', 2)));  // 偏航角，格式化为2位小数
+    }
 //    LOG_INFO((char*)"姿态数据显示");
 }
 
 void MotionControlWidget::slotDepthDataDisplay(QByteArray ProcessedData)
 {
-//    if(!this->isHidden())
-//    {
-//        DepthDataInfo->setText(QString("%1cm")
-//                                 .arg(QString::fromStdString(ProcessedData.at(1))));    //深度cm
-//    }
+    if(!this->isHidden())
+    {
+        unsigned short Depth = (ProcessedData[DEPTH_BASE] << 8) + ProcessedData[DEPTH_BASE + 1];
+        AttitudeDataInfo->setText(QString("%1cm").arg(QString::number(Depth)));     //深度cm
+    }
 //    LOG_INFO((char*)"深度数据显示");
 }
 
 void MotionControlWidget::slotGPSDataDisplay(QByteArray ProcessedData)
 {
+    if(!this->isHidden())
+    {
+        float Latitude,Longitude;   //纬度和经度
 
+        std::memcpy(&Longitude,&ProcessedData[GPS_BASE + UINT8_T_SIZE],FLOAT_SIZE);
+        std::memcpy(&Latitude,&ProcessedData[GPS_BASE + 2 * UINT8_T_SIZE + FLOAT_SIZE],FLOAT_SIZE);
+
+        GPSDataInfo->setText(QString("%1 %2%3 %4%5")    //有效性 东西 经值 南北 维值
+                             .arg(static_cast<char>(ProcessedData[GPS_BASE + 2 * UINT8_T_SIZE + 2 * FLOAT_SIZE]))  // 有效性
+                             .arg(static_cast<char>(ProcessedData[GPS_BASE]))  // 东西
+                             .arg(QString::number(Longitude, 'f', 6))  // 经度，格式化为6位小数
+                             .arg(static_cast<char>(ProcessedData[GPS_BASE + UINT8_T_SIZE + FLOAT_SIZE]))  // 南北
+                             .arg(QString::number(Latitude, 'f', 6)));  // 纬度，格式化为6位小数
+    }
 }
 
 void MotionControlWidget::slotThrusterDataDisplay(QByteArray ProcessedData)
 {
-//    if(!this->isHidden())
-//    {
-//        ThrusterData1->setText(QString("%1")
-//                               .arg(QString::fromStdString(ProcessedData.at(1))));
+    if(!this->isHidden())
+    {
+        unsigned short DataTemp;    //数据缓存
 
-//        ThrusterData2->setText(QString("%1")
-//                               .arg(QString::fromStdString(ProcessedData.at(2))));
+        DataTemp = (ProcessedData[THRUSTER_BASE] << 8) + ProcessedData[THRUSTER_BASE + 1];
+        ThrusterData1->setText(QString("%1").arg(QString::number(DataTemp)));
 
-//        ThrusterData3->setText(QString("%1")
-//                               .arg(QString::fromStdString(ProcessedData.at(3))));
+        DataTemp = (ProcessedData[THRUSTER_BASE + UINT16_T_SIZE] << 8) + ProcessedData[THRUSTER_BASE + UINT16_T_SIZE + 1];
+        ThrusterData2->setText(QString("%1").arg(QString::number(DataTemp)));
 
-//        ThrusterData4->setText(QString("%1")
-//                               .arg(QString::fromStdString(ProcessedData.at(4))));
-//    }
-//    LOG_INFO((char*)"推进器数据显示");
+        DataTemp = (ProcessedData[THRUSTER_BASE + 2 * UINT16_T_SIZE] << 8) + ProcessedData[THRUSTER_BASE + 2 * UINT16_T_SIZE + 1];
+        ThrusterData3->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        DataTemp = (ProcessedData[THRUSTER_BASE + 3 * UINT16_T_SIZE] << 8) + ProcessedData[THRUSTER_BASE + 3 * UINT16_T_SIZE + 1];
+        ThrusterData4->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        DataTemp = (ProcessedData[SERVO_BASE] << 8) + ProcessedData[SERVO_BASE + 1];
+        ServoData1->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        DataTemp = (ProcessedData[SERVO_BASE + UINT16_T_SIZE] << 8) + ProcessedData[SERVO_BASE + UINT16_T_SIZE + 1];
+        ServoData2->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        DataTemp = (ProcessedData[SERVO_BASE + 2 * UINT16_T_SIZE] << 8) + ProcessedData[SERVO_BASE + 2 * UINT16_T_SIZE + 1];
+        ServoData3->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        DataTemp = (ProcessedData[SERVO_BASE + 3 * UINT16_T_SIZE] << 8) + ProcessedData[SERVO_BASE + 3 * UINT16_T_SIZE + 1];
+        ServoData4->setText(QString("%1").arg(QString::number(DataTemp)));
+    }
+//    LOG_INFO((char*)"推进器和舵机数据显示");
 }
 
 
