@@ -873,7 +873,7 @@ void MotionControlWidget::slotAngleDataDisplay(QByteArray ProcessedData)
         std::memcpy(&Roll,&ProcessedData[ANGLE_BASE],FLOAT_SIZE);
         std::memcpy(&Pitch,&ProcessedData[ANGLE_BASE + FLOAT_SIZE],FLOAT_SIZE);
         std::memcpy(&Yaw,&ProcessedData[ANGLE_BASE + 2 * FLOAT_SIZE],FLOAT_SIZE);
-        AttitudeDataInfo->setText(QString("Roll%1    Pitch%2    Yaw%3")
+        AttitudeDataInfo->setText(QString("Roll%1  Pitch%2  Yaw%3")
                                   .arg(QString::number(Roll, 'f', 2))  // 横滚角，格式化为2位小数
                                   .arg(QString::number(Pitch, 'f', 2))  // 俯仰角，格式化为2位小数
                                   .arg(QString::number(Yaw, 'f', 2)));  // 偏航角，格式化为2位小数
@@ -886,7 +886,7 @@ void MotionControlWidget::slotDepthDataDisplay(QByteArray ProcessedData)
     if(!this->isHidden())
     {
         unsigned short Depth = (ProcessedData[DEPTH_BASE] << 8) + ProcessedData[DEPTH_BASE + 1];
-        AttitudeDataInfo->setText(QString("%1cm").arg(QString::number(Depth)));     //深度cm
+        DepthDataInfo->setText(QString("%1cm").arg(QString::number(Depth)));     //深度cm
     }
 //    LOG_INFO((char*)"深度数据显示");
 }

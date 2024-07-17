@@ -11,11 +11,14 @@ SerialReadData::SerialReadData(QSerialPort *serial,QObject *parent)
 
 void SerialReadData::SRDworking()
 {
-    serialBuf = m_pserial->readLine();
+    while(m_pserial->waitForReadyRead(FRAMEEND_BASE + 1)) {
+        serialBuf += m_pserial->readAll();
+    }
 
-    //qDebug() << serialBuf.toHex();
     //LOG_INFO((char *)"串口收到数据%s",serialBuf.toStdString());
 
     //发射信号给数据分拣线程
     emit sigDataSort(serialBuf);
+    //qDebug() << serialBuf.toHex();
+    serialBuf.clear();
 }

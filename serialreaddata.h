@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 #include "./log/log.h"
+#include "serialdataanalyze.h"
 
 class SerialReadData : public QObject
 {

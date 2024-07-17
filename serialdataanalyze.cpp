@@ -9,10 +9,15 @@ SerialDataAnalyze::SerialDataAnalyze(QObject *parent)
 //数据分析线程任务函数
 void SerialDataAnalyze::SDAworking(QByteArray serialBuf)
 {
-    qDebug() << serialBuf;
+    //qDebug() << serialBuf.toHex();
 
     //根据帧头解析数据，并发送对应信号，显示在界面上
-    if(serialBuf.contains("@DUP") && serialBuf.right(1) == "$")
+    if(serialBuf[FRAMESTART_BASE] == '@'
+       && serialBuf[FRAMESTART_BASE + 1] == 'D'
+       && serialBuf[FRAMESTART_BASE + 2] == 'U'
+       && serialBuf[FRAMESTART_BASE + 3] == 'P'
+       && serialBuf[FRAMEEND_BASE] == '$'
+       && serialBuf.size() == FRAMEEND_BASE + 1)
     {
         qDebug() << "STM32数据";
         emit sigAngleDataAnalyze(serialBuf);
