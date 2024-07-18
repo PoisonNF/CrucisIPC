@@ -885,8 +885,9 @@ void MotionControlWidget::slotDepthDataDisplay(QByteArray ProcessedData)
 {
     if(!this->isHidden())
     {
-        unsigned short Depth = (ProcessedData[DEPTH_BASE] << 8) + ProcessedData[DEPTH_BASE + 1];
-        DepthDataInfo->setText(QString("%1cm").arg(QString::number(Depth)));     //深度cm
+        float Depth;
+        std::memcpy(&Depth,&ProcessedData[DEPTH_BASE],FLOAT_SIZE);
+        DepthDataInfo->setText(QString("%1cm").arg(QString::number(Depth, 'f', 2)));     //深度cm
     }
 //    LOG_INFO((char*)"深度数据显示");
 }
@@ -915,28 +916,28 @@ void MotionControlWidget::slotThrusterDataDisplay(QByteArray ProcessedData)
     {
         unsigned short DataTemp;    //数据缓存
 
-        DataTemp = (ProcessedData[THRUSTER_BASE] << 8) + ProcessedData[THRUSTER_BASE + 1];
+        std::memcpy(&DataTemp,&ProcessedData[THRUSTER_BASE],UINT16_T_SIZE);
         ThrusterData1->setText(QString("%1").arg(QString::number(DataTemp)));
 
-        DataTemp = (ProcessedData[THRUSTER_BASE + UINT16_T_SIZE] << 8) + ProcessedData[THRUSTER_BASE + UINT16_T_SIZE + 1];
+        std::memcpy(&DataTemp,&ProcessedData[THRUSTER_BASE + UINT16_T_SIZE],UINT16_T_SIZE);
         ThrusterData2->setText(QString("%1").arg(QString::number(DataTemp)));
 
-        DataTemp = (ProcessedData[THRUSTER_BASE + 2 * UINT16_T_SIZE] << 8) + ProcessedData[THRUSTER_BASE + 2 * UINT16_T_SIZE + 1];
+        std::memcpy(&DataTemp,&ProcessedData[THRUSTER_BASE + 2 * UINT16_T_SIZE],UINT16_T_SIZE);
         ThrusterData3->setText(QString("%1").arg(QString::number(DataTemp)));
 
-        DataTemp = (ProcessedData[THRUSTER_BASE + 3 * UINT16_T_SIZE] << 8) + ProcessedData[THRUSTER_BASE + 3 * UINT16_T_SIZE + 1];
+        std::memcpy(&DataTemp,&ProcessedData[THRUSTER_BASE + 3 * UINT16_T_SIZE],UINT16_T_SIZE);
         ThrusterData4->setText(QString("%1").arg(QString::number(DataTemp)));
 
-        DataTemp = (ProcessedData[SERVO_BASE] << 8) + ProcessedData[SERVO_BASE + 1];
+        std::memcpy(&DataTemp,&ProcessedData[SERVO_BASE],UINT16_T_SIZE);
         ServoData1->setText(QString("%1").arg(QString::number(DataTemp)));
 
-        DataTemp = (ProcessedData[SERVO_BASE + UINT16_T_SIZE] << 8) + ProcessedData[SERVO_BASE + UINT16_T_SIZE + 1];
+        std::memcpy(&DataTemp,&ProcessedData[SERVO_BASE + UINT16_T_SIZE],UINT16_T_SIZE);
         ServoData2->setText(QString("%1").arg(QString::number(DataTemp)));
 
-        DataTemp = (ProcessedData[SERVO_BASE + 2 * UINT16_T_SIZE] << 8) + ProcessedData[SERVO_BASE + 2 * UINT16_T_SIZE + 1];
+        std::memcpy(&DataTemp,&ProcessedData[SERVO_BASE + 2 * UINT16_T_SIZE],UINT16_T_SIZE);
         ServoData3->setText(QString("%1").arg(QString::number(DataTemp)));
 
-        DataTemp = (ProcessedData[SERVO_BASE + 3 * UINT16_T_SIZE] << 8) + ProcessedData[SERVO_BASE + 3 * UINT16_T_SIZE + 1];
+        std::memcpy(&DataTemp,&ProcessedData[SERVO_BASE + 3 * UINT16_T_SIZE],UINT16_T_SIZE);
         ServoData4->setText(QString("%1").arg(QString::number(DataTemp)));
     }
 //    LOG_INFO((char*)"推进器和舵机数据显示");

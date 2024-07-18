@@ -19,17 +19,17 @@ void SerialDataAnalyze::SDAworking(QByteArray serialBuf)
        && serialBuf[FRAMEEND_BASE] == '$'
        && serialBuf.size() == FRAMEEND_BASE + 1)
     {
-        qDebug() << "STM32数据";
+        //qDebug() << "STM32数据";
         emit sigAngleDataAnalyze(serialBuf);
         emit sigDepthDataAnalyze(serialBuf);
         emit sigGPSDataAnalyze(serialBuf);
         emit sigThrusterDataAnalyze(serialBuf);
     }
-    else
-    {
-        //如果帧头为ASCII中字符部分则是普通调试信息
-        emit sigLogDataDisplay(serialBuf);
-    }
+//    else
+//    {
+//        //如果帧头为ASCII中字符部分则是普通调试信息
+//        emit sigLogDataDisplay(serialBuf);
+//    }
 }
 
 

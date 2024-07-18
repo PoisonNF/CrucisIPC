@@ -11,7 +11,7 @@ SerialReadData::SerialReadData(QSerialPort *serial,QObject *parent)
 
 void SerialReadData::SRDworking()
 {
-    while(m_pserial->waitForReadyRead(FRAMEEND_BASE + 1)) {
+    while(m_pserial->waitForReadyRead(50)) {        //最长等待50ms
         serialBuf += m_pserial->readAll();
     }
 

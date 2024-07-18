@@ -333,7 +333,7 @@ void MainWindow::InitSerialPage()
 
     foreach(qint32 baud, QSerialPortInfo::standardBaudRates())
         baudrateCBox->addItem(QString::number(baud));
-    baudrateCBox->setCurrentText("115200");
+    baudrateCBox->setCurrentText("9600");
     serial->setBaudRate(baudrateCBox->currentText().toInt());
 
     dataBitsCBox->addItem(QString::number(5));
