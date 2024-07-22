@@ -430,14 +430,14 @@ void MotionControlWidget::InitControlWidget()
         ChangeToHandleBTN->setEnabled(true);
         ChangeToAutoBTN->setEnabled(false);
         ControlState->setText("Now:  AutoMode");
-        emit sigSendControlSignal("MODE AUTO");
+        emit sigSendControlSignal("@SMAUTO$");
     });
     connect(ChangeToHandleBTN,&textButton::clicked,this,[=]()
     {
         ChangeToHandleBTN->setEnabled(false);
         ChangeToAutoBTN->setEnabled(true);
         ControlState->setText("Now:  HandleMode");
-        emit sigSendControlSignal("MODE HANDLE");
+        emit sigSendControlSignal("@SMMANU$");
     });
 
     //按键垂直布局
@@ -901,12 +901,12 @@ void MotionControlWidget::slotGPSDataDisplay(QByteArray ProcessedData)
         std::memcpy(&Longitude,&ProcessedData[GPS_BASE + UINT8_T_SIZE],FLOAT_SIZE);
         std::memcpy(&Latitude,&ProcessedData[GPS_BASE + 2 * UINT8_T_SIZE + FLOAT_SIZE],FLOAT_SIZE);
 
-        GPSDataInfo->setText(QString("%1 %2%3 %4%5")    //有效性 东西 经值 南北 维值
+        GPSDataInfo->setText(QString("%1 %2 %3 %4 %5")    //有效性 东西 经值 南北 维值
                              .arg(static_cast<char>(ProcessedData[GPS_BASE + 2 * UINT8_T_SIZE + 2 * FLOAT_SIZE]))  // 有效性
                              .arg(static_cast<char>(ProcessedData[GPS_BASE]))  // 东西
-                             .arg(QString::number(Longitude, 'f', 6))  // 经度，格式化为6位小数
+                             .arg(QString::number(Longitude, 'f', 5))  // 经度，格式化为6位小数
                              .arg(static_cast<char>(ProcessedData[GPS_BASE + UINT8_T_SIZE + FLOAT_SIZE]))  // 南北
-                             .arg(QString::number(Latitude, 'f', 6)));  // 纬度，格式化为6位小数
+                             .arg(QString::number(Latitude, 'f', 5)));  // 纬度，格式化为6位小数
     }
 }
 
