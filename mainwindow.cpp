@@ -479,6 +479,21 @@ void MainWindow::InitSerialPage()
     connect(motionControlWidget,&MotionControlWidget::sigJoyButtonSend,this,[=](QString str){
         serial->write(str.toLocal8Bit().data());
     });
+
+    //将定航数据发送给下位机
+    connect(motionControlWidget,&MotionControlWidget::sigFixYawSend,this,[=](QString str){
+        QByteArray FixYawArray = str.toLocal8Bit().data();
+        FixYawArray.prepend("@FY ");
+        FixYawArray.append(" $");
+        serial->write(FixYawArray);
+    });
+    //将定深数据发送给下位机
+    connect(motionControlWidget,&MotionControlWidget::sigFixDepthSend,this,[=](QString str){
+        QByteArray FixDepthArray = str.toLocal8Bit().data();
+        FixDepthArray.prepend("@FD ");
+        FixDepthArray.append(" $");
+        serial->write(FixDepthArray);
+    });
 }
 
 void MainWindow::InitSerialYOLOPage()
@@ -640,16 +655,16 @@ void MainWindow::InitTimeSYNC()
             TimeToTimeHex(secondhex,second);
 
             //拼接数据帧
-            QByteArray TimeSyncStr = "@TS";
-            TimeSyncStr.append(yearhex);
-            TimeSyncStr.append(monthhex);
-            TimeSyncStr.append(dayhex);
-            TimeSyncStr.append(hourhex);
-            TimeSyncStr.append(minutehex);
-            TimeSyncStr.append(secondhex);
-            TimeSyncStr.append('$');
+            QByteArray TimeSyncArray = "@TS";
+            TimeSyncArray.append(yearhex);
+            TimeSyncArray.append(monthhex);
+            TimeSyncArray.append(dayhex);
+            TimeSyncArray.append(hourhex);
+            TimeSyncArray.append(minutehex);
+            TimeSyncArray.append(secondhex);
+            TimeSyncArray.append('$');
 
-            serial->write(TimeSyncStr); //向串口写入
+            serial->write(TimeSyncArray); //向串口写入
         }
     });
 }

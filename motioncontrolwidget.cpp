@@ -61,6 +61,7 @@ void MotionControlWidget::Init(){
     InitPropulsionSysWidget();  //初始化动力系统窗口
     InitLogWidget();            //初始化串口log窗口
     //InitYOLOLogWidget();        //初始化YOLO串口log窗口
+    InitFixCtrlWidget();
     InitInfoWidget();           //初始化信息窗口
 }
 
@@ -706,6 +707,76 @@ void MotionControlWidget::InitYOLOLogWidget()
     //垂直布局，将logWidget、BTNWidget摆放
     splitter_4->addWidget(YOLOlogWidget);
     splitter_4->addWidget(BTNWidget);
+}
+
+void MotionControlWidget::InitFixCtrlWidget()
+{
+    //log标签设置
+    QLabel *FixCtrlLabel = new QLabel(this);
+    FixCtrlLabel->setText("FixCtrl");
+    FixCtrlLabel->setFont(TitleFont);
+    FixCtrlLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    FixCtrlLabel->setStyleSheet("color:#2c2c2c");
+
+    //小横条设置
+    QWidget *FixCtrlSplitter = new QWidget(this);
+    FixCtrlSplitter->setFixedSize(30, 6);
+    FixCtrlSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
+
+    //字体设置
+    QFont LabelFont = QFont("Corbel", 12);
+
+    //定航参数输入窗口
+    QLabel *FixYawLabel = new QLabel("FixYaw",this);
+    FixYawLabel->setFont(LabelFont);
+
+    FixYawTII = new textInputItem("",this);
+    textButton *FixYawBTN = new textButton("Go",this);
+
+    connect(FixYawBTN,&textButton::clicked,this,[=]()
+    {
+        emit sigFixYawSend(FixYawTII->value());
+    });
+
+    //定航窗口水平布局
+    QWidget *FixYawWidget = new QWidget(this);
+    QHBoxLayout *FixYawLayout = new QHBoxLayout(this); //水平布局
+    FixYawWidget->setLayout(FixYawLayout);
+    FixYawLayout->addWidget(FixYawLabel);
+    FixYawLayout->addWidget(FixYawTII);
+    FixYawLayout->addWidget(FixYawBTN);
+
+
+    //定深参数输入窗口
+    QLabel *FixDepthLabel = new QLabel("FixDepth",this);
+    FixDepthLabel->setFont(LabelFont);
+    FixDepthTII = new textInputItem("",this);
+    textButton *FixDepthBTN = new textButton("Go",this);
+
+    connect(FixDepthBTN,&textButton::clicked,this,[=]()
+    {
+        emit sigFixDepthSend(FixDepthTII->value());
+    });
+
+    //定深窗口水平布局
+    QWidget *FixDepthWidget = new QWidget(this);
+    QHBoxLayout *FixDepthLayout = new QHBoxLayout(this); //水平布局
+    FixDepthWidget->setLayout(FixDepthLayout);
+    FixDepthLayout->addWidget(FixDepthLabel);
+    FixDepthLayout->addWidget(FixDepthTII);
+    FixDepthLayout->addWidget(FixDepthBTN);
+
+    //整体垂直布局
+    QWidget *FixCtrlWidget = new QWidget(this);
+    QVBoxLayout *FixCtrlLayout = new QVBoxLayout(this); //垂直布局
+    FixCtrlWidget->setLayout(FixCtrlLayout);
+    FixCtrlLayout->setAlignment(Qt::AlignTop);
+    FixCtrlLayout->addWidget(FixCtrlLabel);
+    FixCtrlLayout->addWidget(FixCtrlSplitter);
+    FixCtrlLayout->addWidget(FixYawWidget);
+    FixCtrlLayout->addWidget(FixDepthWidget);
+
+    splitter_4->addWidget(FixCtrlWidget);
 }
 
 void MotionControlWidget::InitInfoWidget()

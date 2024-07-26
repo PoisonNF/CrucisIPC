@@ -140,6 +140,7 @@ private:
     void InitPropulsionSysWidget(); //初始化动力系统窗口
     void InitLogWidget();           //初始化串口log窗口
     void InitYOLOLogWidget();       //初始化YOLO串口log窗口
+    void InitFixCtrlWidget();       //初始化定控制窗口
     void InitInfoWidget();          //初始化信息窗口
 
 
@@ -163,13 +164,18 @@ public:
     textButton *ClearBTN;       //串口清空按钮
     textInputItem *logTII;      //串口发送栏
 
+    textInputItem *FixYawTII;      //定航参数输入框
+    textInputItem *FixDepthTII;    //定深参数输入框
+
 signals:
     void sigLogDataSend();  //发送数据信号往主窗口
     //void AttitudeChange(QString pitch, QString yaw, QString roll);
     void sigSendPIDSignal(MotionControlWidget::CurrPIDstore PIDstore,MotionControlWidget::PIDtype PIDtype);   //设置PID信号往主窗口
-    void sigSendControlSignal(QString str);  //发送控制信号往主窗口
-    void sigJoyAxisSend(QString str);     //发送手柄坐标数据往主窗口
-    void sigJoyButtonSend(QString str);   //发送手柄按键数据往主窗口
+    void sigSendControlSignal(QString str); //发送控制信号往主窗口
+    void sigJoyAxisSend(QString str);       //发送手柄坐标数据往主窗口
+    void sigJoyButtonSend(QString str);     //发送手柄按键数据往主窗口
+    void sigFixYawSend(QString str);        //发送定航数据往主窗口
+    void sigFixDepthSend(QString str);      //发送定深数据往主窗口
 
 public slots:
     void slotLogDataDisplay(QByteArray serialBuf);
