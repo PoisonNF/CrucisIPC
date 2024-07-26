@@ -60,8 +60,8 @@ void MotionControlWidget::Init(){
     InitControlWidget();        //初始化控制窗口
     InitPropulsionSysWidget();  //初始化动力系统窗口
     InitLogWidget();            //初始化串口log窗口
-    //InitYOLOLogWidget();        //初始化YOLO串口log窗口
-    InitFixCtrlWidget();
+    //InitYOLOLogWidget();      //初始化YOLO串口log窗口
+    InitFixCtrlWidget();        //初始化定控制窗口
     InitInfoWidget();           //初始化信息窗口
 }
 

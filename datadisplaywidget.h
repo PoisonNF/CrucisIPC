@@ -77,10 +77,18 @@ private:
 
     QPlainTextEdit *logPTE;
 
+    QSizePolicy sizepolicy; //布局器
+    QFont titleFont;        //标题字体
+
     void Init();
+    void InitLayout();      //初始化总体布局
+    void InitJY901SWidget();   //初始化JY901S窗口
+    void InitFluxgateWidget();   //初始化磁通门窗口
+    void InitPropulsionSysWidget(); //初始化动力系统窗口
+    void InitLogWidget();           //初始化串口log窗口
+    void InitInfoWidget();          //初始化信息窗口
     void SaveToFile(const QString &path);
     void ModeSelectPage(int r);  //模式选择页
-    void DataSortConnect(); //数据分类链接函数
 
 public:
     explicit DataDisplayWidget(int radius, QWidget *parent = nullptr);
@@ -98,17 +106,15 @@ public:
     textInputItem *logTII;  //串口发送栏
 
 signals:
-    void SendDataSignal();
-    void StartDataSort(QStringList ProcessedData);
-    void AttitudeChange(QString pitch, QString yaw, QString roll);
+    void sigLogDataSend();  //发送数据信号往主窗口
 
 public slots:
-    void DataDisplayPTE(QString serialBuf);
-
-private slots:
-    void JY901SDataSort(QStringList ProcessedData);  //JY901S数据分拣槽函数
-    void RM3100DataSort(QStringList ProcessedData);  //RM3100数据分拣槽函数
-    void PropulsionSysDataSort(QStringList ProcessedData);  //动力系统数据分拣槽函数
+    void slotLogDataDisplay(QByteArray serialBuf);
+    void slotDepthDataDisplay(QByteArray ProcessedData);
+    void slotAngleDataDisplay(QByteArray ProcessedData);     //JY901S数据分拣槽函数
+    void slotFluxgateDataDisplay(QByteArray ProcessedData);  //磁通门数据分拣槽函数
+    void slotThrusterDataDisplay(QByteArray ProcessedData);  //动力系统数据分拣槽函数
+    void slotGPSDataDisplay(QByteArray ProcessedData);
 
 };
 

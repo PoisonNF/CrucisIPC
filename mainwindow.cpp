@@ -288,8 +288,14 @@ void MainWindow::InitLayersPage()
 /* 时间显示窗口初始化 */
 void MainWindow::InitTimeShow()
 {
-    QLabel *TimeLabel = new QLabel("test",this);
+    QLabel *TimeLabel = new QLabel(this);
     ui->horizontalLayout->insertWidget(1,TimeLabel);
+
+    //初始化的时候先显示一次
+    QDateTime dateTime = QDateTime::currentDateTime();//获取系统当前的时间
+    QString str = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
+    TimeLabel->setText(str);
+
     QTimer *timer = new QTimer(this);
     //到达超时时间
     connect(timer, &QTimer::timeout,this,[=](){
@@ -428,14 +434,14 @@ void MainWindow::InitSerialPage()
     connect(closeSerialBtn, &textButton::clicked, this, &MainWindow::CloseSerialPort);
 
     //接收到数据显示界面发送信号，往串口中写入发送框的数据
-//    connect(dataDisplayWidget,&DataDisplayWidget::SendDataSignal,this,[=]()
-//    {
-//        if(!dataDisplayWidget->isHidden())  //如果数据显示界面没有被隐藏
-//        {
-//            qDebug() << "从数据显示界面获取，串口开始发送";
-//            serial->write(dataDisplayWidget->logTII->value().toLocal8Bit().data());
-//        }
-//    });
+    connect(dataDisplayWidget,&DataDisplayWidget::sigLogDataSend,this,[=]()
+    {
+        if(!dataDisplayWidget->isHidden())  //如果数据显示界面没有被隐藏
+        {
+            qDebug() << "从数据显示界面获取，串口开始发送";
+            serial->write(dataDisplayWidget->logTII->value().toLocal8Bit().data());
+        }
+    });
 
     //接收到运动控制发送数据信号，往串口中写入发送框的数据
     connect(motionControlWidget,&MotionControlWidget::sigLogDataSend,this,[=]()
@@ -802,6 +808,14 @@ void MainWindow::OpenSerialPort()
         connect(SDAwork,&SerialDataAnalyze::sigDepthDataAnalyze,motionControlWidget,&MotionControlWidget::slotDepthDataDisplay);
         connect(SDAwork,&SerialDataAnalyze::sigGPSDataAnalyze,motionControlWidget,&MotionControlWidget::slotGPSDataDisplay);
         connect(SDAwork,&SerialDataAnalyze::sigThrusterDataAnalyze,motionControlWidget,&MotionControlWidget::slotThrusterDataDisplay);
+
+        //当线程完成读取时，要求显示在DataDisplayWidget的Log控件中
+        connect(SDAwork,&SerialDataAnalyze::sigLogDataDisplay,dataDisplayWidget,&DataDisplayWidget::slotLogDataDisplay);
+        //当线程完成分析时，发送给DataDisplayWidget显示在对应的控件中
+        connect(SDAwork,&SerialDataAnalyze::sigAngleDataAnalyze,dataDisplayWidget,&DataDisplayWidget::slotAngleDataDisplay);
+        connect(SDAwork,&SerialDataAnalyze::sigDepthDataAnalyze,dataDisplayWidget,&DataDisplayWidget::slotDepthDataDisplay);
+        connect(SDAwork,&SerialDataAnalyze::sigGPSDataAnalyze,dataDisplayWidget,&DataDisplayWidget::slotGPSDataDisplay);
+        connect(SDAwork,&SerialDataAnalyze::sigThrusterDataAnalyze,dataDisplayWidget,&DataDisplayWidget::slotThrusterDataDisplay);
 
         //线程资源释放
         connect(this,&MainWindow::destroyed,this,[=]()

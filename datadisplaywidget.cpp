@@ -68,8 +68,18 @@ void DataDisplayWidget::ModeSelectPage(int radius){
 }
 
 void DataDisplayWidget::Init(){
-//layout
 
+    InitLayout();               //初始化总体布局
+    InitJY901SWidget();         //初始化JY901S窗口
+    InitFluxgateWidget();       //初始化磁通门窗口
+    InitPropulsionSysWidget();  //初始化动力系统窗口
+    InitLogWidget();            //初始化串口log窗口
+    InitInfoWidget();           //初始化信息窗口
+}
+
+void DataDisplayWidget::InitLayout()
+{
+    //layout
     //1为最大的布局器，2，3，4分别为垂直布局器，对应左中右
     splitter_1 = new QSplitter(this);
     splitter_1->setOrientation(Qt::Horizontal);
@@ -85,7 +95,7 @@ void DataDisplayWidget::Init(){
     splitter_1->addWidget(splitter_3);
     splitter_1->addWidget(splitter_4);
 
-    QSizePolicy sizepolicy = QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Minimum);
+    sizepolicy = QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Minimum);
     sizepolicy.setVerticalPolicy(QSizePolicy::Expanding);
     sizepolicy.setHorizontalPolicy(QSizePolicy::Expanding);
 
@@ -94,8 +104,25 @@ void DataDisplayWidget::Init(){
     splitter_3->setSizePolicy(sizepolicy);
     splitter_4->setSizePolicy(sizepolicy);
 
-//JY901S
-    QFont titleFont = QFont("Corbel", 20);
+    splitter_1->setStretchFactor(0,2);
+    splitter_1->setStretchFactor(1,7);
+    splitter_1->setStretchFactor(2,2);
+
+    splitter_2->setStretchFactor(0,1);
+    splitter_2->setStretchFactor(1,1);
+
+    splitter_3->setStretchFactor(0,5);
+    splitter_3->setStretchFactor(1,1);
+
+    splitter_4->setStretchFactor(0,1);
+    splitter_4->setStretchFactor(1,2);
+
+    titleFont = QFont("Corbel", 20);        //设定标题字体和大小
+}
+
+void DataDisplayWidget::InitJY901SWidget()
+{
+    //JY901S
     JY901STitle = new QLabel(this);
     JY901STitle->setText("JY901S");
     JY901STitle->setFont(titleFont);
@@ -136,7 +163,7 @@ void DataDisplayWidget::Init(){
     QWidget *JY901SDataWidget = new QWidget(this);
     JY901SDataWidget->setSizePolicy(sizepolicy);
     //设置最小大小
-    JY901SDataWidget->setMinimumSize(450,300);
+    JY901SDataWidget->setMinimumSize(300,250);
     QVBoxLayout *JY901SDataLayout = new QVBoxLayout(this);
     JY901SDataWidget->setLayout(JY901SDataLayout);
     JY901SDataLayout->setContentsMargins(0, 0, 0, 0);
@@ -162,8 +189,11 @@ void DataDisplayWidget::Init(){
 
     splitter_2->addWidget(JY901SWidget);
     //splitter_2->addWidget(splitter_3);
+}
 
-//RM3100
+void DataDisplayWidget::InitFluxgateWidget()
+{
+    //RM3100
     RM3100Title = new QLabel(this);
     RM3100Title->setText("RM3100");
     RM3100Title->setFont(titleFont);
@@ -203,7 +233,7 @@ void DataDisplayWidget::Init(){
 
     QWidget *RM3100DataWidget = new QWidget(this);
     RM3100DataWidget->setSizePolicy(sizepolicy);
-    RM3100DataWidget->setMinimumSize(450,300);
+    RM3100DataWidget->setMinimumSize(300,250);
     QVBoxLayout *RM3100DataLayout = new QVBoxLayout(this);
     RM3100DataWidget->setLayout(RM3100DataLayout);
     RM3100DataLayout->setContentsMargins(0, 0, 0, 0);
@@ -229,8 +259,11 @@ void DataDisplayWidget::Init(){
     RM3100Layout->addWidget(RM3100DataWidget);
 
     splitter_2->addWidget(RM3100Widget);
+}
 
-//动力系统
+void DataDisplayWidget::InitPropulsionSysWidget()
+{
+    //动力系统
     QLabel *PropulsionSysLabel = new QLabel(this);
     PropulsionSysLabel->setText("Propulsion System");
     PropulsionSysLabel->setFont(titleFont);
@@ -345,8 +378,11 @@ void DataDisplayWidget::Init(){
     PropulsionSysLayout->addWidget(PropulsionSysDataWidget);
 
     splitter_3->addWidget(PropulsionSysWidget);
+}
 
-//串口LOG
+void DataDisplayWidget::InitLogWidget()
+{
+    //串口LOG
     //log标签设置
     QLabel *logLabel = new QLabel(this);
     logLabel->setText("Log From Uart");
@@ -385,7 +421,7 @@ void DataDisplayWidget::Init(){
 
     //按下发送键，发送发送数据信号给主窗口
     connect(SendBTN,&textButton::clicked,this,[=](){
-        emit SendDataSignal();
+        emit sigLogDataSend();
     });
 
     //按下清屏键，清除接收框和发送框所有的数据
@@ -405,11 +441,11 @@ void DataDisplayWidget::Init(){
     //垂直布局，将logWidget、BTNWidget摆放
     splitter_3->addWidget(logWidget);
     splitter_3->addWidget(BTNWidget);
+}
 
-//3d模型
-
-
-//info 显示深度、GPS、电量百分比
+void DataDisplayWidget::InitInfoWidget()
+{
+    //info 显示深度、GPS、电量百分比
     infoTitle = new QLabel(this);
     infoTitle->setText("INFO");
     infoTitle->setFont(titleFont);
@@ -433,183 +469,36 @@ void DataDisplayWidget::Init(){
     infoLayout->addWidget(infoSplitter);
 
     splitter_4->addWidget(infoWidget);
-
-    splitter_1->setStretchFactor(0,2);
-    splitter_1->setStretchFactor(1,7);
-    splitter_1->setStretchFactor(2,2);
-
-    splitter_2->setStretchFactor(0,1);
-    splitter_2->setStretchFactor(1,1);
-
-    splitter_3->setStretchFactor(0,5);
-    splitter_3->setStretchFactor(1,1);
-
-    splitter_4->setStretchFactor(0,1);
-    splitter_4->setStretchFactor(1,2);
-
-    //内部数据分拣逻辑连接
-    DataSortConnect();
 }
 
-//数据分类链接函数
-void DataDisplayWidget::DataSortConnect()
+void DataDisplayWidget::slotLogDataDisplay(QByteArray serialBuf)
 {
-    connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::JY901SDataSort);
-    connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::RM3100DataSort);
-    connect(this,&DataDisplayWidget::StartDataSort,this,&DataDisplayWidget::PropulsionSysDataSort);
 
-    //connect(this,&DataDisplayWidget::AttitudeChange,modifier,&SceneModifier::OnSetRotation);
 }
 
-//数据显示到PlainTextEdit中，发起数据分拣信号
-void DataDisplayWidget::DataDisplayPTE(QString serialBuf)
+void DataDisplayWidget::slotAngleDataDisplay(QByteArray ProcessedData)
 {
-    if(!this->isHidden())
-    {
-        logPTE->ensureCursorVisible();
-        logPTE->insertPlainText(serialBuf);
-        //qDebug()<<serialBuf;
 
-        //开始数据分拣
-        //以空格进行分割数据，用于判断数据来源
-        QStringList ProcessedData = serialBuf.split(u' ');
-        //qDebug() << ProcessedData;
-
-        emit StartDataSort(ProcessedData);
-    }
 }
 
-//JY901S数据分拣
-void DataDisplayWidget::JY901SDataSort(QStringList ProcessedData)
+void DataDisplayWidget::slotFluxgateDataDisplay(QByteArray ProcessedData)
 {
-    //是JY901S的数据
-    if(ProcessedData.count() > 0 && ProcessedData.at(0) == "J")
-    {
-        //qDebug() << "JY901S的数据";
-        //是加速度
-        if(ProcessedData.at(1) == "Acc")
-        {
-            //qDebug() << "Acc的数据";
-            JY901SDataAcc->setText(QString("%1    %2    %3")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
-        }
-        //是角速度
-        else if(ProcessedData.at(1) == "Gyro")
-        {
-            //qDebug() << "Gyro的数据";
-            JY901SDataGyro->setText(QString("%1    %2    %3")
-                                    .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
-        }
-        //是欧拉角
-        else if(ProcessedData.at(1) == "Angle")
-        {
-            //qDebug() << "Angle的数据";
-            JY901SDataAngle->setText(QString("%1    %2    %3")
-                                     .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));    //Roll Pitch Yaw
-            emit AttitudeChange(ProcessedData.at(3),ProcessedData.at(4),ProcessedData.at(2));  //姿态改变，对应的3D模型进行旋转  Pitch Yaw Roll
-        }
-        //是磁场
-        else if(ProcessedData.at(1) == "Mag")
-        {
-            //qDebug() << "Mag的数据";
-            JY901SDataMag->setText(QString("%1    %2    %3")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
-        }
-    }
+
 }
 
-//RM3100数据分拣
-void DataDisplayWidget::RM3100DataSort(QStringList ProcessedData)
+void DataDisplayWidget::slotThrusterDataDisplay(QByteArray ProcessedData)
 {
-    //是RM3100的数据
-    if(ProcessedData.count() > 0 && ProcessedData.at(0) == "R")
-    {
-        if(ProcessedData.at(1) == "1")
-        {
-            //qDebug() << "NO1的数据";
-            RM3100DataNO1->setText(QString("%1    %2    %3")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
-        }
-        else if(ProcessedData.at(1) == "2")
-        {
-            //qDebug() << "NO2的数据";
-            RM3100DataNO2->setText(QString("%1    %2    %3")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
-        }
-        else if(ProcessedData.at(1) == "3")
-        {
-            //qDebug() << "NO3的数据";
-            RM3100DataNO3->setText(QString("%1    %2    %3")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
-        }
-        else if(ProcessedData.at(1) == "4")
-        {
-            //qDebug() << "NO4的数据";
-            RM3100DataNO4->setText(QString("%1    %2    %3")
-                                   .arg(ProcessedData.at(2),ProcessedData.at(3),ProcessedData.at(4)));
-        }
-    }
+
 }
 
-//推进系统数据分拣
-void DataDisplayWidget::PropulsionSysDataSort(QStringList ProcessedData)
+void DataDisplayWidget::slotDepthDataDisplay(QByteArray ProcessedData)
 {
-    //是推进器的数据
-    if(ProcessedData.count() > 0 && ProcessedData.at(0) == "T")
-    {
-        if(ProcessedData.at(1) == "1")
-        {
-            //qDebug() << "NO1的数据";
-            ThrusterData1->setText(QString("%1")
-                                   .arg(ProcessedData.at(2)));
-        }
-        else if(ProcessedData.at(1) == "2")
-        {
-            //qDebug() << "NO2的数据";
-            ThrusterData2->setText(QString("%1")
-                                   .arg(ProcessedData.at(2)));
-        }
-        else if(ProcessedData.at(1) == "3")
-        {
-            //qDebug() << "NO3的数据";
-            ThrusterData3->setText(QString("%1")
-                                   .arg(ProcessedData.at(2)));
-        }
-        else if(ProcessedData.at(1) == "4")
-        {
-            //qDebug() << "NO4的数据";
-            ThrusterData4->setText(QString("%1")
-                                   .arg(ProcessedData.at(2)));
-        }
-    }
-    //是舵机的数据
-    else if(ProcessedData.count() > 0 && ProcessedData.at(0) == "S")
-    {
-        if(ProcessedData.at(1) == "1")
-        {
-            //qDebug() << "NO1的数据";
-            ServoData1->setText(QString("%1")
-                                   .arg(ProcessedData.at(2)));
-        }
-        else if(ProcessedData.at(1) == "2")
-        {
-            //qDebug() << "NO2的数据";
-            ServoData2->setText(QString("%1")
-                                   .arg(ProcessedData.at(2)));
-        }
-        else if(ProcessedData.at(1) == "3")
-        {
-            //qDebug() << "NO3的数据";
-            ServoData3->setText(QString("%1")
-                                   .arg(ProcessedData.at(2)));
-        }
-        else if(ProcessedData.at(1) == "4")
-        {
-            //qDebug() << "NO4的数据";
-            ServoData4->setText(QString("%1")
-                                   .arg(ProcessedData.at(2)));
-        }
-    }
+
+}
+
+void DataDisplayWidget::slotGPSDataDisplay(QByteArray ProcessedData)
+{
+
 }
 
 //暂不使用
