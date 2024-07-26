@@ -95,6 +95,7 @@ private:
     void InitDefaultSettingsPage(); //默认设置界面初始化
     void InitDefaultPage(); //默认主界面初始化
     void InitLayersPage();  //换层页初始化
+    void InitTimeShow(); //时间显示窗口初始化
     void InitSerialPage();  //串口设置界面初始化
     void InitSerialYOLOPage();  //串口YOLO设置界面初始化
     void InitDataDisplayWidget();   //初始化数据显示窗口

@@ -39,6 +39,7 @@ void MainWindow::Init(){
     InitLayersPage();           //层页界面和按钮初始化
     InitDataDisplayWidget();    //数据显示界面初始化
     InitMotionControlWidget();  //运动控制界面初始化
+    InitTimeShow();             //时间显示窗口初始化
     InitSerialPage();           //串口设置界面初始化
     InitTimeSYNC();             //时间同步按钮初始化
     //InitSerialYOLOPage();       //串口YOLO设置界面初始化
@@ -284,6 +285,22 @@ void MainWindow::InitLayersPage()
     });
 }
 
+/* 时间显示窗口初始化 */
+void MainWindow::InitTimeShow()
+{
+    QLabel *TimeLabel = new QLabel("test",this);
+    ui->horizontalLayout->insertWidget(1,TimeLabel);
+    QTimer *timer = new QTimer(this);
+    //到达超时时间
+    connect(timer, &QTimer::timeout,this,[=](){
+        QDateTime dateTime = QDateTime::currentDateTime();//获取系统当前的时间
+        QString str = dateTime.toString("yyyy-MM-dd hh:mm:ss");//格式化时间
+        TimeLabel->setText(str);
+    });
+    // 启动定时器和事件循环
+    timer->start(1000);
+}
+
 /* 串口界面初始化 */
 void MainWindow::InitSerialPage()
 {
@@ -291,7 +308,7 @@ void MainWindow::InitSerialPage()
     textButton *serialBtn = new textButton("串口配置", ui->titleBar,1.2);
     serialBtn->setMinimumWidth(100);
 
-    ui->horizontalLayout->insertWidget(1,serialBtn);
+    ui->horizontalLayout->insertWidget(2,serialBtn);
 
     serial = new QSerialPort;
     serialDialog = new SlideDialog(cornerRadius,"串口配置",ui->mainWidget);
@@ -502,7 +519,7 @@ void MainWindow::InitSerialYOLOPage()
     textButton *serialYOLOBtn = new textButton("YOLO配置", ui->titleBar,1.2);
     serialYOLOBtn->setMinimumWidth(100);
 
-    ui->horizontalLayout->insertWidget(2,serialYOLOBtn);
+    ui->horizontalLayout->insertWidget(3,serialYOLOBtn);
 
     serialYOLO = new QSerialPort;
     serialYOLODialog = new SlideDialog(cornerRadius,"YOLO串口配置",ui->mainWidget);
@@ -627,7 +644,7 @@ void MainWindow::InitTimeSYNC()
 {
     textButton *TimeSYNCBtn = new textButton("时间同步", ui->titleBar,1.2);
     TimeSYNCBtn->setMinimumWidth(100);
-    ui->horizontalLayout->insertWidget(2,TimeSYNCBtn);
+    ui->horizontalLayout->insertWidget(3,TimeSYNCBtn);
 
     //按下时间同步按钮时，将时间数据发送给STM32
     connect(TimeSYNCBtn, &textButton::clicked, this, [=](){
