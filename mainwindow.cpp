@@ -443,29 +443,29 @@ void MainWindow::InitSerialPage()
             this,[=](MotionControlWidget::CurrPIDstore PIDstore,MotionControlWidget::PIDtype PIDtype)
     {
         //qDebug() << "设置PID值";
-        //根据协议传输PID值 形如PID Depth X X X
+        //根据协议传输PID值 形如@AP 类型 P I D
         QString PIDValue;
 
         if(PIDtype == MotionControlWidget::DepthPID)
-            PIDValue = "PID DepthPID "
+            PIDValue = "@AP 1 "
                      + QString::number(PIDstore.P) + " "
                      + QString::number(PIDstore.I) + " "
-                     + QString::number(PIDstore.D);
+                     + QString::number(PIDstore.D) + " $";
         else if(PIDtype == MotionControlWidget::YawPID)
-            PIDValue = "PID YawPID "
+            PIDValue = "@AP 2 "
                      + QString::number(PIDstore.P) + " "
                      + QString::number(PIDstore.I) + " "
-                     + QString::number(PIDstore.D);
-        else if(PIDtype == MotionControlWidget::AngleLoopPID)
-            PIDValue = "PID AngleLoopPID "
-                     + QString::number(PIDstore.P) + " "
-                     + QString::number(PIDstore.I) + " "
-                     + QString::number(PIDstore.D);
-        else if(PIDtype == MotionControlWidget::PositionLoopPID)
-            PIDValue = "PID PositionLoopPID "
-                     + QString::number(PIDstore.P) + " "
-                     + QString::number(PIDstore.I) + " "
-                     + QString::number(PIDstore.D);
+                     + QString::number(PIDstore.D) + " $";
+//        else if(PIDtype == MotionControlWidget::AngleLoopPID)
+//            PIDValue = "PID AngleLoopPID "
+//                     + QString::number(PIDstore.P) + " "
+//                     + QString::number(PIDstore.I) + " "
+//                     + QString::number(PIDstore.D);
+//        else if(PIDtype == MotionControlWidget::PositionLoopPID)
+//            PIDValue = "PID PositionLoopPID "
+//                     + QString::number(PIDstore.P) + " "
+//                     + QString::number(PIDstore.I) + " "
+//                     + QString::number(PIDstore.D);
         qDebug() << "IPC:" + PIDValue;
         LOG_INFO((char*)"设置PID值为%s",PIDValue.toStdString().c_str());
         serial->write(PIDValue.toLocal8Bit().data());

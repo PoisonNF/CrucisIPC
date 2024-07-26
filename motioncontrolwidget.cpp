@@ -92,7 +92,7 @@ void MotionControlWidget::InitJoysticks()
         QString Pro = QString::number(std::floor(JoyData.Pro));
 
         str = "x " + x + " y " + y + " angle " + Angle + " Pro " + Pro;
-        sendstr = "JSV " + Angle + " " + Pro;
+        sendstr = "@HCV " + Angle + " " + Pro + " $";
         emit sigJoyAxisSend(sendstr);
         JoystickAxisDataInfo->setText(str);
     });
@@ -103,10 +103,10 @@ void MotionControlWidget::InitJoysticks()
 
         //根据按键状态发送不同的字符串给下位机
         if(JoyData.Status){
-            str = "JSB " + QString::number(JoyData.Button) + " Press";
+            str = "@HCB " + QString::number(JoyData.Button) + " Press" + " $";
         }
         else {
-            str = "JSB " + QString::number(JoyData.Button) + " Release";
+            str = "@HCB " + QString::number(JoyData.Button) + " Release" + " $";
         }
 
         emit sigJoyButtonSend(str);
@@ -192,8 +192,8 @@ void MotionControlWidget::InitPIDWidget()
     PIDComboBox->insertItems(0,QStringList("深度环"));
     PIDComboBox->insertItems(1,QStringList("艏向环"));
     //PIDComboBox->insertItems(2,QStringList("巡线环"));
-    PIDComboBox->insertItems(2,QStringList("角度环"));
-    PIDComboBox->insertItems(3,QStringList("位置环"));
+//    PIDComboBox->insertItems(2,QStringList("角度环"));
+//    PIDComboBox->insertItems(3,QStringList("位置环"));
     PIDComboBox->setFont(QFont("Corbel", 12));
 
     QString sheet = "\
