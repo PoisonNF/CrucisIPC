@@ -40,6 +40,7 @@ void MainWindow::Init(){
     InitDataDisplayWidget();    //数据显示界面初始化
     InitMotionControlWidget();  //运动控制界面初始化
     InitSerialPage();           //串口设置界面初始化
+    InitTimeSYNC();             //时间同步按钮初始化
     //InitSerialYOLOPage();       //串口YOLO设置界面初始化
 }
 
@@ -604,6 +605,53 @@ void MainWindow::InitSerialYOLOPage()
     connect(openSerialYOLOBtn, &textButton::clicked, this, &MainWindow::OpenYOLOSerialPort);
     //按下关闭串口按钮时，关闭串口
     connect(closeSerialYOLOBtn, &textButton::clicked, this, &MainWindow::CloseYOLOSerialPort);
+}
+
+/* 初始化时间同步 */
+void MainWindow::InitTimeSYNC()
+{
+    textButton *TimeSYNCBtn = new textButton("时间同步", ui->titleBar,1.2);
+    TimeSYNCBtn->setMinimumWidth(100);
+    ui->horizontalLayout->insertWidget(2,TimeSYNCBtn);
+
+    //按下时间同步按钮时，将时间数据发送给STM32
+    connect(TimeSYNCBtn, &textButton::clicked, this, [=](){
+        QDateTime dateTime = QDateTime::currentDateTime();//获取系统当前的时间
+        QString str = dateTime.toString("yy MM dd hh mm ss");//格式化时间
+        qDebug() << str;
+        QRegularExpression re("(\\d{2}) (\\d{2}) (\\d{2}) (\\d{2}) (\\d{2}) (\\d{2})");
+        QRegularExpressionMatch match = re.match(str);
+
+        if(match.hasMatch()) {
+            QString year = match.captured(1);
+            QString month = match.captured(2);
+            QString day = match.captured(3);
+            QString hour = match.captured(4);
+            QString minute = match.captured(5);
+            QString second = match.captured(6);
+
+            //字符数字“56”转换为0x56
+            unsigned char yearhex,monthhex,dayhex,hourhex,minutehex,secondhex;
+            TimeToTimeHex(yearhex,year);
+            TimeToTimeHex(monthhex,month);
+            TimeToTimeHex(dayhex,day);
+            TimeToTimeHex(hourhex,hour);
+            TimeToTimeHex(minutehex,minute);
+            TimeToTimeHex(secondhex,second);
+
+            //拼接数据帧
+            QByteArray TimeSyncStr = "@TS";
+            TimeSyncStr.append(yearhex);
+            TimeSyncStr.append(monthhex);
+            TimeSyncStr.append(dayhex);
+            TimeSyncStr.append(hourhex);
+            TimeSyncStr.append(minutehex);
+            TimeSyncStr.append(secondhex);
+            TimeSyncStr.append('$');
+
+            serial->write(TimeSyncStr); //向串口写入
+        }
+    });
 }
 
 /* 初始化数据显示窗口 */
