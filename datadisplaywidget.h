@@ -19,6 +19,7 @@
 
 #include "./frame/slidepage.h"
 #include "./frame/customWidgets.h"
+#include "serialdataanalyze.h"
 
 #if (QT_VERSION > QT_VERSION_CHECK(6,3,0))
 #include <QFileDialog>
@@ -35,6 +36,8 @@ private:
     Qt3DCore::QEntity *lightEntity;
     Qt3DRender::QPointLight *light;
 
+    QFont TitleFont = QFont("Corbel", 20);
+
     QVBoxLayout *mainLayout;
     QSplitter *splitter_1;
     QSplitter *splitter_2;
@@ -42,7 +45,7 @@ private:
     QSplitter *splitter_4;
 
     QLabel *JY901STitle;
-    QLabel *RM3100Title;
+    QLabel *FluxgateTitle;
     QLabel *logTitle;
     QLabel *infoTitle;
 
@@ -51,10 +54,10 @@ private:
     QLabel *JY901SDataAngle = new QLabel(this);  //显示JY901S中欧拉角数据
     QLabel *JY901SDataMag = new QLabel(this);    //显示JY901S中磁场数据
 
-    QLabel *RM3100DataNO1 = new QLabel(this);   //RM3100 1号数据
-    QLabel *RM3100DataNO2 = new QLabel(this);   //RM3100 2号数据
-    QLabel *RM3100DataNO3 = new QLabel(this);   //RM3100 3号数据
-    QLabel *RM3100DataNO4 = new QLabel(this);   //RM3100 4号数据
+    QLabel *FluxgateDataNO1 = new QLabel(this);   //Fluxgate 1号数据
+    QLabel *FluxgateDataNO2 = new QLabel(this);   //Fluxgate 2号数据
+    QLabel *FluxgateDataNO3 = new QLabel(this);   //Fluxgate 3号数据
+    QLabel *FluxgateDataNO4 = new QLabel(this);   //Fluxgate 4号数据
 
     QLabel *ThrusterData1 = new QLabel(this);   //1号推进器的数据
     QLabel *ThrusterData2 = new QLabel(this);   //2号推进器的数据
@@ -70,12 +73,21 @@ private:
     QString ctrDescrip;
 
     QWidget *JY901SWidget = nullptr;
-    QWidget *RM3100Widget = nullptr;
+    QWidget *FluxgateWidget = nullptr;
     QWidget *PropulsionSysWidget = nullptr;
     QWidget *logWidget = nullptr;
     QWidget *infoWidget = nullptr;
 
+    //log
     QPlainTextEdit *logPTE;
+    QTextCursor TextCursor;
+
+    //Info
+    QLabel *AttitudeDataInfo = new QLabel(this);    //Info姿态数据
+    QLabel *DepthDataInfo = new QLabel(this);       //Info深度数据
+    QLabel *GPSDataInfo = new QLabel(this);         //InfoGPS数据
+    QLabel *JoystickAxisDataInfo = new QLabel(this);        //Info手柄坐标数据
+    QLabel *JoystickButtonDataInfo = new QLabel(this);        //Info手柄按键数据
 
     QSizePolicy sizepolicy; //布局器
     QFont titleFont;        //标题字体

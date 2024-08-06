@@ -193,72 +193,72 @@ void DataDisplayWidget::InitJY901SWidget()
 
 void DataDisplayWidget::InitFluxgateWidget()
 {
-    //RM3100
-    RM3100Title = new QLabel(this);
-    RM3100Title->setText("RM3100");
-    RM3100Title->setFont(titleFont);
-    RM3100Title->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    RM3100Title->setStyleSheet("color:#2c2c2c");
+    //Fluxgate
+    FluxgateTitle = new QLabel(this);
+    FluxgateTitle->setText("Fluxgate");
+    FluxgateTitle->setFont(titleFont);
+    FluxgateTitle->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    FluxgateTitle->setStyleSheet("color:#2c2c2c");
 
     //小横条设置
-    QWidget *RM3100Splitter = new QWidget(this);
-    RM3100Splitter->setFixedSize(30, 6);
-    RM3100Splitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
+    QWidget *FluxgateSplitter = new QWidget(this);
+    FluxgateSplitter->setFixedSize(30, 6);
+    FluxgateSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
 
-    QLabel *RM3100NO1 = new QLabel("NO1:",this);    //RM3100 1号标签
-    QLabel *RM3100NO2 = new QLabel("NO2:",this);    //RM3100 2号标签
-    QLabel *RM3100NO3 = new QLabel("NO3:",this);    //RM3100 3号标签
-    QLabel *RM3100NO4 = new QLabel("NO4:",this);    //RM3100 4号标签
+    QLabel *FluxgateNO1 = new QLabel("NO1:",this);    //Fluxgate 1号标签
+    QLabel *FluxgateNO2 = new QLabel("NO2:",this);    //Fluxgate 2号标签
+    QLabel *FluxgateNO3 = new QLabel("NO3:",this);    //Fluxgate 3号标签
+    QLabel *FluxgateNO4 = new QLabel("NO4:",this);    //Fluxgate 4号标签
 
     //设置字体和大小
-    QFont RM3100DataFont = QFont("Corbel", 15);
+    QFont FluxgateDataFont = QFont("Corbel", 15);
 
-    RM3100NO1->setMinimumHeight(25);
-    RM3100NO1->setFont(RM3100DataFont);
-    RM3100NO2->setMinimumHeight(25);
-    RM3100NO2->setFont(RM3100DataFont);
-    RM3100NO3->setMinimumHeight(25);
-    RM3100NO3->setFont(RM3100DataFont);
-    RM3100NO4->setMinimumHeight(25);
-    RM3100NO4->setFont(RM3100DataFont);
+    FluxgateNO1->setMinimumHeight(25);
+    FluxgateNO1->setFont(FluxgateDataFont);
+    FluxgateNO2->setMinimumHeight(25);
+    FluxgateNO2->setFont(FluxgateDataFont);
+    FluxgateNO3->setMinimumHeight(25);
+    FluxgateNO3->setFont(FluxgateDataFont);
+    FluxgateNO4->setMinimumHeight(25);
+    FluxgateNO4->setFont(FluxgateDataFont);
 
-    RM3100DataNO1->setMinimumSize(300,25);
-    RM3100DataNO1->setFont(RM3100DataFont);
-    RM3100DataNO2->setMinimumSize(300,25);
-    RM3100DataNO2->setFont(RM3100DataFont);
-    RM3100DataNO3->setMinimumSize(300,25);
-    RM3100DataNO3->setFont(RM3100DataFont);
-    RM3100DataNO4->setMinimumSize(300,25);
-    RM3100DataNO4->setFont(RM3100DataFont);
+    FluxgateDataNO1->setMinimumSize(300,25);
+    FluxgateDataNO1->setFont(FluxgateDataFont);
+    FluxgateDataNO2->setMinimumSize(300,25);
+    FluxgateDataNO2->setFont(FluxgateDataFont);
+    FluxgateDataNO3->setMinimumSize(300,25);
+    FluxgateDataNO3->setFont(FluxgateDataFont);
+    FluxgateDataNO4->setMinimumSize(300,25);
+    FluxgateDataNO4->setFont(FluxgateDataFont);
 
-    QWidget *RM3100DataWidget = new QWidget(this);
-    RM3100DataWidget->setSizePolicy(sizepolicy);
-    RM3100DataWidget->setMinimumSize(300,250);
-    QVBoxLayout *RM3100DataLayout = new QVBoxLayout(this);
-    RM3100DataWidget->setLayout(RM3100DataLayout);
-    RM3100DataLayout->setContentsMargins(0, 0, 0, 0);
-    RM3100DataLayout->setAlignment(Qt::AlignTop);
-    RM3100DataLayout->addWidget(RM3100NO1);
-    RM3100DataLayout->addWidget(RM3100DataNO1);
-    RM3100DataLayout->addWidget(RM3100NO2);
-    RM3100DataLayout->addWidget(RM3100DataNO2);
-    RM3100DataLayout->addWidget(RM3100NO3);
-    RM3100DataLayout->addWidget(RM3100DataNO3);
-    RM3100DataLayout->addWidget(RM3100NO4);
-    RM3100DataLayout->addWidget(RM3100DataNO4);
+    QWidget *FluxgateDataWidget = new QWidget(this);
+    FluxgateDataWidget->setSizePolicy(sizepolicy);
+    FluxgateDataWidget->setMinimumSize(300,250);
+    QVBoxLayout *FluxgateDataLayout = new QVBoxLayout(this);
+    FluxgateDataWidget->setLayout(FluxgateDataLayout);
+    FluxgateDataLayout->setContentsMargins(0, 0, 0, 0);
+    FluxgateDataLayout->setAlignment(Qt::AlignTop);
+    FluxgateDataLayout->addWidget(FluxgateNO1);
+    FluxgateDataLayout->addWidget(FluxgateDataNO1);
+    FluxgateDataLayout->addWidget(FluxgateNO2);
+    FluxgateDataLayout->addWidget(FluxgateDataNO2);
+    FluxgateDataLayout->addWidget(FluxgateNO3);
+    FluxgateDataLayout->addWidget(FluxgateDataNO3);
+    FluxgateDataLayout->addWidget(FluxgateNO4);
+    FluxgateDataLayout->addWidget(FluxgateDataNO4);
 
 
-    RM3100Widget = new QWidget(this);
-    RM3100Widget->setSizePolicy(sizepolicy);
-    QVBoxLayout *RM3100Layout = new QVBoxLayout(this);
-    RM3100Widget->setLayout(RM3100Layout);
-    RM3100Layout->setContentsMargins(0, 0, 0, 0);
-    RM3100Layout->setAlignment(Qt::AlignTop);
-    RM3100Layout->addWidget(RM3100Title);
-    RM3100Layout->addWidget(RM3100Splitter);
-    RM3100Layout->addWidget(RM3100DataWidget);
+    FluxgateWidget = new QWidget(this);
+    FluxgateWidget->setSizePolicy(sizepolicy);
+    QVBoxLayout *FluxgateLayout = new QVBoxLayout(this);
+    FluxgateWidget->setLayout(FluxgateLayout);
+    FluxgateLayout->setContentsMargins(0, 0, 0, 0);
+    FluxgateLayout->setAlignment(Qt::AlignTop);
+    FluxgateLayout->addWidget(FluxgateTitle);
+    FluxgateLayout->addWidget(FluxgateSplitter);
+    FluxgateLayout->addWidget(FluxgateDataWidget);
 
-    splitter_2->addWidget(RM3100Widget);
+    splitter_2->addWidget(FluxgateWidget);
 }
 
 void DataDisplayWidget::InitPropulsionSysWidget()
@@ -448,7 +448,7 @@ void DataDisplayWidget::InitInfoWidget()
     //info 显示深度、GPS、电量百分比
     infoTitle = new QLabel(this);
     infoTitle->setText("INFO");
-    infoTitle->setFont(titleFont);
+    infoTitle->setFont(TitleFont);
     infoTitle->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     infoTitle->setStyleSheet("color:#2c2c2c");
 
@@ -457,6 +457,53 @@ void DataDisplayWidget::InitInfoWidget()
     //info底下的小横条长度30，高度6
     infoSplitter->setFixedSize(30, 6);
     infoSplitter->setStyleSheet("background-color:#3c3c3c;border-radius:3px;");
+
+    QFont InfoTitleFont = QFont("Corbel",18);
+    QFont InfoDataFont = QFont("Arial",15);
+
+    //姿态信息标题
+    QLabel *AttitudeInfo = new QLabel(this);
+    AttitudeInfo->setText("Angle:");
+    AttitudeInfo->setMinimumHeight(25);
+    AttitudeInfo->setFont(InfoTitleFont);
+
+    AttitudeDataInfo->setMinimumHeight(25);
+    AttitudeInfo->setFont(InfoDataFont);
+    AttitudeDataInfo->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000; border: 1px solid darkgray;");
+
+    //深度信息标题
+    QLabel *DepthInfo = new QLabel(this);
+    DepthInfo->setText("Depth:");
+    DepthInfo->setMinimumHeight(25);
+    DepthInfo->setFont(InfoTitleFont);
+
+    DepthDataInfo->setMinimumHeight(25);
+    DepthDataInfo->setFont(InfoDataFont);
+    DepthDataInfo->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000; border: 1px solid darkgray;");
+
+    //GPS信息
+    QLabel *GPSInfo = new QLabel(this);
+    GPSInfo->setText("GPS:");
+    GPSInfo->setMinimumHeight(25);
+    GPSInfo->setFont(InfoTitleFont);
+
+    GPSDataInfo->setMinimumHeight(25);
+    GPSDataInfo->setFont(InfoDataFont);
+    GPSDataInfo->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000; border: 1px solid darkgray;");
+
+    //手柄数据输出
+    QLabel *JoystickInfo = new QLabel(this);
+    JoystickInfo->setText("Joystick:");
+    JoystickInfo->setMinimumHeight(25);
+    JoystickInfo->setFont(InfoTitleFont);
+
+    JoystickAxisDataInfo->setMinimumHeight(25);
+    JoystickAxisDataInfo->setFont(InfoDataFont);
+    JoystickAxisDataInfo->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000; border: 1px solid darkgray;");
+
+    JoystickButtonDataInfo->setMinimumHeight(25);
+    JoystickButtonDataInfo->setFont(InfoDataFont);
+    JoystickButtonDataInfo->setStyleSheet("background-color: black; color: black;border-radius:3px; background-color: #00000000; border: 1px solid darkgray;");
 
     infoWidget = new QWidget(this);
     infoWidget->setSizePolicy(sizepolicy);
@@ -467,38 +514,138 @@ void DataDisplayWidget::InitInfoWidget()
     infoLayout->setAlignment(Qt::AlignTop);
     infoLayout->addWidget(infoTitle);
     infoLayout->addWidget(infoSplitter);
+    infoLayout->addWidget(AttitudeInfo);
+    infoLayout->addWidget(AttitudeDataInfo);
+    infoLayout->addWidget(DepthInfo);
+    infoLayout->addWidget(DepthDataInfo);
+    infoLayout->addWidget(GPSInfo);
+    infoLayout->addWidget(GPSDataInfo);
+    infoLayout->addWidget(JoystickInfo);
+    infoLayout->addWidget(JoystickAxisDataInfo);
+    infoLayout->addWidget(JoystickButtonDataInfo);
 
     splitter_4->addWidget(infoWidget);
 }
 
 void DataDisplayWidget::slotLogDataDisplay(QByteArray serialBuf)
 {
-
+    if(!this->isHidden())
+    {
+        logPTE->ensureCursorVisible();
+        TextCursor.movePosition(QTextCursor::End);
+        TextCursor.insertText(QString(serialBuf));
+    }
 }
 
 void DataDisplayWidget::slotAngleDataDisplay(QByteArray ProcessedData)
 {
-
+    if(!this->isHidden())
+    {
+        float Roll,Pitch,Yaw;
+        //拷贝数据
+        std::memcpy(&Roll,&ProcessedData[ANGLE_BASE],FLOAT_SIZE);
+        std::memcpy(&Pitch,&ProcessedData[ANGLE_BASE + FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&Yaw,&ProcessedData[ANGLE_BASE + 2 * FLOAT_SIZE],FLOAT_SIZE);
+        AttitudeDataInfo->setText(QString("Roll%1  Pitch%2  Yaw%3")
+                                      .arg(QString::number(Roll, 'f', 2))  // 横滚角，格式化为2位小数
+                                      .arg(QString::number(Pitch, 'f', 2))  // 俯仰角，格式化为2位小数
+                                      .arg(QString::number(Yaw, 'f', 2)));  // 偏航角，格式化为2位小数
+    }
 }
 
 void DataDisplayWidget::slotFluxgateDataDisplay(QByteArray ProcessedData)
 {
+    if(!this->isHidden())
+    {
+        float FluxgateX,FluxgateY,FluxgateZ;
+        std::memcpy(&FluxgateX,&ProcessedData[GRADIENTMAGNET_BASE                 ],FLOAT_SIZE);
+        std::memcpy(&FluxgateY,&ProcessedData[GRADIENTMAGNET_BASE +     FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateZ,&ProcessedData[GRADIENTMAGNET_BASE + 2 * FLOAT_SIZE],FLOAT_SIZE);
+        FluxgateDataNO1->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX, 'f', 6)
+                                                              ,QString::number(FluxgateY, 'f', 6)
+                                                              ,QString::number(FluxgateZ, 'f', 6)));
 
+        std::memcpy(&FluxgateX,&ProcessedData[GRADIENTMAGNET_BASE + 3 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateY,&ProcessedData[GRADIENTMAGNET_BASE + 4 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateZ,&ProcessedData[GRADIENTMAGNET_BASE + 5 * FLOAT_SIZE],FLOAT_SIZE);
+        FluxgateDataNO2->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX, 'f', 6)
+                                                              ,QString::number(FluxgateY, 'f', 6)
+                                                              ,QString::number(FluxgateZ, 'f', 6)));
+
+        std::memcpy(&FluxgateX,&ProcessedData[GRADIENTMAGNET_BASE + 6 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateY,&ProcessedData[GRADIENTMAGNET_BASE + 7 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateZ,&ProcessedData[GRADIENTMAGNET_BASE + 8 * FLOAT_SIZE],FLOAT_SIZE);
+        FluxgateDataNO3->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX, 'f', 6)
+                                                              ,QString::number(FluxgateY, 'f', 6)
+                                                              ,QString::number(FluxgateZ, 'f', 6)));
+
+        std::memcpy(&FluxgateX,&ProcessedData[GRADIENTMAGNET_BASE + 9 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateY,&ProcessedData[GRADIENTMAGNET_BASE + 10 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateZ,&ProcessedData[GRADIENTMAGNET_BASE + 11 * FLOAT_SIZE],FLOAT_SIZE);
+        FluxgateDataNO4->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX, 'f', 6)
+                                                              ,QString::number(FluxgateY, 'f', 6)
+                                                              ,QString::number(FluxgateZ, 'f', 6)));
+    }
 }
 
 void DataDisplayWidget::slotThrusterDataDisplay(QByteArray ProcessedData)
 {
+    if(!this->isHidden())
+    {
+        unsigned short DataTemp;    //数据缓存
 
+        std::memcpy(&DataTemp,&ProcessedData[THRUSTER_BASE],UINT16_T_SIZE);
+        ThrusterData1->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        std::memcpy(&DataTemp,&ProcessedData[THRUSTER_BASE + UINT16_T_SIZE],UINT16_T_SIZE);
+        ThrusterData2->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        std::memcpy(&DataTemp,&ProcessedData[THRUSTER_BASE + 2 * UINT16_T_SIZE],UINT16_T_SIZE);
+        ThrusterData3->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        std::memcpy(&DataTemp,&ProcessedData[THRUSTER_BASE + 3 * UINT16_T_SIZE],UINT16_T_SIZE);
+        ThrusterData4->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        std::memcpy(&DataTemp,&ProcessedData[SERVO_BASE],UINT16_T_SIZE);
+        ServoData1->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        std::memcpy(&DataTemp,&ProcessedData[SERVO_BASE + UINT16_T_SIZE],UINT16_T_SIZE);
+        ServoData2->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        std::memcpy(&DataTemp,&ProcessedData[SERVO_BASE + 2 * UINT16_T_SIZE],UINT16_T_SIZE);
+        ServoData3->setText(QString("%1").arg(QString::number(DataTemp)));
+
+        std::memcpy(&DataTemp,&ProcessedData[SERVO_BASE + 3 * UINT16_T_SIZE],UINT16_T_SIZE);
+        ServoData4->setText(QString("%1").arg(QString::number(DataTemp)));
+    }
 }
 
 void DataDisplayWidget::slotDepthDataDisplay(QByteArray ProcessedData)
 {
-
+    if(!this->isHidden())
+    {
+        float Depth;
+        std::memcpy(&Depth,&ProcessedData[DEPTH_BASE],FLOAT_SIZE);
+        DepthDataInfo->setText(QString("%1cm").arg(QString::number(Depth, 'f', 2)));     //深度cm
+    }
 }
 
 void DataDisplayWidget::slotGPSDataDisplay(QByteArray ProcessedData)
 {
+    if(!this->isHidden())
+    {
+        float Latitude,Longitude;   //纬度和经度
 
+        std::memcpy(&Longitude,&ProcessedData[GPS_BASE + UINT8_T_SIZE],FLOAT_SIZE);
+        std::memcpy(&Latitude,&ProcessedData[GPS_BASE + 2 * UINT8_T_SIZE + FLOAT_SIZE],FLOAT_SIZE);
+
+        GPSDataInfo->setText(QString("%1 %2 %3 %4 %5")    //有效性 东西 经值 南北 维值
+                                 .arg(static_cast<char>(ProcessedData[GPS_BASE + 2 * UINT8_T_SIZE + 2 * FLOAT_SIZE]))  // 有效性
+                                 .arg(static_cast<char>(ProcessedData[GPS_BASE]))  // 东西
+                                 .arg(QString::number(Longitude, 'f', 5))  // 经度，格式化为6位小数
+                                 .arg(static_cast<char>(ProcessedData[GPS_BASE + UINT8_T_SIZE + FLOAT_SIZE]))  // 南北
+                                 .arg(QString::number(Latitude, 'f', 5)));  // 纬度，格式化为6位小数
+    }
 }
 
 //暂不使用
