@@ -24,6 +24,7 @@ void SerialDataAnalyze::SDAworking(QByteArray serialBuf)
         emit sigDepthDataAnalyze(serialBuf);
         emit sigGPSDataAnalyze(serialBuf);
         emit sigThrusterDataAnalyze(serialBuf);
+        emit sigFluxgateDataAnalyze(serialBuf);
     }
 //    else
 //    {

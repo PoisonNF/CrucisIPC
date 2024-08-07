@@ -44,6 +44,7 @@ signals:
     void sigDepthDataAnalyze(QByteArray ProcessedData);
     void sigGPSDataAnalyze(QByteArray ProcessedData);
     void sigThrusterDataAnalyze(QByteArray ProcessedData);
+    void sigFluxgateDataAnalyze(QByteArray ProcessedData);
 
 };
 

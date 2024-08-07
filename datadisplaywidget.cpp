@@ -546,10 +546,16 @@ void DataDisplayWidget::slotAngleDataDisplay(QByteArray ProcessedData)
         std::memcpy(&Roll,&ProcessedData[ANGLE_BASE],FLOAT_SIZE);
         std::memcpy(&Pitch,&ProcessedData[ANGLE_BASE + FLOAT_SIZE],FLOAT_SIZE);
         std::memcpy(&Yaw,&ProcessedData[ANGLE_BASE + 2 * FLOAT_SIZE],FLOAT_SIZE);
+        //显示在log里面
         AttitudeDataInfo->setText(QString("Roll%1  Pitch%2  Yaw%3")
-                                      .arg(QString::number(Roll, 'f', 2))  // 横滚角，格式化为2位小数
-                                      .arg(QString::number(Pitch, 'f', 2))  // 俯仰角，格式化为2位小数
-                                      .arg(QString::number(Yaw, 'f', 2)));  // 偏航角，格式化为2位小数
+                                      .arg(QString::number(Roll, 'f', 2)    // 横滚角，格式化为2位小数
+                                          ,QString::number(Pitch, 'f', 2)   // 俯仰角，格式化为2位小数
+                                          ,QString::number(Yaw, 'f', 2)));  // 偏航角，格式化为2位小数
+        //显示在JY901S里面
+        JY901SDataAngle->setText(QString("Roll%1  Pitch%2  Yaw%3")
+                                      .arg(QString::number(Roll, 'f', 2)    // 横滚角，格式化为2位小数
+                                          ,QString::number(Pitch, 'f', 2)   // 俯仰角，格式化为2位小数
+                                          ,QString::number(Yaw, 'f', 2)));  // 偏航角，格式化为2位小数
     }
 }
 
@@ -557,34 +563,36 @@ void DataDisplayWidget::slotFluxgateDataDisplay(QByteArray ProcessedData)
 {
     if(!this->isHidden())
     {
-        float FluxgateX,FluxgateY,FluxgateZ;
-        std::memcpy(&FluxgateX,&ProcessedData[GRADIENTMAGNET_BASE                 ],FLOAT_SIZE);
-        std::memcpy(&FluxgateY,&ProcessedData[GRADIENTMAGNET_BASE +     FLOAT_SIZE],FLOAT_SIZE);
-        std::memcpy(&FluxgateZ,&ProcessedData[GRADIENTMAGNET_BASE + 2 * FLOAT_SIZE],FLOAT_SIZE);
-        FluxgateDataNO1->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX, 'f', 6)
-                                                              ,QString::number(FluxgateY, 'f', 6)
-                                                              ,QString::number(FluxgateZ, 'f', 6)));
+        float FluxgateX1,FluxgateY1,FluxgateZ1;
+        std::memcpy(&FluxgateX1,&ProcessedData[GRADIENTMAGNET_BASE                 ],FLOAT_SIZE);
+        std::memcpy(&FluxgateY1,&ProcessedData[GRADIENTMAGNET_BASE +     FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateZ1,&ProcessedData[GRADIENTMAGNET_BASE + 2 * FLOAT_SIZE],FLOAT_SIZE);
+        FluxgateDataNO1->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX1 * 10000, 'f', 0)
+                                                              ,QString::number(FluxgateX1 * 10000, 'f', 0)
+                                                              ,QString::number(FluxgateX1 * 10000, 'f', 0)));
 
-        std::memcpy(&FluxgateX,&ProcessedData[GRADIENTMAGNET_BASE + 3 * FLOAT_SIZE],FLOAT_SIZE);
-        std::memcpy(&FluxgateY,&ProcessedData[GRADIENTMAGNET_BASE + 4 * FLOAT_SIZE],FLOAT_SIZE);
-        std::memcpy(&FluxgateZ,&ProcessedData[GRADIENTMAGNET_BASE + 5 * FLOAT_SIZE],FLOAT_SIZE);
-        FluxgateDataNO2->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX, 'f', 6)
-                                                              ,QString::number(FluxgateY, 'f', 6)
-                                                              ,QString::number(FluxgateZ, 'f', 6)));
+        float FluxgateX2,FluxgateY2,FluxgateZ2;
+        std::memcpy(&FluxgateX2,&ProcessedData[GRADIENTMAGNET_BASE + 3 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateY2,&ProcessedData[GRADIENTMAGNET_BASE + 4 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateZ2,&ProcessedData[GRADIENTMAGNET_BASE + 5 * FLOAT_SIZE],FLOAT_SIZE);
+        FluxgateDataNO2->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX2 * 10000, 'f', 0)
+                                                              ,QString::number(FluxgateY2 * 10000, 'f', 0)
+                                                              ,QString::number(FluxgateZ2 * 10000, 'f', 0)));
 
-        std::memcpy(&FluxgateX,&ProcessedData[GRADIENTMAGNET_BASE + 6 * FLOAT_SIZE],FLOAT_SIZE);
-        std::memcpy(&FluxgateY,&ProcessedData[GRADIENTMAGNET_BASE + 7 * FLOAT_SIZE],FLOAT_SIZE);
-        std::memcpy(&FluxgateZ,&ProcessedData[GRADIENTMAGNET_BASE + 8 * FLOAT_SIZE],FLOAT_SIZE);
-        FluxgateDataNO3->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX, 'f', 6)
-                                                              ,QString::number(FluxgateY, 'f', 6)
-                                                              ,QString::number(FluxgateZ, 'f', 6)));
-
-        std::memcpy(&FluxgateX,&ProcessedData[GRADIENTMAGNET_BASE + 9 * FLOAT_SIZE],FLOAT_SIZE);
-        std::memcpy(&FluxgateY,&ProcessedData[GRADIENTMAGNET_BASE + 10 * FLOAT_SIZE],FLOAT_SIZE);
-        std::memcpy(&FluxgateZ,&ProcessedData[GRADIENTMAGNET_BASE + 11 * FLOAT_SIZE],FLOAT_SIZE);
-        FluxgateDataNO4->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX, 'f', 6)
-                                                              ,QString::number(FluxgateY, 'f', 6)
-                                                              ,QString::number(FluxgateZ, 'f', 6)));
+        float FluxgateX3,FluxgateY3,FluxgateZ3;
+        std::memcpy(&FluxgateX3,&ProcessedData[GRADIENTMAGNET_BASE + 6 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateY3,&ProcessedData[GRADIENTMAGNET_BASE + 7 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateZ3,&ProcessedData[GRADIENTMAGNET_BASE + 8 * FLOAT_SIZE],FLOAT_SIZE);
+        FluxgateDataNO3->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX3 * 10000, 'f', 0)
+                                                              ,QString::number(FluxgateY3 * 10000, 'f', 0)
+                                                              ,QString::number(FluxgateZ3 * 10000, 'f', 0)));
+        float FluxgateX4,FluxgateY4,FluxgateZ4;
+        std::memcpy(&FluxgateX4,&ProcessedData[GRADIENTMAGNET_BASE + 9 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateY4,&ProcessedData[GRADIENTMAGNET_BASE + 10 * FLOAT_SIZE],FLOAT_SIZE);
+        std::memcpy(&FluxgateZ4,&ProcessedData[GRADIENTMAGNET_BASE + 11 * FLOAT_SIZE],FLOAT_SIZE);
+        FluxgateDataNO4->setText(QString("X:%1 Y:%2 Z:%3").arg(QString::number(FluxgateX4 * 10000, 'f', 0)
+                                                              ,QString::number(FluxgateY4 * 10000, 'f', 0)
+                                                              ,QString::number(FluxgateZ4 * 10000, 'f', 0)));
     }
 }
 

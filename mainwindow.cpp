@@ -816,6 +816,7 @@ void MainWindow::OpenSerialPort()
         connect(SDAwork,&SerialDataAnalyze::sigDepthDataAnalyze,dataDisplayWidget,&DataDisplayWidget::slotDepthDataDisplay);
         connect(SDAwork,&SerialDataAnalyze::sigGPSDataAnalyze,dataDisplayWidget,&DataDisplayWidget::slotGPSDataDisplay);
         connect(SDAwork,&SerialDataAnalyze::sigThrusterDataAnalyze,dataDisplayWidget,&DataDisplayWidget::slotThrusterDataDisplay);
+        connect(SDAwork,&SerialDataAnalyze::sigFluxgateDataAnalyze,dataDisplayWidget,&DataDisplayWidget::slotFluxgateDataDisplay);
 
         //线程资源释放
         connect(this,&MainWindow::destroyed,this,[=]()
