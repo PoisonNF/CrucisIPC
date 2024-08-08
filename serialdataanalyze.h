@@ -27,7 +27,9 @@
 #define DATE_BASE                   (DEPTH_BASE + FLOAT_SIZE)
 #define ANGLE_BASE                  (DATE_BASE + 6 * UINT8_T_SIZE)
 #define MAG_BASE                    (ANGLE_BASE + 3 * FLOAT_SIZE)
-#define FRAMEEND_BASE               (MAG_BASE + 3 * FLOAT_SIZE)
+#define ACCEL_BASE                  (MAG_BASE + 3 * FLOAT_SIZE)
+#define GYRO_BASE                   (ACCEL_BASE + 3 * FLOAT_SIZE)
+#define FRAMEEND_BASE               (GYRO_BASE + 3 * FLOAT_SIZE)
 
 class SerialDataAnalyze : public QObject
 {
@@ -45,7 +47,7 @@ signals:
     void sigGPSDataAnalyze(QByteArray ProcessedData);
     void sigThrusterDataAnalyze(QByteArray ProcessedData);
     void sigFluxgateDataAnalyze(QByteArray ProcessedData);
-
+    void sigJY901SDataAnalyze(QByteArray ProcessedData);
 };
 
 #endif // SERIALDATAANALYZE_H

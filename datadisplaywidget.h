@@ -127,7 +127,7 @@ public slots:
     void slotFluxgateDataDisplay(QByteArray ProcessedData);  //磁通门数据分拣槽函数
     void slotThrusterDataDisplay(QByteArray ProcessedData);  //动力系统数据分拣槽函数
     void slotGPSDataDisplay(QByteArray ProcessedData);
-
+    void slotJY901SDataDisplay(QByteArray ProcessedData);
 };
 
 #endif // DATADISPLAYWIDGET_H
