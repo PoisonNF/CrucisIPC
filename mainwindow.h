@@ -102,6 +102,7 @@ private:
     void InitMotionControlWidget(); //初始化运动控制窗口
     void InitLog();   //log初始化
     void InitTimeSYNC();    //初始化时间同步按钮
+    void InitSaveCsv();     //初始化保存数据按钮
 
     //字符数字“56”转换为0x56的宏
 #define TimeToTimeHex(TimeHex,Time) TimeHex = Time.toInt() + Time.toInt() / 10 * 6

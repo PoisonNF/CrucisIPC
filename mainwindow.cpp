@@ -42,6 +42,7 @@ void MainWindow::Init(){
     InitTimeShow();             //时间显示窗口初始化
     InitSerialPage();           //串口设置界面初始化
     InitTimeSYNC();             //时间同步按钮初始化
+    InitSaveCsv();              //保存数据按钮初始化
     //InitSerialYOLOPage();       //串口YOLO设置界面初始化
 }
 
@@ -688,6 +689,35 @@ void MainWindow::InitTimeSYNC()
             TimeSyncArray.append('$');
 
             serial->write(TimeSyncArray); //向串口写入
+        }
+    });
+}
+
+/* 初始化保存数据按钮 */
+void MainWindow::InitSaveCsv()
+{
+    textButton *SaveCsvBtn = new textButton("保存数据", ui->titleBar,1.2);
+    SaveCsvBtn->setMinimumWidth(100);
+    ui->horizontalLayout->insertWidget(4,SaveCsvBtn);
+    QString originalStyle;
+
+    //按下保存数据按钮开始保存数据
+    connect(SaveCsvBtn, &textButton::clicked, this, [=](){
+        if(SaveCsv == false){
+//            SaveCsv = true;         //保存数据标志位置1
+//            //如果需要切换回原始样式，可以保存原始样式然后在必要时恢复
+//            SaveCsvBtn->styleSheet();
+//            // 设置按钮为椭圆形背景颜色
+//            SaveCsvBtn->setStyleSheet(
+//                "background-color: green;"
+//                "color: white;"
+//                "border-radius: 2px;" // 设置圆角半径
+//                "padding: 10px;"       // 内边距，增加按钮的大小，确保显示为椭圆
+//            );
+        }else{
+            SaveCsv = false;         //保存数据标志位置1
+            SaveCsvBtn->setEnabled(false);
+            SaveCsvBtn->setStyleSheet(originalStyle);
         }
     });
 }
